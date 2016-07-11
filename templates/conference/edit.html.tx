@@ -21,7 +21,7 @@
     <input placeholder="(任意）日本語で表示する際のカンファレンス名" id="title#ja" name="title#ja" type="text" class="validate[% IF conference.item("title#ja") %] active[% END %]"[% IF conference.item("title#ja") %] value="[% conference.item("title#ja") %]"[% END %]>
   </div>
 </div>
-<div>
+<div class="row">
   <div class="input-field col s6">
     <label for="sub_title">Sub Title</label>
     <input placeholder="(Optional)" id="sub_title" name="sub_title" type="text" class="validate[% IF conference.sub_title %] active[% END %]"[% IF conference.sub_title %] value="[% conference.sub_title %]"[% END %]>
