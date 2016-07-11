@@ -99,6 +99,9 @@ sub startup {
             $r_resource->get("/$action")->to("$resource#$action");
         }
 
+        # This shows the create form
+        $r_resource->get("/input")->to("$resource#input");
+
         for my $action (qw(create update delete)) {
             $r_resource->post("/$action")->to("$resource#$action");
         }

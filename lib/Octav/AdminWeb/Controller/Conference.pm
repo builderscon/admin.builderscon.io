@@ -72,4 +72,42 @@ sub update {
     $self->redirect_to($self->url_for('lookup')->query(id => $id));
 }
 
+# This is just shows the form to create
+sub input {
+    my $self = shift;
+
+    
+
+    # If we have been redirected here because of a validation error,
+    # we should remember the values
+    my $h;
+    my $error_id = $self->param("error")
+    if ($error_id && (my $h = $self->plack_session->get($error_id))) {
+        $self->stash(error => $h->{error});
+        $self->stash(prefill => $h->{params});
+    }
+    $self->render(tx => "conference/edit");
+}
+
+# This does the validation and creates the entry.
+sub create {
+    my $self = shift;
+
+    my $client = $self->client;
+    my $conference = $client->create_conference(\%params);
+    if (!$conference) {
+        # XXX Currently we don't have a great way to show errors
+        # we just take the returned error, and shove it in the session
+        my $id = Digest::SHA::sha1_hex(time() . {} . rand() . $$);
+        $self->plack_session->set($id, {
+            error => $client->last_error(),
+            params => \%params,
+        });
+        $self->redirect_to($self->url_for("input")->query(error => $id));
+        return
+    }
+
+    $self->redirect_to($self->url_for("lookup")->query(id => $conference->{id}));
+}
+
 1;
