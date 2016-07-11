@@ -93,7 +93,7 @@ sub startup {
         $r_resource->get("/${resource}_cb")->to("auth#${resource}_cb");
     }
 
-    for my $resource (qw(conference user venue room)) {
+    for my $resource (qw(conference_series conference user venue room)) {
         my $r_resource = $r->under("/$resource");
         for my $action (qw(edit lookup list)) {
             $r_resource->get("/$action")->to("$resource#$action");

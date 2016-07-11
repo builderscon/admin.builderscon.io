@@ -1,13 +1,13 @@
-package Octav::AdminWeb::Controller::Conference;
+package Octav::AdminWeb::Controller::ConferenceSeries;
 use Mojo::Base qw(Mojolicious::Controller);
 
 sub list {
     my $self = shift;
 
     my $client = $self->client();
-    my $conferences = $client->list_conference();
-    $self->stash(conferences => $conferences);
-    $self->render(tx => "conference/list");
+    my $conference_series = $client->list_conference_series();
+    $self->stash(conference_series => $conference_series);
+    $self->render(tx => "conference_series/list");
 }
 
 sub _lookup {
@@ -20,13 +20,13 @@ sub _lookup {
     }
 
     my $client = $self->client;
-    my $conference = $client->lookup_conference({id => $id, lang => "all"});
-    if (!$conference) {
+    my $conference_series = $client->lookup_conference_series({id => $id, lang => "all"});
+    if (!$conference_series) {
         $self->render(text => "not found", status => 404);
         return;
     }
     $self->stash(api_key => $self->config->{googlemaps}->{api_key});
-    $self->stash(conference => $conference);
+    $self->stash(conference_series => $conference_series);
     return 1
 }
 
@@ -35,7 +35,7 @@ sub lookup {
     if (!$self->_lookup()) {
         return
     }
-    $self->render(tx => "conference/lookup");
+    $self->render(tx => "conference_series/lookup");
 }
 
 sub edit {
@@ -43,7 +43,7 @@ sub edit {
     if (!$self->_lookup()) {
         return
     }
-    $self->render(tx => "conference/edit");
+    $self->render(tx => "conference_series/edit");
 }
 
 sub update {
@@ -55,19 +55,19 @@ sub update {
     }
 
     my $client = $self->client;
-    my $conference = $client->lookup_conference({id => $id, lang => "all"});
+    my $conference_series = $client->lookup_conference_series({id => $id, lang => "all"});
 
     my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug");
     my %params = (id => $id);
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);
-        if ($pvalue ne $conference->{$pname}) {
+        if ($pvalue ne $conference_series->{$pname}) {
             $params{$pname} = $pvalue;
         }
     }
 
-    if (!$client->update_conference(\%params)) {
-        die $client->last_error();
+    if (!$client->update_conference_series(\%params)) {
+        die "failed";
     }
 
     $self->redirect_to($self->url_for('lookup')->query(id => $id));
@@ -83,10 +83,10 @@ sub input {
     my $error_id = $self->param("error");
     if ($error_id && (my $h = delete $self->plack_session->{$error_id})) {
         $self->stash(error => $h->{error});
-        $self->stash(conference => $h->{params});
+        $self->stash(conference_series => $h->{params});
     }
 
-    $self->render(tx => "conference/edit");
+    $self->render(tx => "conference_series/edit");
 }
 
 # This does the validation and creates the entry.
@@ -101,8 +101,8 @@ sub create {
     }
 
     my $client = $self->client;
-    my $conference = $client->create_conference(\%params);
-    if (!$conference) {
+    my $conference_series = $client->create_conference_series(\%params);
+    if (!$conference_series) {
         # XXX Currently we don't have a great way to show errors
         # we just take the returned error, and shove it in the session
         my $id = Digest::SHA::sha1_hex(time() . {} . rand() . $$);
@@ -114,7 +114,7 @@ sub create {
         return
     }
 
-    $self->redirect_to($self->url_for("lookup")->query(id => $conference->{id}));
+    $self->redirect_to($self->url_for("lookup")->query(id => $conference_series->{id}));
 }
 
 1;
