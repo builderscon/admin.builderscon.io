@@ -57,8 +57,9 @@ sub update {
     my $client = $self->client;
     my $conference = $client->lookup_conference({id => $id, lang => "all"});
 
+    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug");
     my %params = (id => $id);
-    for my $pname (qw(title sub_title title#ja sub_title#ja slug)) {
+    for my $pname (@columns) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $conference->{$pname}) {
             $params{$pname} = $pvalue;
@@ -76,16 +77,15 @@ sub update {
 sub input {
     my $self = shift;
 
-    
-
     # If we have been redirected here because of a validation error,
     # we should remember the values
     my $h;
-    my $error_id = $self->param("error")
-    if ($error_id && (my $h = $self->plack_session->get($error_id))) {
+    my $error_id = $self->param("error");
+    if ($error_id && (my $h = delete $self->plack_session->{$error_id})) {
         $self->stash(error => $h->{error});
-        $self->stash(prefill => $h->{params});
+        $self->stash(conference => $h->{params});
     }
+
     $self->render(tx => "conference/edit");
 }
 
@@ -93,16 +93,23 @@ sub input {
 sub create {
     my $self = shift;
 
+    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug");
+    my %params = (user_id => $self->stash('ui_user')->{id});
+    for my $pname (@columns) {
+        my $pvalue = $self->param($pname);
+        $params{$pname} = $pvalue;
+    }
+
     my $client = $self->client;
     my $conference = $client->create_conference(\%params);
     if (!$conference) {
         # XXX Currently we don't have a great way to show errors
         # we just take the returned error, and shove it in the session
         my $id = Digest::SHA::sha1_hex(time() . {} . rand() . $$);
-        $self->plack_session->set($id, {
+        $self->plack_session->{$id} = {
             error => $client->last_error(),
             params => \%params,
-        });
+        };
         $self->redirect_to($self->url_for("input")->query(error => $id));
         return
     }
