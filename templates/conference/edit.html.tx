@@ -95,13 +95,13 @@
   <form action="/conference/venue/add" method="POST" class="col s12">
   <input type="hidden" name="id" value="[% conference.id %]">
   <div class="input-field col s6">
-    <label for="venue_id">Venue</label>
     <select id="venue_id" name="venue_id">
-        <option value="" disabled selected>Choose Venues</option>
+        <option value="" disabled selected>Choose Venue</option>
 [%- FOREACH venue IN venues %]
         <option value="[% venue.id %]">[% venue.name %] [% venue.address %]</option>
 [% END -%]
     </select>
+    <label for="venue_id">Venue</label>
   </div>
   <div class="col s3">
     <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
@@ -110,20 +110,35 @@
 </div>
 
 <div class="row">
-  <div class="collection col s12">
+  <ul class="collection col s12">
 [% FOREACH venue IN conference.venues %]
-    <a class="collection-item" href="/venue/lookup?id=[% venue.id %]">[% venue.name %]</a>
+    <li class="collection-item"><a href="/venue/lookup?id=[% venue.id %]">[% venue.name %]</a> [<a href="#" data-id="[% venue.id %]" class="remove-venue">x</a>]</li>
 [% END %]
-  </div>
+  </ul>
 </div>
 
 <script type="text/javascript">
 <!--
     $(document).ready(function() {
         $("select").material_select();
+        $("#add-venue-btn").click(function() { $("#venueform").show("slide") });
+        $("#venueform").hide();
         $("#add-date-btn").click(function() { $("#dateform").show("slide") });
         $("#dateform").hide();
         $("#date").datepicker({ "dateFormat": "yy-mm-dd" });
+
+        $("a.remove-venue").each(function(i, elem) {
+            $e = $(elem)
+            $e.click(function() {
+                $.ajax({
+                    "method": "POST",
+                    "url": "/conference/venue/remove",
+                    "data": {"id": "[% conference.id %]", "venue_id": $e.attr("data-id")},
+                    "success": function() { location.reload() },
+                    "error": function(xhr, st, err) { alert(err) }
+                });
+            });
+        });
     });
 -->
 </script>

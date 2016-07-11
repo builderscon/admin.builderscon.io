@@ -158,4 +158,24 @@ sub venue_add {
 
     $self->redirect_to($self->url_for("lookup")->query(id => $self->stash("conference")->{id}));
 }
+
+sub venue_remove {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        venue_id => $self->param("venue_id"),
+    );
+    my $client = $self->client;
+    if (! $client->delete_conference_venue(\%params)) {
+        # XXX handle this properly
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("lookup")->query(id => $self->stash("conference")->{id}));
+}
+
 1;
