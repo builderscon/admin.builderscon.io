@@ -1,0 +1,7 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<div class="row">
+[% INCLUDE "venue/form.html.tx" WITH venue = venue %]
+</div><!-- outer div -->
+
+[% END %]

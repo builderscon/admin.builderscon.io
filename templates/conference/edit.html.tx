@@ -7,6 +7,8 @@
   ],
 %]
 
+<div class="row">
+
 <h4>Conference "[% conference.title %]"</h4>
 
 [% INCLUDE "conference/form.html.tx" WITH conference = conference %]
@@ -71,6 +73,8 @@
 [% END %]
   </ul>
 </div>
+
+</div><!-- outer row -->
 
 <script type="text/javascript">
 <!--
