@@ -106,6 +106,8 @@ sub startup {
             $r_resource->post("/$action")->to("$resource#$action");
         }
     }
+    $r->post("/conference/date/add")->to("conference#date_add");
+    $r->post("/conference/venue/add")->to("conference#venue_add");
 
     $r->get("/user/dashboard")->to("user#dashboard");
 

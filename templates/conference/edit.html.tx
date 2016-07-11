@@ -1,4 +1,11 @@
-[% WRAPPER "layout/main.html.tx" %]
+[% WRAPPER "layout/main.html.tx" WITH
+  additional_styles = [
+    "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css",
+  ],
+  additional_scripts = [
+    "//code.jquery.com/ui/1.11.3/jquery-ui.min.js"
+  ],
+%]
 
 <h4>Conference "[% conference.title %]"</h4>
 
@@ -43,13 +50,26 @@
 </div>
 
 <div class="row">
-  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-    <i class="material-icons right">send</i>
-  </button>
+  <div class="col s12">
+    <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
+  </div>
 </div>
 </form>
 
-<h5>Dates</h5>
+<h5>Dates <a id="add-date-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
+
+<div id="dateform" class="row">
+  <form action="/conference/date/add" method="POST" class="col s12">
+  <input type="hidden" name="id" value="[% conference.id %]">
+  <div class="input-field col s3">
+    <label for="date">Date</label>
+    <input type="text" name="date" placeholder="YYYY-MM-DD" id="date">
+  </div>
+  <div class="col s3">
+    <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
+  </div>
+  </form>
+</div>
 
 <div class="row">
   <div class="col s12">
@@ -59,7 +79,7 @@
   </div>
 </div>
 
-<h5>Administrators</h5>
+<h5>Administrators <!--a id="add-admin-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a--></h5>
 
 <div class="row">
   <div class="collection col s12">
@@ -69,7 +89,25 @@
   </div>
 </div>
 
-<h5>Venues</h5>
+<h5>Venues <a id="add-venue-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
+
+<div id="venueform" class="row">
+  <form action="/conference/venue/add" method="POST" class="col s12">
+  <input type="hidden" name="id" value="[% conference.id %]">
+  <div class="input-field col s6">
+    <label for="venue_id">Venue</label>
+    <select id="venue_id" name="venue_id">
+        <option value="" disabled selected>Choose Venues</option>
+[%- FOREACH venue IN venues %]
+        <option value="[% venue.id %]">[% venue.name %] [% venue.address %]</option>
+[% END -%]
+    </select>
+  </div>
+  <div class="col s3">
+    <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
+  </div>
+  </form>
+</div>
 
 <div class="row">
   <div class="collection col s12">
@@ -78,5 +116,16 @@
 [% END %]
   </div>
 </div>
+
+<script type="text/javascript">
+<!--
+    $(document).ready(function() {
+        $("select").material_select();
+        $("#add-date-btn").click(function() { $("#dateform").show("slide") });
+        $("#dateform").hide();
+        $("#date").datepicker({ "dateFormat": "yy-mm-dd" });
+    });
+-->
+</script>
 
 [% END %]
