@@ -114,7 +114,6 @@ sub create {
 
     my $client = $self->client;
     my $venue = $client->create_venue(\%params);
-$self->app->log->debug($venue->{response}->as_string());
     if (!$venue) {
         # XXX Currently we don't have a great way to show errors
         # we just take the returned error, and shove it in the session

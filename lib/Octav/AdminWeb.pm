@@ -21,8 +21,9 @@ sub load_from_file {
         warn "Could not load from file '$file': $!";
         return
     }
-    local $/;
-    return <$fh>;
+    my $content = do { local $/; <$fh> };
+    chomp($content);
+    return $content;
 }
 
 sub startup {
