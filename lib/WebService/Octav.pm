@@ -45,7 +45,7 @@ sub create_user {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub lookup_user {
@@ -62,7 +62,7 @@ sub lookup_user {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub lookup_user_by_auth_user_id {
@@ -79,7 +79,7 @@ sub lookup_user_by_auth_user_id {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub update_user {
@@ -125,7 +125,7 @@ sub list_user {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub create_venue {
@@ -138,7 +138,6 @@ sub create_venue {
     my $uri = URI->new($self->{endpoint} . qq|/v1/venue/create|);
     my $json_payload = JSON::encode_json($payload);
     my $res = $self->{user_agent}->post($uri, Content => $json_payload);
-    $self->{response} = $res;
     if (!$res->is_success) {
         $self->{last_error} = $res->status_line;
         return;
@@ -155,7 +154,7 @@ sub list_venue {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub lookup_venue {
@@ -172,7 +171,7 @@ sub lookup_venue {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub update_venue {
@@ -223,7 +222,7 @@ sub create_room {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub update_room {
@@ -257,7 +256,7 @@ sub lookup_room {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub delete_room {
@@ -291,7 +290,7 @@ sub list_room {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub create_conference_series {
@@ -308,7 +307,7 @@ sub create_conference_series {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub list_conference_series {
@@ -320,7 +319,7 @@ sub list_conference_series {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub create_conference {
@@ -337,7 +336,7 @@ sub create_conference {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub add_conference_dates {
@@ -456,7 +455,7 @@ sub lookup_conference {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub lookup_conference_by_slug {
@@ -473,7 +472,7 @@ sub lookup_conference_by_slug {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub list_conference {
@@ -485,7 +484,7 @@ sub list_conference {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub update_conference {
@@ -553,7 +552,7 @@ sub create_session {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub lookup_session {
@@ -570,7 +569,7 @@ sub lookup_session {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub delete_session {
@@ -621,7 +620,7 @@ sub list_session_by_conference {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub create_question {
@@ -638,7 +637,7 @@ sub create_question {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub delete_question {
@@ -672,7 +671,7 @@ sub list_question {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub create_session_survey_response {
