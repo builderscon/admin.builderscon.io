@@ -70,7 +70,7 @@ sub update {
         die "failed";
     }
 
-    $self->redirect_to($self->url_for('lookup')->query(id => $id));
+    $self->redirect_to($self->url_for('/conference_series/lookup')->query(id => $id));
 }
 
 # This is just shows the form to create
@@ -110,11 +110,11 @@ sub create {
             error => $client->last_error(),
             params => \%params,
         };
-        $self->redirect_to($self->url_for("input")->query(error => $id));
+        $self->redirect_to($self->url_for("/conference_series/input")->query(error => $id));
         return
     }
 
-    $self->redirect_to($self->url_for("lookup")->query(id => $conference_series->{id}));
+    $self->redirect_to($self->url_for("/conference_series/lookup")->query(id => $conference_series->{id}));
 }
 
 1;

@@ -3,7 +3,10 @@
 <h4>Venue "[% venue.name %]"</h4>
 
 <div class="row">
-[% INCLUDE "venue/form.html.tx" WITH venue = venue %]
+[% INCLUDE "venue/form.html.tx" WITH
+    action = "/venue/update",
+    venue = venue,
+%]
 <h5>Rooms</h5>
 
 <div class="row">

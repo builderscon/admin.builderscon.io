@@ -51,7 +51,7 @@ sub update {
         die "failed";
     }
 
-    $self->redirect_to($self->url_for('lookup')->query(id => $id));
+    $self->redirect_to($self->url_for('/user/lookup')->query(id => $id));
 }
 
 1;

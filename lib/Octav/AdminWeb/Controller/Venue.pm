@@ -2,6 +2,10 @@ package Octav::AdminWeb::Controller::Venue;
 use Mojo::Base qw(Mojolicious::Controller);
 use JSON::Types ();
 
+has columns => sub { 
+    return ["name", "name#ja", "address", "address#ja", "latitude", "longitude"];
+};
+
 sub list {
     my $self = shift;
 
@@ -62,7 +66,7 @@ sub update {
     my $venue = $client->lookup_venue({id => $id, lang => "all"});
 
     my %params = (id => $id);
-    for my $pname (qw(name name#ja latitude longitude)) {
+    for my $pname (@{$self->columns}) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $venue->{$pname}) {
             if ($pname =~ /^(?:latitude|longitude)$/) {
@@ -73,10 +77,58 @@ sub update {
     }
 
     if (!$client->update_venue(\%params)) {
-        die "failed";
+        die $client->last_error();
     }
 
-    $self->redirect_to($self->url_for('venue/lookup')->query(id => $id));
+    $self->redirect_to($self->url_for('/venue/lookup')->query(id => $id));
 }
+
+# This is just shows the form to create
+sub input {
+    my $self = shift;
+
+    # If we have been redirected here because of a validation error,
+    # we should remember the values
+    my $h;
+    my $error_id = $self->param("error");
+    if ($error_id && (my $h = delete $self->plack_session->{$error_id})) {
+        $self->stash(error => $h->{error});
+        $self->stash(venue => $h->{params});
+    }
+
+    $self->render(tx => "venue/edit");
+}
+
+# This does the validation and creates the entry.
+sub create {
+    my $self = shift;
+
+    my %params = (user_id => $self->stash('ui_user')->{id});
+    for my $pname (@{$self->columns}) {
+        my $pvalue = $self->param($pname);
+        if ($pname =~ /^(?:latitude|longitude)$/) {
+            $pvalue = JSON::Types::number($pvalue);
+        }
+        $params{$pname} = $pvalue;
+    }
+
+    my $client = $self->client;
+    my $venue = $client->create_venue(\%params);
+$self->app->log->debug($venue->{response}->as_string());
+    if (!$venue) {
+        # XXX Currently we don't have a great way to show errors
+        # we just take the returned error, and shove it in the session
+        my $id = Digest::SHA::sha1_hex(time() . {} . rand() . $$);
+        $self->plack_session->{$id} = {
+            error => $client->last_error(),
+            params => \%params,
+        };
+        $self->redirect_to($self->url_for("/venue/input")->query(error => $id));
+        return
+    }
+
+    $self->redirect_to($self->url_for("/venue/lookup")->query(id => $venue->{id}));
+}
+
 
 1;

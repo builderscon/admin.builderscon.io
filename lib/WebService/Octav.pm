@@ -138,11 +138,12 @@ sub create_venue {
     my $uri = URI->new($self->{endpoint} . qq|/v1/venue/create|);
     my $json_payload = JSON::encode_json($payload);
     my $res = $self->{user_agent}->post($uri, Content => $json_payload);
+    $self->{response} = $res;
     if (!$res->is_success) {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return JSON::decode_json($res->content);
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub list_venue {

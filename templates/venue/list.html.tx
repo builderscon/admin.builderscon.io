@@ -1,9 +1,11 @@
 [% WRAPPER "layout/main.html.tx" %]
 
 <div class="row">
-  <div class="input-field s12">
+  <div class="input-field sqw">
     <ul class="collection with-header">
-      <li class="collection-header"><h4>Venues</h4></li>
+      <li class="collection-header"><h4>Venues</h4> 
+        <div class="chip"><a href="/venue/input"><i class="material-icons">add_circle</i> Create</a></div>
+      </li>
 [% FOREACH venue IN venues %]
       <li class="collection-item"><a href="/venue/lookup?id=[% venue.id %]">[% venue.name %]</a></li>
 [% END %]

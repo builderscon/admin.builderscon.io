@@ -74,7 +74,7 @@ sub update {
         die $client->last_error();
     }
 
-    $self->redirect_to($self->url_for('lookup')->query(id => $id));
+    $self->redirect_to($self->url_for('/conference/lookup')->query(id => $id));
 }
 
 # This is just shows the form to create
@@ -90,7 +90,7 @@ sub input {
         $self->stash(conference => $h->{params});
     }
 
-    $self->render(tx => "conference/edit");
+    $self->render(tx => "conference/input");
 }
 
 # This does the validation and creates the entry.
@@ -114,11 +114,11 @@ sub create {
             error => $client->last_error(),
             params => \%params,
         };
-        $self->redirect_to($self->url_for("input")->query(error => $id));
+        $self->redirect_to($self->url_for("/conference/input")->query(error => $id));
         return
     }
 
-    $self->redirect_to($self->url_for("lookup")->query(id => $conference->{id}));
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $conference->{id}));
 }
 
 sub date_add {
@@ -137,7 +137,7 @@ sub date_add {
         die $client->last_error();
     }
 
-    $self->redirect_to($self->url_for("lookup")->query(id => $self->stash("conference")->{id}));
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
 }
 
 sub venue_add {
@@ -156,7 +156,7 @@ sub venue_add {
         die $client->last_error();
     }
 
-    $self->redirect_to($self->url_for("lookup")->query(id => $self->stash("conference")->{id}));
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
 }
 
 sub venue_remove {
@@ -175,7 +175,7 @@ sub venue_remove {
         die $client->last_error();
     }
 
-    $self->redirect_to($self->url_for("lookup")->query(id => $self->stash("conference")->{id}));
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
 }
 
 1;

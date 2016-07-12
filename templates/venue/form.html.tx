@@ -1,4 +1,4 @@
-<form action="/venue/update" method="POST" class="col s12">
+<form action="[% action %]" method="POST" class="col s12">
 [% IF venue %]
 <div class="row">
   <div class="input-field col s12">
@@ -26,7 +26,7 @@
   </div>
   <div class="input-field col s6">
     <label for="address#ja">Address (日本語）</label>
-    <input placeholder="(任意）日本語で表示する際の施設名" id="address#ja" name="address#ja" type="text" class="validate[% IF venue.item("address#ja") %] active[% END %]"[% IF venue.item("address#ja") %] value="[% venue.item("address#ja") %]"[% END %]>
+    <input placeholder="(任意）日本語で表示する際の住所" id="address#ja" name="address#ja" type="text" class="validate[% IF venue.item("address#ja") %] active[% END %]"[% IF venue.item("address#ja") %] value="[% venue.item("address#ja") %]"[% END %]>
   </div>
 </div>
 
