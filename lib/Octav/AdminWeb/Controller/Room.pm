@@ -50,6 +50,9 @@ sub lookup {
     if (! $self->_lookup()) {
         return
     }
+    my $client = $self->client;
+    my $venue = $client->lookup_venue({id => $self->stash('room')->{venue_id}});
+    $self->stash(venue => $venue);
     $self->render(tx => "room/lookup");
 }
 

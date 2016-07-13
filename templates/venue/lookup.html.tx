@@ -72,11 +72,22 @@ function initMap() {
 <h5>Rooms</h5>
 
 <div class="row">
-  <ul class="collection col s12">
+  <table class="bordered col s12">
+    <thead>
+      <tr>
+        <th data-field="name">Name</th>
+        <th data-field="capacity">Capacity</th>
+      </tr>
+    </thead>
+    <tbody>
 [% FOREACH room IN venue.rooms %]
-    <li class="collection-item"><a href="/room/lookup?id=[% room.id %]">[% room.name %]</a></li>
+      <tr>
+        <td><a href="/room/lookup?id=[% room.id %]">[% room.name %]</a></td>
+        <td>[% room.capacity %]</td>
+      </tr>
 [% END %]
-  </ul>
+    </tbody>
+  </table>
 </div>
 
 </div><!-- outer div -->

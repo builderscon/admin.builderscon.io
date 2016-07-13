@@ -3,7 +3,7 @@
 <h4>Room "[% room.name %]"</h4>
 
 <div class="row">
-[% INCLUDE "room/input.html.tx" WITH
+[% INCLUDE "room/form.html.tx" WITH
     action = "/room/update",
     room = room,
 %]
