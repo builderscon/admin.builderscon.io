@@ -67,7 +67,7 @@ sub update {
 
     my %params = (
         id => $id,
-        user_id => $self->stash('ui_user')->{id}),
+        user_id => $self->stash('ui_user')->{id},
     );
     for my $pname (@{$self->columns}) {
         my $pvalue = $self->param($pname);

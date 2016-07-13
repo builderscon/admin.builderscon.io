@@ -60,7 +60,7 @@ sub update {
     my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug");
     my %params = (
         id => $id,
-        user_id => $self->stash('ui_user')->{id}),
+        user_id => $self->stash('ui_user')->{id},
     );
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);

@@ -41,7 +41,7 @@ sub update {
 
     my %params = (
         id => $id,
-        user_id => $self->stash('ui_user')->{id}),
+        user_id => $self->stash('ui_user')->{id},
     );
     for my $pname (qw(FIXME)) {
         my $pvalue = $self->param($pname);
