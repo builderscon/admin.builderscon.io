@@ -99,7 +99,7 @@ sub input {
         $self->stash(venue => $h->{params});
     }
 
-    $self->render(tx => "venue/edit");
+    $self->render(tx => "venue/input");
 }
 
 # This does the validation and creates the entry.
