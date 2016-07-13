@@ -65,7 +65,10 @@ sub update {
     my $client = $self->client;
     my $venue = $client->lookup_venue({id => $id, lang => "all"});
 
-    my %params = (id => $id);
+    my %params = (
+        id => $id,
+        user_id => $self->stash('ui_user')->{id}),
+    );
     for my $pname (@{$self->columns}) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $venue->{$pname}) {

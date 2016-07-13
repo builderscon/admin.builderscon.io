@@ -39,7 +39,10 @@ sub update {
     my $client = $self->client;
     my $user = $client->lookup_user({id => $id, lang => "all"});
 
-    my %params = (id => $id);
+    my %params = (
+        id => $id,
+        user_id => $self->stash('ui_user')->{id}),
+    );
     for my $pname (qw(FIXME)) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $user->{$pname}) {

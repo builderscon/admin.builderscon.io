@@ -68,7 +68,10 @@ sub update {
     my $client = $self->client;
     my $room = $client->lookup_room({id => $id, lang => "all"});
 
-    my %params = (id => $id);
+    my %params = (
+        id => $id,
+        user_id => $self->stash('ui_user')->{id}),
+    );
     for my $pname (qw(name name#ja capacity)) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $room->{$pname}) {

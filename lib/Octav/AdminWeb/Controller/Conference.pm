@@ -62,7 +62,7 @@ sub update {
     my $conference = $client->lookup_conference({id => $id, lang => "all"});
 
     my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug");
-    my %params = (id => $id);
+    my %params = (id => $id, user_id => $self->stash('ui_user')->{id});
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $conference->{$pname}) {
@@ -130,6 +130,7 @@ sub date_add {
     my %params = (
         conference_id => $self->stash("conference")->{id},
         dates => [ $self->param("date") ],
+        user_id => $self->stash('ui_user')->{id}),
     );
     my $client = $self->client;
     if (! $client->add_conference_dates(\%params)) {
@@ -149,6 +150,7 @@ sub venue_add {
     my %params = (
         conference_id => $self->stash("conference")->{id},
         venue_id => $self->param("venue_id"),
+        user_id => $self->stash('ui_user')->{id}),
     );
     my $client = $self->client;
     if (! $client->add_conference_venue(\%params)) {
@@ -168,6 +170,7 @@ sub venue_remove {
     my %params = (
         conference_id => $self->stash("conference")->{id},
         venue_id => $self->param("venue_id"),
+        user_id => $self->stash('ui_user')->{id}),
     );
     my $client = $self->client;
     if (! $client->delete_conference_venue(\%params)) {

@@ -58,7 +58,10 @@ sub update {
     my $conference_series = $client->lookup_conference_series({id => $id, lang => "all"});
 
     my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug");
-    my %params = (id => $id);
+    my %params = (
+        id => $id,
+        user_id => $self->stash('ui_user')->{id}),
+    );
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);
         if ($pvalue ne $conference_series->{$pname}) {

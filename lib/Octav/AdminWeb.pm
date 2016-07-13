@@ -139,17 +139,6 @@ sub startup {
                 return
             }
             $c->stash(ui_user => $session->{user});
-
-            if (! $session->{user}->{is_admin}) {
-                warn "User is not an administrator";
-                # Instead of just erroring out here, redirect to
-                # dashboard so we can see the error in a user
-                # friendly format
-                if ($endpoint !~ m{^/user/dashboard$}) {
-                    $c->redirect_to($c->url_for("/user/dashboard"));
-                    return
-                }
-            }
         }
 
         return $next->();
