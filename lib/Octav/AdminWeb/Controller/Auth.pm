@@ -113,7 +113,6 @@ sub github_cb {
         auth_user_id => $auth_user_id,
         avatar_url   => $user->{avatar_url},
         nickname     => $user->{login},
-        user_id      => $self->stash('ui_user')->{id},
     );
     
     # name from github *could* be first/last name
