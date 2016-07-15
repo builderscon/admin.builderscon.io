@@ -40,7 +40,7 @@ if (my $file = $ENV{BASIC_AUTH_MAP}) {
 
 builder {
     if (keys %authmap > 0) {
-        enable 'Basic::Auth', authenticator => sub {
+        enable 'Auth::Basic', authenticator => sub {
             my($username, $password, $env) = @_;
             return exists $authmap->{$username} && $authmap->{$username} eq $password;
         };
