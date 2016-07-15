@@ -129,11 +129,39 @@ sub date_add {
 
     my %params = (
         conference_id => $self->stash("conference")->{id},
-        dates => [ $self->param("date") ],
+        dates => [ {
+            date => $self->param("date"),
+            open => $self->param("open"),
+            close => $self->param("close"),
+        } ],
         user_id => $self->stash('ui_user')->{id},
     );
     my $client = $self->client;
     if (! $client->add_conference_dates(\%params)) {
+        # XXX handle this properly
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
+}
+
+sub date_remove {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        dates => [ {
+            date => $self->param("date"),
+            open => $self->param("open"),
+            close => $self->param("close"),
+        } ],
+        user_id => $self->stash('ui_user')->{id},
+    );
+    my $client = $self->client;
+    if (! $client->delete_conference_dates(\%params)) {
         # XXX handle this properly
         die $client->last_error();
     }

@@ -108,6 +108,7 @@ sub startup {
         }
     }
     $r->post("/conference/date/add")->to("conference#date_add");
+    $r->post("/conference/date/remove")->to("conference#date_remove");
     $r->post("/conference/venue/add")->to("conference#venue_add");
     $r->post("/conference/venue/remove")->to("conference#venue_remove");
 

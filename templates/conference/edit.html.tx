@@ -1,9 +1,11 @@
 [% WRAPPER "layout/main.html.tx" WITH
   additional_styles = [
     "//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css",
+    "//cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css"
   ],
   additional_scripts = [
-    "//code.jquery.com/ui/1.11.3/jquery-ui.min.js"
+    "//code.jquery.com/ui/1.11.3/jquery-ui.min.js",
+    "//cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"
   ],
 %]
 
@@ -16,14 +18,24 @@
     conference = conference,
 %]
 
-<h5>Dates <a id="add-date-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
+<div class="row">
+  <div class="col s12">
+    <h5>Dates <a id="add-date-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
 
-<div id="dateform" class="row">
-  <form action="/conference/date/add" method="POST" class="col s12">
+<div id="dateform-container" class="row">
+  <form action="/conference/date/add" id="dateform" method="POST" class="col s12">
   <input type="hidden" name="id" value="[% conference.id %]">
   <div class="input-field col s3">
     <label for="date">Date</label>
     <input type="text" name="date" placeholder="YYYY-MM-DD" id="date">
+  </div>
+  <div class="input-field col s3">
+    <label for="open">Start</label>
+    <input type="text" class="timepick" name="open" placeholder="HH:MM" id="open">
+  </div>
+  <div class="input-field col s3">
+    <label for="close">End</label>
+    <input type="text" class="timepick" name="close" placeholder="HH:MM" id="close">
   </div>
   <div class="col s3">
     <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
@@ -34,8 +46,23 @@
 <div class="row">
   <div class="col s12">
 [% FOREACH date IN conference.dates %]
-    <a class="chip">[% date.date %][% IF date.open || date.close %] ([% IF date.open %][% date.open %][% END %]〜[% IF date.close %][% date.close %][% END %])[% END %]</a>
+    <form action="/conference/date/remove" id="datermform-[% loop.index %]" method="POST">
+      <input type="hidden" name="id" value="[% conference.id %]">
+      <input type="hidden" name="date" value="[% date.date %]">
+      [%- IF date.open %]
+      <input type="hidden" name="open" value="[% date.open %]">
+      [%- END %]
+      [%- IF date.close %]
+      <input type="hidden" name="close" value="[% date.close %]">
+      [%- END %]
+    </form>
+    <div class="chip">
+      [% date.date %][% IF date.open || date.close %] ([% IF date.open %][% date.open %][% END %][% IF date.close %]〜[% date.close %][% END %])[% END %]
+      <a href="#" data-id="datermform-[% loop.index %]" class="remove-date-btn"> x </a>
+    </div>
 [% END %]
+  </div>
+</div>
   </div>
 </div>
 
@@ -48,6 +75,7 @@
 [% END %]
   </div>
 </div>
+
 
 <h5>Venues <a id="add-venue-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
 
@@ -85,10 +113,21 @@
         $("select").material_select();
         $("#add-venue-btn").click(function() { $("#venueform").show("slide") });
         $("#venueform").hide();
-        $("#add-date-btn").click(function() { $("#dateform").show("slide") });
-        $("#dateform").hide();
-        $("#date").datepicker({ "dateFormat": "yy-mm-dd" });
 
+        $("#add-date-btn").click(function() { $("#dateform-container").show("slide") });
+        $("#dateform-container").hide();
+        $("#date").datepicker({ "dateFormat": "yy-mm-dd" });
+        $("input.timepick").timepicker({
+            "forceRoundTime": true,
+            "step": function(i) { return 10 },
+            "timeFormat": "H:i"
+        });
+        $("#open").timepicker("setTime", new Date(1, 1, 1, 10, 0, 0, 0))
+        $("#close").timepicker("setTime", new Date(1, 1, 1, 18, 0, 0, 0))
+        $(".remove-date-btn").click(function(event) {
+            $("#" + $(event.target).attr("data-id")).submit()
+            return false;
+        });
         $("a.remove-venue").each(function(i, elem) {
             $e = $(elem)
             $e.click(function() {
