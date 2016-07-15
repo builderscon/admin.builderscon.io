@@ -46,6 +46,7 @@ sub edit {
 
     my $client = $self->client();
     # XXX We should cache this
+    $self->stash(series => $client->list_conference_series());
     $self->stash(venues => $client->list_venue());
     $self->render(tx => "conference/edit");
 }
