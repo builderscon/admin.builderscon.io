@@ -14,6 +14,7 @@ requires 'JSON::Types';
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::XslateRenderer';
 requires 'Plack';
+requires 'Plack::Middleware::Basic::Auth';
 requires 'Plack::Middleware::Session::Simple';
 requires 'Redis::Jet';
 requires 'Sereal';
