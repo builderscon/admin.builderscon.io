@@ -1,0 +1,15 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<h4>Create Venue</h4>
+
+[% IF error %]
+<button class="alert hollow button" href="#">[% error %]</button>
+[% END %]
+
+<div class="row">
+[% INCLUDE "venue/form.html.tx" WITH
+    action = "/venue/create",
+%]
+</div><!-- outer div -->
+
+[% END %]

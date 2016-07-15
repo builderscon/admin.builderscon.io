@@ -7,6 +7,13 @@
   <link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="/static/css/materialize.min.css"  media="screen,projection"/>
   <link rel="stylesheet" href="/static/css/style.css" type="text/css" />
+[%- FOREACH style IN additional_styles %]
+  <link rel="stylesheet" href="[% style %]">
+[% END -%]
+  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+[%- FOREACH script IN additional_scripts %]
+  <script src="[% script %]"></script>
+[% END -%]
 </head>
 
 <body>
@@ -41,11 +48,10 @@
 [% content %]
 
 <!--  Scripts-->
-<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="/static/js/materialize.min.js"></script>
 <script type="text/javascript"><!--
 $(".button-collapse").sideNav();
-</script>
+--></script>
 </body>
 
 </html>

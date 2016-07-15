@@ -21,8 +21,9 @@ sub load_from_file {
         warn "Could not load from file '$file': $!";
         return
     }
-    local $/;
-    return <$fh>;
+    my $content = do { local $/; <$fh> };
+    chomp($content);
+    return $content;
 }
 
 sub startup {
@@ -93,16 +94,23 @@ sub startup {
         $r_resource->get("/${resource}_cb")->to("auth#${resource}_cb");
     }
 
-    for my $resource (qw(conference user venue room)) {
+    for my $resource (qw(conference_series conference user venue room)) {
         my $r_resource = $r->under("/$resource");
         for my $action (qw(edit lookup list)) {
             $r_resource->get("/$action")->to("$resource#$action");
         }
 
+        # This shows the create form
+        $r_resource->get("/input")->to("$resource#input");
+
         for my $action (qw(create update delete)) {
             $r_resource->post("/$action")->to("$resource#$action");
         }
     }
+    $r->post("/conference/date/add")->to("conference#date_add");
+    $r->post("/conference/date/remove")->to("conference#date_remove");
+    $r->post("/conference/venue/add")->to("conference#venue_add");
+    $r->post("/conference/venue/remove")->to("conference#venue_remove");
 
     $r->get("/user/dashboard")->to("user#dashboard");
 
@@ -132,17 +140,6 @@ sub startup {
                 return
             }
             $c->stash(ui_user => $session->{user});
-
-            if (! $session->{user}->{is_admin}) {
-                warn "User is not an administrator";
-                # Instead of just erroring out here, redirect to
-                # dashboard so we can see the error in a user
-                # friendly format
-                if ($endpoint !~ m{^/user/dashboard$}) {
-                    $c->redirect_to($c->url_for("/user/dashboard"));
-                    return
-                }
-            }
         }
 
         return $next->();

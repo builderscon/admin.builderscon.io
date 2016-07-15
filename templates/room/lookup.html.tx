@@ -29,8 +29,8 @@
           <td>[% room.capacity %]</td>
         </tr>
         <tr>
-          <td>Venue ID</td>
-          <td>[% room.venue_id %]</td>
+          <td>Venue</td>
+          <td><a href="/venue/lookup?id=[% venue.id %]">[% venue.name %]</a></td>
         </tr>
       </tbody>
     </table>

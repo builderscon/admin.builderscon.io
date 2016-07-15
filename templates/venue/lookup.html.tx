@@ -1,5 +1,7 @@
 [% WRAPPER "layout/main.html.tx" %]
 
+<div class="row">
+
 <h4>Venue "[% venue.name %]"  <a href="/venue/edit?id=[% venue.id %]" class="btn-floating btn-small red"><i class="large material-icons">mode_edit</i></a></h4>
 
 <div class="row">
@@ -55,6 +57,7 @@ function initMap() {
   var latlng = {lat: [% venue.latitude %], lng: [% venue.longitude %]}
   map = new google.maps.Map(document.getElementById('map'), {
     center: latlng,
+    draggable: false,
     zoom: 14
   });
   var marker = new google.maps.Marker({
@@ -66,24 +69,28 @@ function initMap() {
 -->
 </script>
 
-<div class="row">
-  <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-    <i class="material-icons right">send</i>
-  </button>
-</div>
-</form>
-</div>
-
 <h5>Rooms</h5>
 
 <div class="row">
-  <div class="collection col s12">
+  <table class="bordered col s12">
+    <thead>
+      <tr>
+        <th data-field="name">Name</th>
+        <th data-field="capacity">Capacity</th>
+      </tr>
+    </thead>
+    <tbody>
 [% FOREACH room IN venue.rooms %]
-    <a class="collection-item" href="/room/lookup?id=[% room.id %]">[% room.name %]</a>
+      <tr>
+        <td><a href="/room/lookup?id=[% room.id %]">[% room.name %]</a></td>
+        <td>[% room.capacity %]</td>
+      </tr>
 [% END %]
-  </div>
+    </tbody>
+  </table>
 </div>
 
+</div><!-- outer div -->
 
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=[% api_key %]&callback=initMap"></script>
 
