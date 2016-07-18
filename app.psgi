@@ -33,13 +33,13 @@ my $store = Plack::Util::inline_object(
 
 # file should contain a key/value pair of username/password.
 # TODO: maybe put this in the database.
-my $authmap = {}
+my $authmap = {};
 if (my $file = $ENV{BASIC_AUTH_MAP}) {
     $authmap = do $file;
 }
 
 builder {
-    if (keys %authmap > 0) {
+    if (keys %$authmap > 0) {
         enable 'Auth::Basic', authenticator => sub {
             my($username, $password, $env) = @_;
             return exists $authmap->{$username} && $authmap->{$username} eq $password;
