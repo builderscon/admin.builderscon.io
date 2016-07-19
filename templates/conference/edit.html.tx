@@ -77,6 +77,42 @@
 </div>
 
 
+<div class="row">
+  <div class="col s12">
+    <h5>Featured Speakers <a id="add-featured_speaker-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
+      <div id="featured_speaker_form" class="row">
+        <div class="collection col s12">
+          <form action="/conference/featured_speaker/add" method="POST" class="col s12">
+          <input type="hidden" name="id" value="[% conference.id %]">
+          <div class="row">
+            <div class="input-field col s6">
+              <input type="text" name="display_name" placeholder="Larry Wall (TimToady)" id="display_name">
+              <label for="display_name">Display Name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input type="text" name="avatar_url" placeholder="https://upload.wikimedia.org/wikipedia/commons/b/b3/Larry_Wall_YAPC_2007.jpg" id="avatar_url">
+              <label for="avatar_url">Avatar URL</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s6">
+              <label for="description">Description</label>
+              <textarea width="10" height="60" id="description" name="description" placeholder="Larry Wall is a computer programmer and author, most widely known as the creator of the Perl programming language."></textarea>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+
+  <ul class="collection col s12">
+[% FOREACH featured_speaker IN conference.featured_speakers %]
+    <li class="collection-item">[% featured_speaker.display_name %] [<a href="#" data-id="[% featured_speaker.id %]" class="remove-featured_speaker">x</a>]</li>
+[% END %]
+  </ul>
+</div>
+
 <h5>Venues <a id="add-venue-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
 
 <div id="venueform" class="row">
@@ -140,6 +176,8 @@
                 });
             });
         });
+        $("#featured_speaker_form").hide();
+        $("#add-featured_speaker-btn").click(function() { $("#featured_speaker_form").show("slide") });
     });
 -->
 </script>

@@ -107,11 +107,11 @@ sub startup {
             $r_resource->post("/$action")->to("$resource#$action");
         }
     }
-    $r->post("/conference/date/add")->to("conference#date_add");
-    $r->post("/conference/date/remove")->to("conference#date_remove");
-    $r->post("/conference/venue/add")->to("conference#venue_add");
-    $r->post("/conference/venue/remove")->to("conference#venue_remove");
 
+    for my $subr (qw(date venue featured_speaker)) {
+        $r->post("/conference/$subr/add")->to("conference#${subr}_add");
+        $r->post("/conference/$subr/remove")->to("conference#${subr}_remove");
+    }
     $r->get("/user/dashboard")->to("user#dashboard");
 
     $self->hook(around_action => sub {
