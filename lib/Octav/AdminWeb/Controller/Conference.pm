@@ -224,7 +224,7 @@ sub featured_speaker_add {
         user_id => $self->stash('ui_user')->{id},
     );
     my $client = $self->client;
-    if (! $client->add_conference_featured_speaker(\%params)) {
+    if (! $client->add_featured_speaker(\%params)) {
         # XXX handle this properly
         die $client->last_error();
     }
@@ -244,7 +244,7 @@ sub featured_speaker_remove {
         user_id => $self->stash('ui_user')->{id},
     );
     my $client = $self->client;
-    if (! $client->delete_conference_featured_speaker(\%params)) {
+    if (! $client->delete_featured_speaker(\%params)) {
         # XXX handle this properly
         die $client->last_error();
     }
