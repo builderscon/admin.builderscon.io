@@ -210,4 +210,46 @@ sub venue_remove {
     $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
 }
 
+sub featured_speaker_add {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        avatar_url => $self->param("avatar_url"),
+        display_name => $self->param("display_name"),
+        description => $self->param("description"),
+        user_id => $self->stash('ui_user')->{id},
+    );
+    my $client = $self->client;
+    if (! $client->add_featured_speaker(\%params)) {
+        # XXX handle this properly
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
+}
+
+sub featured_speaker_remove {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        featured_speaker_id => $self->param("featured_speaker_id"),
+        user_id => $self->stash('ui_user')->{id},
+    );
+    my $client = $self->client;
+    if (! $client->delete_featured_speaker(\%params)) {
+        # XXX handle this properly
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
+}
+
 1;
