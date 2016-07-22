@@ -8,6 +8,7 @@ on 'test' => sub {
     requires 'Test::More', '0.98';
 };
 
+requires 'HTML::Scrubber';
 requires 'IO::Socket::SSL' => ">= 1.94";
 requires 'JSON';
 requires 'JSON::Types';
@@ -20,5 +21,6 @@ requires 'Redis::Jet';
 requires 'Sereal';
 requires 'Server::Starter';
 requires 'Starlet';
+requires 'Text::Markdown';
 requires 'Text::Xslate::Bridge::TT2Like';
 requires 'UUID::Tiny';

@@ -1,0 +1,46 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<h4>"[% featured_speaker.display_name %]" <a href="/featured_speaker/edit?id=[% featured_speaker.id %]" class="btn-floating btn-small red"><i class="large material-icons">mode_edit</i></a></h4>
+
+<div class="row">
+  <div class="col s6">
+    <table class="highlight">
+      <thead>
+        <tr>
+          <th data-field="name"></th>
+          <th data-field="value"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ID</td>
+          <td>[% featured_speaker.id %]</td>
+        </tr>
+        <tr>
+          <td>Display Name</td>
+          <td>[% featured_speaker.display_name %]</td>
+        </tr>
+        <tr>
+          <td>Display Name (日本語)</td>
+          <td>[% featured_speaker.item("display_name#ja") %]</td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>[% featured_speaker.description | markdown %]</td>
+        </tr>
+        <tr>
+          <td>Description (日本語)</td>
+          <td>[% featured_speaker.item("description#ja") | markdown %]</td>
+        </tr>
+        <tr>
+          <td>Conference</td>
+          <td><a href="/conference/lookup?id=[% conference.id %]">[% conference.title %]</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+[% END %]
