@@ -121,7 +121,7 @@ sub startup {
         }
     }
 
-    for my $resource (qw(featured_speaker)) {
+    for my $resource (qw(featured_speaker sponsor)) {
         my $r_resource = $r->under("/$resource");
         for my $action (qw(edit lookup)) {
             $r_resource->get("/$action")->to("$resource#$action");
@@ -132,7 +132,7 @@ sub startup {
         }
     }
 
-    for my $subr (qw(date venue featured_speaker)) {
+    for my $subr (qw(date venue featured_speaker sponsor)) {
         $r->post("/conference/$subr/add")->to("conference#${subr}_add");
         $r->post("/conference/$subr/remove")->to("conference#${subr}_remove");
     }
