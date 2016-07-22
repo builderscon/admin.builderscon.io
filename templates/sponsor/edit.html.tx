@@ -1,0 +1,12 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<h4>[% sponsor.name %]</h4>
+
+<div class="row">
+[% INCLUDE "sponsor/form.html.tx" WITH
+    action = "/sponsor/update",
+    sponsor = sponsor,
+%]
+</div>
+
+[% END %]

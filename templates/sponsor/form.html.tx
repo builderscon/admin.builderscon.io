@@ -1,0 +1,57 @@
+<form action="[% action %]" method="POST" class="col s12">
+[% IF sponsor %]<input type="hidden" name="id" value="[% sponsor.id %]">[% END %]
+<div class="row">
+  <div class="col s6">
+    <label for="name">Name</label>
+    <input type="text" id="name" name="name"[% IF sponsor %] value="[% sponsor.name %]"[% END %] />
+  </div>
+</div>
+<div class="row">
+  <div class="col s6">
+    <label for="name#ja">日本語表記</label>
+    <input type="text" id="name#ja" name="name#ja"[% IF sponsor %] value="[% sponsor.item("name#ja") %]"[% END %] />
+  </div>
+</div>
+<div class="row">
+  <div class="col s6">
+    <label for="sort_order">Sort Order</label>
+    <input type="text" id="sort_order" name="sort_order"[% IF sponsor %] value="[% sponsor.sort_order %]"[% END %] />
+  </div>
+</div>
+<div class="row">
+  <div class="col s6">
+    <label for="group_name">Group Name</label>
+    <input type="text" id="group_name" name="group_name"[% IF sponsor %] value="[% sponsor.group_name %]"[% END %] />
+  </div>
+</div>
+<div class="row">
+  <div class="input-field col s6">
+    <input type="text" name="url"[% IF sponsor %] value="[% sponsor.url %]"[% END %] />
+    <label for="url">URL</label>
+  </div>
+</div>
+<div class="row">
+  <div class="input-field col s6">
+    <input type="text" name="logo_url1"[% IF sponsor %] value="[% sponsor.logo_url1 %]"[% END %] />
+    <label for="log_url1">Logo URL1</label>
+  </div>
+</div>
+<div class="row">
+  <div class="input-field col s6">
+    <input type="text" name="logo_url2"[% IF sponsor %] value="[% sponsor.logo_url2 %]"[% END %] />
+    <label for="logo_url2">Logo URL2</label>
+  </div>
+</div>
+<div class="row">
+  <div class="input-field col s6">
+    <input type="text" name="logo_url3"[% IF sponsor %] value="[% sponsor.logo_url3 %]"[% END %] />
+    <label for="logo_url3">Logo URL3</label>
+  </div>
+</div>
+<div class="row">
+  <div class="col s3">
+    <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
+  </div>
+</div>
+</form>
+
