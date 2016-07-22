@@ -132,7 +132,7 @@ sub startup {
         }
     }
 
-    for my $subr (qw(date venue featured_speaker sponsor)) {
+    for my $subr (qw(administrator date venue featured_speaker sponsor)) {
         $r->post("/conference/$subr/add")->to("conference#${subr}_add");
         $r->post("/conference/$subr/remove")->to("conference#${subr}_remove");
     }
