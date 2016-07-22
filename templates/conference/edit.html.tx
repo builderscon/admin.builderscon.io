@@ -119,7 +119,7 @@
 
   <ul class="collection col s12">
 [% FOREACH featured_speaker IN conference.featured_speakers %]
-    <li class="collection-item">[% featured_speaker.display_name %] [<a href="#" data-id="[% featured_speaker.id %]" class="remove-featured_speaker">x</a>]</li>
+    <li class="collection-item"><a href="/featured_speaker/lookup?id=[% featured_speaker.id %]">[% featured_speaker.display_name %]</a> [<a href="#" data-id="[% featured_speaker.id %]" class="remove-featured_speaker">x</a>]</li>
 [% END %]
   </ul>
 </div>

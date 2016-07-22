@@ -4,7 +4,9 @@ use strict;
 use warnings;
 use Mojo::Base qw(Mojolicious);
 use Mojolicious::Plugin::XslateRenderer;
+use HTML::Scrubber;
 use Redis::Jet;
+use Text::Markdown;
 use WebService::Octav;
 
 our $VERSION = "0.01";
@@ -75,12 +77,23 @@ sub startup {
         };
         return $config;
     });
+
+    my $scrubber = HTML::Scrubber->new(
+        allow => ["a"],
+        rules => [ a => { href => qr{^(?!(?:java)?script)} } ],
+    );
+    my $markdown = Text::Markdown->new();
     $self->plugin('xslate_renderer' => {
         template_options => {
-            module => [ "Text::Xslate::Bridge::TT2Like" ],
+            module    => [ "Text::Xslate::Bridge::TT2Like" ],
             syntax    => 'TTerse',
             tag_start => '[%',
             tag_end   => '%]',
+            function  => {
+                markdown => sub {
+                    return Text::Xslate::mark_raw($markdown->markdown($scrubber->scrub($_[0])));
+                }
+            }
         }
     });
     my $r = $self->routes;
@@ -104,6 +117,17 @@ sub startup {
         $r_resource->get("/input")->to("$resource#input");
 
         for my $action (qw(create update delete)) {
+            $r_resource->post("/$action")->to("$resource#$action");
+        }
+    }
+
+    for my $resource (qw(featured_speaker)) {
+        my $r_resource = $r->under("/$resource");
+        for my $action (qw(edit lookup)) {
+            $r_resource->get("/$action")->to("$resource#$action");
+        }
+
+        for my $action (qw(update)) {
             $r_resource->post("/$action")->to("$resource#$action");
         }
     }

@@ -16,7 +16,8 @@ my $decoder = Sereal::Decoder->new();
 my $store = Plack::Util::inline_object(
     get => sub {
         my $h = $redis->command('get', @_);
-        if ($h =~ /^ERR /) {
+        chomp($h);
+        if ($h =~ /^ERR / || $h !~ /\S/) {
             return;
         }
         return $h;
@@ -48,9 +49,24 @@ builder {
     enable 'Session::Simple',
         store => $store,
         serializer => [
-            sub { encode_base64($encoder->encode($_[0])) },
+            sub { 
+                my $raw = $_[0];
+                my $encoded = encode_base64($encoder->encode($raw));
+                return $encoded;
+            },
             sub {
-                return eval { $decoder->decode(decode_base64($_[0])) };
+                my $raw = $_[0];
+                if (!$raw || $raw !~ /\S/) {
+                    return # optmize
+                }
+
+                my $decodedb64 = decode_base64($raw);
+                my $ret = eval { $decoder->decode($decodedb64) };
+                if ($@) {
+                    warn "Failed to decode session: $@";
+                    return
+                }
+                return $ret;
             },
         ],
         cookie_name => "octav_admin_session",

@@ -1,0 +1,12 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<h4>[% featured_speaker.name %]</h4>
+
+<div class="row">
+[% INCLUDE "featured_speaker/form.html.tx" WITH
+    action = "/featured_speaker/update",
+    featured_speaker = featured_speaker,
+%]
+</div>
+
+[% END %]

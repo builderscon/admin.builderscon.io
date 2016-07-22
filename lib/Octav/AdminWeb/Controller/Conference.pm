@@ -218,11 +218,15 @@ sub featured_speaker_add {
 
     my %params = (
         conference_id => $self->stash("conference")->{id},
-        avatar_url => $self->param("avatar_url"),
-        display_name => $self->param("display_name"),
-        description => $self->param("description"),
         user_id => $self->stash('ui_user')->{id},
     );
+
+    my @columns = ("avatar_url", "display_name", "description", "display_name#ja", "description#ja");
+    foreach my $column (@columns) {
+        if (my $v = $self->param($column)) {
+            $params{$column} = $v;
+        }
+    }
     my $client = $self->client;
     if (! $client->add_featured_speaker(\%params)) {
         # XXX handle this properly
