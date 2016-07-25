@@ -5,7 +5,7 @@ sub list {
     my $self = shift;
 
     my $client = $self->client();
-    my $conferences = $client->list_conference();
+    my $conferences = $client->list_conference({status => "any"});
     $self->stash(conferences => $conferences);
     $self->render(tx => "conference/list");
 }
