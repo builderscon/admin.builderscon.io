@@ -150,7 +150,7 @@
     <h5>Sponsors<a id="add-sponsor-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
     <div id="sponsor_form" class="row">
       <div class="collection col s12">
-        <form action="/conference/sponsor/add" method="POST" class="col s12">
+        <form action="/conference/sponsor/add" method="POST" class="col s12" enctype="multipart/form-data">
         <input type="hidden" name="id" value="[% conference.id %]">
         <div class="row">
           <div class="col s6">
@@ -182,24 +182,14 @@
             <label for="url">URL</label>
           </div>
         </div>
+[% FOREACH i IN [ 1, 2, 3 ] %]
         <div class="row">
           <div class="input-field col s6">
-            <input type="text" name="logo_url1">
-            <label for="log_url1">Logo URL1</label>
+            <input type="file" name="logo[% i %]">
+            <label for="logo[% i %]">Logo File [% i %]</label>
           </div>
         </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="text" name="logo_url2" placeholder="optional">
-            <label for="logo_url2">Logo URL2</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="input-field col s6">
-            <input type="text" name="logo_url3" placeholder="optional">
-            <label for="logo_url3">Logo URL3</label>
-          </div>
-        </div>
+[% END %]
         <div class="row">
           <div class="col s3">
             <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>

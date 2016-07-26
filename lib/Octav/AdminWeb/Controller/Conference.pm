@@ -256,52 +256,6 @@ sub featured_speaker_remove {
     $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
 }
 
-sub sponsor_add {
-    my $self = shift;
-    if (!$self->_lookup()) {
-        return
-    }
-
-    my %params = (
-        conference_id => $self->stash("conference")->{id},
-        user_id => $self->stash('ui_user')->{id},
-    );
-
-    my @columns = ("name", "logo_url1", "logo_url2", "logo_url3", "url", "group_name", "name#ja");
-    foreach my $column (@columns) {
-        if (my $v = $self->param($column)) {
-            $params{$column} = $v;
-        }
-    }
-    my $client = $self->client;
-    if (! $client->add_sponsor(\%params)) {
-        # XXX handle this properly
-        die $client->last_error();
-    }
-
-    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
-}
-
-sub sponsor_remove {
-    my $self = shift;
-    if (!$self->_lookup()) {
-        return
-    }
-
-    my %params = (
-        conference_id => $self->stash("conference")->{id},
-        id => $self->param("id"),
-        user_id => $self->stash('ui_user')->{id},
-    );
-    my $client = $self->client;
-    if (! $client->delete_sponsor(\%params)) {
-        # XXX handle this properly
-        die $client->last_error();
-    }
-
-    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
-}
-
 sub administrator_add {
     my $self = shift;
     if (!$self->_lookup()) {
@@ -359,12 +313,26 @@ sub sponsor_add {
         user_id => $self->stash('ui_user')->{id},
     );
 
-    my @columns = ("name", "logo_url1", "logo_url2", "logo_url3", "url", "group_name", "name#ja");
+    my @columns = ("name", "url", "group_name", "name#ja");
     foreach my $column (@columns) {
         if (my $v = $self->param($column)) {
             $params{$column} = $v;
         }
     }
+
+    my @guards;
+    foreach my $field (qw(logo1 logo2 logo3)) {
+        if (my $upload = $self->req->upload($field)) {
+            # Move this to a temporary location so it can be passed to 
+            # add_sponsor, and uploaded
+            my $f = File::Temp->new();
+            $f->unlink_on_destroy(1);
+            $upload->move_to($f->filename);
+            $params{$field} = $f->filename;
+            push @guards, $f;
+        }
+    }
+
     my $client = $self->client;
     if (! $client->add_sponsor(\%params)) {
         # XXX handle this properly
