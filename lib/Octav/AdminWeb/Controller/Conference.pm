@@ -337,7 +337,7 @@ sub sponsor_remove {
 
     my %params = (
         conference_id => $self->stash("conference")->{id},
-        id => $self->param("id"),
+        id => $self->param("sponsor_id"),
         user_id => $self->stash('ui_user')->{id},
     );
     my $client = $self->client;
