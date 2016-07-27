@@ -52,12 +52,28 @@ sub update {
     my $client = $self->client;
     my $sponsor = $client->lookup_sponsor({id => $id, lang => "all"});
 
-    my @columns = ("name", "logo_url1", "logo_url2", "logo_url3", "url", "group_name", "name#ja");
+    my @columns = ("name", "url", "group_name", "name#ja");
     my %params = (id => $id, user_id => $self->stash('ui_user')->{id});
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);
-        if ($pvalue ne $sponsor->{$pname}) {
+        if (($pvalue || '') ne $sponsor->{$pname}) {
             $params{$pname} = $pvalue;
+        }
+    }
+
+    my @guards;
+    foreach my $field (qw(logo1 logo2 logo3)) {
+        if (my $upload = $self->req->upload($field)) {
+            if ($upload->size <= 0) {
+                next;
+            }
+            # Move this to a temporary location so it can be passed to 
+            # add_sponsor, and uploaded
+            my $f = File::Temp->new();
+            $f->unlink_on_destroy(1);
+            $upload->move_to($f->filename);
+            $params{$field} = $f->filename;
+            push @guards, $f;
         }
     }
 
