@@ -320,19 +320,6 @@ sub sponsor_add {
         }
     }
 
-    my @guards;
-    foreach my $field (qw(logo1 logo2 logo3)) {
-        if (my $upload = $self->req->upload($field)) {
-            # Move this to a temporary location so it can be passed to 
-            # add_sponsor, and uploaded
-            my $f = File::Temp->new();
-            $f->unlink_on_destroy(1);
-            $upload->move_to($f->filename);
-            $params{$field} = $f->filename;
-            push @guards, $f;
-        }
-    }
-
     my $client = $self->client;
     if (! $client->add_sponsor(\%params)) {
         # XXX handle this properly
