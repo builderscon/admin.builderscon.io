@@ -1,4 +1,4 @@
-<form action="[% action %]" method="POST" class="col s12">
+<form action="[% action %]" method="POST" class="col s12" enctype="multipart/form-data">
 [% IF conference %]
 <div class="row">
   <div class="input-field col s12">
@@ -10,8 +10,10 @@
 [% END %]
 
 <div class="row">
-  <div class="input-field col s12">
+  <div class="col s2">
     <label for="series_id">Conference Series</label>
+  </div>
+  <div class="input-field col s10">
     <select name="series_id">
 [% FOREACH s IN series %]
         <option value="[% s.id %]"[% IF conference.series_id == s.id %] selected[% END %]>[% s.title %]</option>
@@ -20,6 +22,20 @@
   </div>
 </div>
 
+[% IF conference.cover_url %]
+<div class="row">
+  <img src="[% conference.cover_url %]">
+</div>
+[% END %]
+
+<div class="row">
+  <div class="s2 col">
+    <label for="cover">Cover Image</label>
+  </div>
+  <div class="s10 col">
+    <input type="file" name="cover">
+  </div>
+</div>
 <div class="row">
   <div class="input-field col s6">
     <label for="title">Title (English)</label>
