@@ -71,6 +71,22 @@ sub update {
         }
     }
 
+    my @guards;
+    foreach my $field (qw(cover)) {
+        if (my $upload = $self->req->upload($field)) {
+            if ($upload->size <= 0) {
+                next;
+            }
+            # Move this to a temporary location so it can be passed to 
+            # add_sponsor, and uploaded
+            my $f = File::Temp->new();
+            $f->unlink_on_destroy(1);
+            $upload->move_to($f->filename);
+            $params{$field} = $f->filename;
+            push @guards, $f;
+        }
+    }
+
     if (!$client->update_conference(\%params)) {
         die $client->last_error();
     }
