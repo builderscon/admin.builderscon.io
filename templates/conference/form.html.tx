@@ -24,7 +24,7 @@
 
 [% IF conference.cover_url %]
 <div class="row">
-  <img src="[% conference.cover_url %]">
+  <img class="s12 col" src="[% conference.cover_url %]">
 </div>
 [% END %]
 
@@ -76,6 +76,48 @@
   <div class="col s12">
     <label for="description#ja">開催概要 (Markdown)</label>
     <textarea name="description#ja" style="height: 20em">[% IF conference.item("description#ja") %][% conference.item("description#ja") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="cfp_lead_text">CFP Lead Text (Markdown)</label>
+    <textarea name="cfp_lead_text" style="height: 20em">[% IF conference.item("cfp_lead_text") %][% conference.item("cfp_lead_text") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="cfp_lead_text#ja">CFP募集序文 (Markdown)</label>
+    <textarea name="cfp_lead_text#ja" style="height: 20em">[% IF conference.item("cfp_lead_text#ja") %][% conference.item("cfp_lead_text#ja") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="cfp_pre_submit_instructions">CFP Pre-Submission Instruction Text (Markdown)</label>
+    <textarea name="cfp_pre_submit_instructions" style="height: 20em">[% IF conference.item("cfp_pre_submit_instructions") %][% conference.item("cfp_pre_submit_instructions") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="cfp_pre_submit_instructions#ja">CFP募集要項 (Markdown)</label>
+    <textarea name="cfp_pre_submit_instructions#ja" style="height: 20em">[% IF conference.item("cfp_pre_submit_instructions#ja") %][% conference.item("cfp_pre_submit_instructions#ja") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="cfp_post_submit_instructions">CFP Post-Submission Instruction Text (Markdown)</label>
+    <textarea name="cfp_post_submit_instructions" style="height: 20em">[% IF conference.item("cfp_post_submit_instructions") %][% conference.item("cfp_post_submit_instructions") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="cfp_post_submit_instructions#ja">CFP募集要項（フォーム送信後） (Markdown)</label>
+    <textarea name="cfp_post_submit_instructions#ja" style="height: 20em">[% IF conference.item("cfp_post_submit_instructions#ja") %][% conference.item("cfp_post_submit_instructions#ja") %][% END %]</textarea>
   </div>
 </div>
 

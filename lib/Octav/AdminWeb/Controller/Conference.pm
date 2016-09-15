@@ -62,7 +62,7 @@ sub update {
     my $client = $self->client;
     my $conference = $client->lookup_conference({id => $id, lang => "all"});
 
-    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug", "description", "description#ja");
+    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug", "description", "description#ja", "cfp_lead_text", "cfp_lead_text#ja", "cfp_pre_submit_instructions", "cfp_pre_submit_instructions#ja", "cfp_post_submit_instructions", "cfp_post_submit_instructions#ja");
     my %params = (id => $id, user_id => $self->stash('ui_user')->{id});
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);
@@ -114,11 +114,13 @@ sub input {
 sub create {
     my $self = shift;
 
-    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug", "description", "description#ja");
+    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug", "description", "description#ja", "cfp_lead_text", "cfp_lead_text#ja", "cfp_pre_submit_instructions", "cfp_pre_submit_instructions#ja", "cfp_post_submit_instructions", "cfp_post_submit_instructions#ja");
     my %params = (user_id => $self->stash('ui_user')->{id});
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);
-        $params{$pname} = $pvalue;
+        if ($pvalue) {
+            $params{$pname} = $pvalue;
+        }
     }
 
     my $client = $self->client;
@@ -260,7 +262,7 @@ sub featured_speaker_remove {
 
     my %params = (
         conference_id => $self->stash("conference")->{id},
-        id => $self->param("id"),
+        id => $self->param("featured_speaker_id"),
         user_id => $self->stash('ui_user')->{id},
     );
     my $client = $self->client;

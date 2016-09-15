@@ -264,8 +264,22 @@
         });
         $("#administrator_form").hide();
         $("#add-administrator-btn").click(function() { $("#administrator_form").show("slide") });
+
         $("#featured_speaker_form").hide();
         $("#add-featured_speaker-btn").click(function() { $("#featured_speaker_form").show("slide") });
+        $("a.remove-sponsor").each(function(i, elem) {
+            $e = $(elem)
+            $e.click(function() {
+                $.ajax({
+                    "method": "POST",
+                    "url": "/conference/featured_speaker/remove",
+                    "data": {"id": "[% conference.id %]", "featured_speaker_id": $e.attr("data-id")},
+                    "success": function() { location.reload() },
+                    "error": function(xhr, st, err) { alert(err) }
+                });
+            });
+        });
+
         $("#sponsor_form").hide();
         $("#add-sponsor-btn").click(function() { $("#sponsor_form").show("slide") });
         $("a.remove-sponsor").each(function(i, elem) {
