@@ -130,9 +130,15 @@ sub github_cb {
 
     # Race condition ahead...
     my $client = $self->client();
+    $log->debug("Looking up user in API server");
     my $registered = $client->lookup_user_by_auth_user_id({auth_via => "github", auth_user_id => $auth_user_id});
     if (!$registered) {
+        $log->debug("User not registered, creating...");
         $registered = $client->create_user(\%data);
+    }
+
+    if (!$registered) {
+        die "Could not lookup, nor create a user";
     }
 
     $log->debug("Setting session->{user}");
