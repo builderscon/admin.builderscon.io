@@ -137,6 +137,8 @@ sub startup {
         $r->post("/conference/$subr/remove")->to("conference#${subr}_remove");
     }
     $r->get("/user/dashboard")->to("user#dashboard");
+    $r->get("/conference/sessions")->to("conference#sessions");
+    $r->post("/conference/sessions/update")->to("conference#bulk_update_sessions");
 
     $self->hook(around_action => sub {
         my ($next, $c, $action, $last) = @_;

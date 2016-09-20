@@ -1,0 +1,100 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<div class="row">
+  <div class="col s12">
+    <h2>Sessions for [% conference.title %]</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+[% FOREACH session IN sessions %]
+    <div class="row session-row" data-id="[% session.id %]">
+      <div class="col s2">
+        <div class="chip">[% IF session.speaker.avatar_url %]<img src="[% session.speaker.avatar_url %]">[% END %]<a href="/user/lookup?id=[% session.speaker.id %]">[% session.speaker.nickname %]</a></div>
+      </div>
+      <div class="col s10">
+        <div class="row">
+          <div class="col s10">[% session.title %]</div>
+        </div>
+        <div class="row">
+          <div class="col s2">
+            <select name="session-status">
+[% FOREACH status IN [ "pending", "accepted", "rejected" ] %]
+              <option value="[% status %]"[% IF status == session.status %] selected="selected"[% END %]>[% status %]</option>
+[% END %]
+            </select>
+          </div>
+          <div class="col s4">
+            <select name="session-room">
+              <option value="-"></option>
+[% FOREACH venue IN conference.venues %]
+[% FOREACH room IN venue.rooms %]
+              <option value="[% room.id %]"[% IF room.id == session.room_id %] selected="selected"[% END %]>[% venue.name %] / [% room.name %]</option>
+[% END %]
+[% END %]
+            </select>
+          </div>
+          <div class="col s2">
+            <select name="session-date">
+[% FOREACH date IN conference.dates %]
+              <option value="[% date.date %]">[% date.date %]</option>
+[% END %]
+            </select>
+          </div>
+          <div class="col s2">
+            <input type="text" placeholder="Start Time" name="start_time"[% IF session.starts_on %] value="[% session.starts_on %]"[% END %]>
+          </div>
+        </div>
+      </div>
+    </div>
+[% END %]
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <button class="btn waves-effect waves-light" type="submit" name="action" id="submit-btn" >Submit
+      <i class="material-icons right">send</i>
+    </button>
+  </div>
+</div>
+
+<script type="text/javascript">
+<!--
+    $(document).ready(function() {
+        $("select").material_select();
+
+        $("#submit-btn").click(function() {
+            var list = [];
+            var data = { "sessions": list };
+            data.id = "[% conference.id %]";
+            $(".session-row").each(function(i, e) {
+                var entry = { "id": $(e).attr("data-id") };
+                entry.status = $("select[name='session-status']", e).val();
+                entry.date = $("select[name='session-date']", e).val();
+                entry.start_time = $("input[name='start_time']", e).val();
+                var v = $("select[name='session-room']", e).val();
+                if (v != '-') {
+                    entry.room_id = v;
+                }
+                list.push(entry);
+            });
+
+            $.ajax({
+                url: "/conference/sessions/update",
+                method: "POST",
+                async: false,
+                data: JSON.stringify(data),
+                success: function() {
+                    location.reload();
+                },
+                error: function(xhr, st, err) {
+                    alert(err);
+                }
+            });
+        });
+    })
+-->
+</script>
+[% END %]

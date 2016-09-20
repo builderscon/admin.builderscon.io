@@ -1,5 +1,12 @@
 # carton snapshot format: version 1.0
 DISTRIBUTIONS
+  Algorithm-Diff-1.1903
+    pathname: T/TY/TYEMQ/Algorithm-Diff-1.1903.tar.gz
+    provides:
+      Algorithm::Diff 1.1903
+      Algorithm::Diff::_impl 1.1903
+    requirements:
+      ExtUtils::MakeMaker 0
   Apache-LogFormat-Compiler-0.33
     pathname: K/KA/KAZEBURO/Apache-LogFormat-Compiler-0.33.tar.gz
     provides:
@@ -10,6 +17,21 @@ DISTRIBUTIONS
       POSIX::strftime::Compiler 0.30
       Time::Local 0
       perl 5.008001
+  Capture-Tiny-0.44
+    pathname: D/DA/DAGOLDEN/Capture-Tiny-0.44.tar.gz
+    provides:
+      Capture::Tiny 0.44
+    requirements:
+      Carp 0
+      Exporter 0
+      ExtUtils::MakeMaker 6.17
+      File::Spec 0
+      File::Temp 0
+      IO::Handle 0
+      Scalar::Util 0
+      perl 5.006
+      strict 0
+      warnings 0
   Class-Accessor-Lite-0.08
     pathname: K/KA/KAZUHO/Class-Accessor-Lite-0.08.tar.gz
     provides:
@@ -158,6 +180,21 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       File::Copy 0
       File::Spec 0
+  File-LibMagic-1.15
+    pathname: D/DR/DROLSKY/File-LibMagic-1.15.tar.gz
+    provides:
+      File::LibMagic 1.15
+    requirements:
+      Carp 0
+      Exporter 0
+      ExtUtils::CBuilder 0
+      ExtUtils::MakeMaker 0
+      Scalar::Util 0
+      XSLoader 0
+      base 0
+      perl 5.008
+      strict 0
+      warnings 0
   File-Listing-6.04
     pathname: G/GA/GAAS/File-Listing-6.04.tar.gz
     provides:
@@ -212,6 +249,21 @@ DISTRIBUTIONS
       HTML::Tagset 3
       XSLoader 0
       perl 5.008
+  HTML-Scrubber-0.15
+    pathname: N/NI/NIGELM/HTML-Scrubber-0.15.tar.gz
+    provides:
+      HTML::Scrubber 0.15
+    requirements:
+      HTML::Entities 0
+      HTML::Parser 3.47
+      Module::Build 0.28
+      Scalar::Util 0
+      Test::CPAN::Meta 0
+      Test::EOL 0
+      Test::NoTabs 0
+      perl 5.008
+      strict 0
+      warnings 0
   HTML-Tagset-3.20
     pathname: P/PE/PETDANCE/HTML-Tagset-3.20.tar.gz
     provides:
@@ -935,6 +987,79 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 6.30
       IO::File 1.14
+  Sub-Uplevel-0.2600
+    pathname: D/DA/DAGOLDEN/Sub-Uplevel-0.2600.tar.gz
+    provides:
+      Sub::Uplevel 0.2600
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 6.17
+      constant 0
+      perl 5.006
+      strict 0
+      warnings 0
+  Test-CPAN-Meta-0.25
+    pathname: B/BA/BARBIE/Test-CPAN-Meta-0.25.tar.gz
+    provides:
+      Test::CPAN::Meta 0.25
+      Test::CPAN::Meta::Version 0.25
+    requirements:
+      ExtUtils::MakeMaker 0
+      IO::File 0
+      Parse::CPAN::Meta 0.02
+      Test::Builder 0
+      Test::Builder::Tester 0
+      Test::More 0.70
+  Test-Differences-0.64
+    pathname: D/DC/DCANTRELL/Test-Differences-0.64.tar.gz
+    provides:
+      Test::Differences 0.64
+    requirements:
+      Capture::Tiny 0.24
+      Data::Dumper 2.126
+      Test::More 0.88
+      Text::Diff 0.35
+  Test-EOL-1.6
+    pathname: F/FR/FREW/Test-EOL-1.6.tar.gz
+    provides:
+      Test::EOL 1.6
+    requirements:
+      Cwd 0
+      ExtUtils::MakeMaker 0
+      File::Find 0
+      File::Spec 0
+      Test::Builder 0
+      perl 5.006
+      strict 0
+      vars 0
+      warnings 0
+  Test-Exception-0.43
+    pathname: E/EX/EXODIST/Test-Exception-0.43.tar.gz
+    provides:
+      Test::Exception 0.43
+    requirements:
+      Carp 0
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      Sub::Uplevel 0.18
+      Test::Builder 0.7
+      Test::Builder::Tester 1.07
+      Test::Harness 2.03
+      base 0
+      perl 5.006001
+      strict 0
+      warnings 0
+  Test-NoTabs-1.4
+    pathname: B/BO/BOBTFISH/Test-NoTabs-1.4.tar.gz
+    provides:
+      Test::NoTabs 1.4
+    requirements:
+      ExtUtils::MakeMaker 6.36
+      File::Find 0
+      File::Spec 0
+      FindBin 0
+      Test::Builder 0
+      Test::More 0
   Test-Requires-0.10
     pathname: T/TO/TOKUHIROM/Test-Requires-0.10.tar.gz
     provides:
@@ -972,6 +1097,32 @@ DISTRIBUTIONS
       Test::SharedFork 0.29
       Time::HiRes 0
       perl 5.008001
+  Text-Diff-1.44
+    pathname: N/NE/NEILB/Text-Diff-1.44.tar.gz
+    provides:
+      Text::Diff 1.44
+      Text::Diff::Base 1.44
+      Text::Diff::Config 1.44
+      Text::Diff::Table 1.44
+    requirements:
+      Algorithm::Diff 1.19
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      perl 5.006
+  Text-Markdown-1.000031
+    pathname: B/BO/BOBTFISH/Text-Markdown-1.000031.tar.gz
+    provides:
+      Text::Markdown 1.000031
+    requirements:
+      Digest::MD5 0
+      Encode 0
+      ExtUtils::MakeMaker 6.42
+      FindBin 0
+      List::MoreUtils 0
+      Test::Differences 0
+      Test::Exception 0
+      Test::More 0.42
+      Text::Balanced 0
   Text-Xslate-3.3.9
     pathname: S/SY/SYOHEX/Text-Xslate-3.3.9.tar.gz
     provides:

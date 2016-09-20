@@ -33,6 +33,18 @@ sub credentials {
 
 
 
+sub health_check {
+    my ($self, $payload) = @_;
+    my $uri = URI->new($self->{endpoint} . qq|/|);
+    $uri->query_form($payload);
+    my $res = $self->{user_agent}->get($uri);
+    if (!$res->is_success) {
+        $self->{last_error} = $res->status_line;
+        return;
+    }
+    return 1
+}
+
 sub create_user {
     my ($self, $payload) = @_;
     for my $required (qw(nickname auth_via auth_user_id)) {
@@ -685,7 +697,7 @@ sub delete_conference {
 
 sub create_session {
     my ($self, $payload) = @_;
-    for my $required (qw(conference_id speaker_id title abstract session_type_id user_id)) {
+    for my $required (qw(conference_id speaker_id session_type_id user_id)) {
         if (!$payload->{$required}) {
             die qq|property "$required" must be provided|;
         }
@@ -754,14 +766,9 @@ sub update_session {
     return 1
 }
 
-sub list_session_by_conference {
+sub list_sessions {
     my ($self, $payload) = @_;
-    for my $required (qw(conference_id)) {
-        if (!$payload->{$required}) {
-            die qq|property "$required" must be provided|;
-        }
-    }
-    my $uri = URI->new($self->{endpoint} . qq|/v1/schedule/list|);
+    my $uri = URI->new($self->{endpoint} . qq|/v1/session/list|);
     $uri->query_form($payload);
     my $res = $self->{user_agent}->get($uri);
     if (!$res->is_success) {
@@ -837,7 +844,7 @@ sub create_session_survey_response {
         $self->{last_error} = $res->status_line;
         return;
     }
-    return 1
+    return JSON::decode_json($res->decoded_content);
 }
 
 sub add_featured_speaker {
@@ -1006,6 +1013,42 @@ sub delete_sponsor {
         }
     }
     my $uri = URI->new($self->{endpoint} . qq|/v1/sponsor/delete|);
+    my @request_args;
+    push @request_args, (Content_Type => "application/json", Content => JSON::encode_json($payload));
+    my $res = $self->{user_agent}->post($uri, @request_args);
+    if (!$res->is_success) {
+        $self->{last_error} = $res->status_line;
+        return;
+    }
+    return 1
+}
+
+sub create_temporary_email {
+    my ($self, $payload) = @_;
+    for my $required (qw(target_id user_id email)) {
+        if (!$payload->{$required}) {
+            die qq|property "$required" must be provided|;
+        }
+    }
+    my $uri = URI->new($self->{endpoint} . qq|/v1/email/create|);
+    my @request_args;
+    push @request_args, (Content_Type => "application/json", Content => JSON::encode_json($payload));
+    my $res = $self->{user_agent}->post($uri, @request_args);
+    if (!$res->is_success) {
+        $self->{last_error} = $res->status_line;
+        return;
+    }
+    return JSON::decode_json($res->decoded_content);
+}
+
+sub confirm_temporary_email {
+    my ($self, $payload) = @_;
+    for my $required (qw(target_id user_id confirmation_key)) {
+        if (!$payload->{$required}) {
+            die qq|property "$required" must be provided|;
+        }
+    }
+    my $uri = URI->new($self->{endpoint} . qq|/v1/email/confirm|);
     my @request_args;
     push @request_args, (Content_Type => "application/json", Content => JSON::encode_json($payload));
     my $res = $self->{user_agent}->post($uri, @request_args);
