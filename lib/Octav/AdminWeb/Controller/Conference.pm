@@ -1,5 +1,6 @@
 package Octav::AdminWeb::Controller::Conference;
 use Mojo::Base qw(Mojolicious::Controller);
+use Mojo::Util ();
 
 sub list {
     my $self = shift;
@@ -19,10 +20,16 @@ sub _lookup {
         return;
     }
 
+    return $self->_lookup_conference_id($id);
+}
+
+sub _lookup_conference_id {
+    my $self = shift;
+    my $id = shift;
     my $client = $self->client;
     my $conference = $client->lookup_conference({id => $id, lang => "all"});
     if (!$conference) {
-        $self->render(text => "not found", status => 404);
+        $self->render(text => "conference not found", status => 404);
         return;
     }
     $self->stash(api_key => $self->config->{googlemaps}->{api_key});
@@ -367,4 +374,47 @@ sub sponsor_remove {
     $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
 }
 
+sub sessions {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        user_id => $self->stash('ui_user')->{id},
+        status => [ "pending", "accepted", "rejected" ],
+    );
+    my $client = $self->client;
+    my $sessions = $client->list_sessions(\%params);
+    if (!$sessions) {
+        die $client->last_error
+    }
+
+    $self->stash(sessions => $sessions);
+    $self->render(tx => "conference/sessions");
+}
+
+sub bulk_update_sessions {
+    my $self = shift;
+    my $body = Mojo::Util::url_unescape($self->req->body);
+    my $payload = JSON::decode_json($body);
+
+    if (! $self->_lookup_conference_id($payload->{id})) {
+        return
+    }
+
+    my $client = $self->client;
+    for my $p (@{$payload->{sessions}}) {
+        my $ok = $client->update_session({
+            %$p,
+            user_id => $self->stash('ui_user')->{id},
+        });
+        if (! $ok) {
+            die $client->last_error;
+        }
+    }
+
+    $self->redirect_to($self->url_for("/conference/sessions")->query(id => $self->stash("conference")->{id}));
+}
 1;
