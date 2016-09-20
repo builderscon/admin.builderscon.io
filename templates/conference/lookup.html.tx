@@ -18,6 +18,19 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col s12">
+    <h5>Sessions</h5>
+  </div>
+</div>
+<div class="row">
+  <div class="col s12">
+    <ul>
+      <li><a href="/conference/sessions?id=[% conference.id %]">List of sessions</a></li>
+    </ul>
+  </div>
+</div>
+
 [% IF conference.venues %]
 <div class="row">
   <div class="col s12">
