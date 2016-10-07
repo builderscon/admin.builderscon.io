@@ -26,7 +26,7 @@ sub github {
     my $log = $self->app->log;
     my $github_config = $self->config->{github};
     my $uri = URI->new($github_config->{auth_endpoint});
-    my $redirect_uri = "https://admin.builderscon.io/auth/github_cb";
+    my $redirect_uri = $self->myurl("/auth/github_cb");
     my $state = unpack("H*", create_uuid(UUID_RANDOM));
     my $session = $self->plack_session;
     $session->{"github_state"} = $state;
@@ -36,9 +36,10 @@ sub github {
     $uri->query_form(
         client_id    => $github_config->{client_id},
         redirect_uri => $redirect_uri,
-        scope        => "user",
+        scope        => "user:email",
         state        => $state,
     );
+    warn $uri;
     $self->redirect_to($uri->as_string);
 }
 

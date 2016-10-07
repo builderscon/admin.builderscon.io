@@ -15,6 +15,7 @@ requires 'JSON';
 requires 'JSON::Types';
 requires 'Mojolicious';
 requires 'Mojolicious::Plugin::XslateRenderer';
+requires 'Net::Twitter';
 requires 'Plack';
 requires 'Plack::Middleware::Auth::Basic';
 requires 'Plack::Middleware::Session::Simple';
