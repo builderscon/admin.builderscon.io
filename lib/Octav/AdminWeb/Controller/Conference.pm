@@ -1,6 +1,9 @@
 package Octav::AdminWeb::Controller::Conference;
 use Mojo::Base qw(Mojolicious::Controller);
 use Mojo::Util ();
+use JSON ();
+use MIME::Base64 ();
+use Net::Twitter;
 
 sub list {
     my $self = shift;
@@ -417,4 +420,77 @@ sub bulk_update_sessions {
 
     $self->redirect_to($self->url_for("/conference/sessions")->query(id => $self->stash("conference")->{id}));
 }
+
+sub twitter_client {
+    my $self = shift;
+    my $config = $self->config;
+    return Net::Twitter->new(
+        traits => [qw/API::RESTv1_1 OAuth/],
+        consumer_key => $config->{twitter}->{consumer_key},
+        consumer_secret => $config->{twitter}->{consumer_secret},
+    );
+}
+
+# This is used to store OAuth tokens so that we can tweet for
+# the conference
+sub external_twitter {
+    my $self = shift;
+
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my $conference = $self->stash('conference');
+    my $twitter = $self->twitter_client;
+
+    my $auth_url = $twitter->get_authorization_url(
+        callback => $self->myurl("/conference/external/twitter/callback?id=@{[ $conference->{id} ]}"),
+    );
+    $self->plack_session->{twitter} = {
+        request_token => $twitter->request_token,
+        request_token_secret => $twitter->request_token_secret,
+    };
+
+    $self->redirect_to($auth_url);
+}
+
+sub external_twitter_callback {
+    my $self = shift;
+
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my $request_token = $self->param('oauth_token');
+    my $verifier      = $self->param('oauth_verifier');
+
+    if ($self->plack_session->{twitter}->{request_token} ne $request_token) {
+        $self->render(text => "Wrong token");
+        return
+    }
+
+    my $twitter = $self->twitter_client;
+    $twitter->request_token($request_token);
+    $twitter->request_token_secret($self->plack_session->{twitter}->{request_token_secret});
+
+    my @access_tokens = $twitter->request_access_token(verifier => $verifier);
+
+    my $conference = $self->stash('conference');
+    my $ok = $self->client->add_conference_credential({
+        conference_id => $conference->{id},
+        type => "twitter",
+        user_id => $self->stash('ui_user')->{id},
+        data => MIME::Base64::encode_base64(JSON::encode_json({
+            access_token => $access_tokens[0],
+            access_token_secret => $access_tokens[1],
+        }))
+    });
+
+    if($ok) {
+        $self->render(text => "successfully registered twitter credentials");
+    } else {
+        $self->render(text => "failed to register access tokens");
+    }
+}
+
 1;

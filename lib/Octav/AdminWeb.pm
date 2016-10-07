@@ -31,6 +31,11 @@ sub load_from_file {
 sub startup {
     my $self = shift;
 
+    $self->helper(myurl => sub {
+        state $base = $ENV{BASE_URL} || 'https://admin.builderscon.io';
+        return $base . $_[1];
+    });
+
     $self->helper(plack_session => sub {
         my $c = shift;
         my $session = $c->req->env->{"psgix.session"};
@@ -46,9 +51,7 @@ sub startup {
     $self->helper(client => sub {
         my $c = shift;
         # FIXME endpoint should not be hardcoded
-        my $host = $ENV{APISERVER_SERVICE_HOST};
-        my $port = $ENV{APISERVER_SERVICE_PORT};
-        my $endpoint = "http://$host:$port";
+        my $endpoint = $ENV{APISERVER_ENDPOINT};
         warn "ENDPOINT = $endpoint";
         state $client;
         if (! $client) {
@@ -56,6 +59,7 @@ sub startup {
             my $client_key = $c->config->{client_key};
             my $client_secret = $c->config->{client_secret};
             if ($client_key && $client_secret) {
+warn "Setting credentials: $client_key, $client_secret";
                 $client->credentials($client_key, $client_secret);
             }
         }
@@ -74,6 +78,10 @@ sub startup {
             },
             "client_key" => load_from_file($ENV{OCTAV_API_CLIENT_KEY}),
             "client_secret" => load_from_file($ENV{OCTAV_API_CLIENT_SECRET}),
+            "twitter" => {
+                consumer_key => load_from_file($ENV{OCTAV_TWITTER_CONSUMER_KEY}),
+                consumer_secret => load_from_file($ENV{OCTAV_TWITTER_CONSUMER_SECRET}),
+            },
         };
         return $config;
     });
@@ -139,6 +147,8 @@ sub startup {
     $r->get("/user/dashboard")->to("user#dashboard");
     $r->get("/conference/sessions")->to("conference#sessions");
     $r->post("/conference/sessions/update")->to("conference#bulk_update_sessions");
+    $r->get("/conference/external/twitter")->to("conference#external_twitter");
+    $r->get("/conference/external/twitter/callback")->to("conference#external_twitter_callback");
 
     $self->hook(around_action => sub {
         my ($next, $c, $action, $last) = @_;

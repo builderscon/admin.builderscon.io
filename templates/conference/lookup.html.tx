@@ -20,6 +20,21 @@
 
 <div class="row">
   <div class="col s12">
+    <h5>External Services</h5>
+    <div class="row">
+      <div class="col s1">
+        <img style="width: 69px; height: 56px" src="https://builderscon.io/static/images/twitter-120px.png">
+      </div>
+      <div class="col s11">
+        <p><a href="/conference/external/twitter?id=[% conference.id %]">Authenticate with Twitter</a>, and allow us to post on your behalf
+        when there are new talk submissions</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
     <h5>Sessions</h5>
   </div>
 </div>
