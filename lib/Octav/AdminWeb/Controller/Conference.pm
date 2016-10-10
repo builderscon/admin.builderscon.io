@@ -19,7 +19,7 @@ sub _lookup {
 
     my $id = $self->param('id');
     if (!$id) {
-        $self->render(text => "not found", status => 404);
+        $self->render(text => "conference not found", status => 404);
         return;
     }
 
@@ -431,9 +431,40 @@ sub twitter_client {
     );
 }
 
+sub external_twitter {
+    my $self = shift;
+
+    if (!$self->_lookup()) {
+        return
+    }
+
+    $self->render(tx => "conference/external/twitter");
+}
+
+sub external_twitter_post {
+    my $self = shift;
+
+    if (!$self->_lookup()) {
+        return
+    }
+    my $conference = $self->stash('conference');
+    my $client = $self->client;
+    my $ok = $client->tweet_as_conference({
+        conference_id => $conference->{id},
+        user_id => $self->stash('ui_user')->{id},
+        tweet => $self->param("tweet"),
+    });
+
+    if (! $ok) {
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("/conference/external/twitter")->query(id => $conference->{id}));
+}
+
 # This is used to store OAuth tokens so that we can tweet for
 # the conference
-sub external_twitter {
+sub external_twitter_credentials {
     my $self = shift;
 
     if (!$self->_lookup()) {

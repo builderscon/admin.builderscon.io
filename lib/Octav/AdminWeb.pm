@@ -148,7 +148,9 @@ warn "Setting credentials: $client_key, $client_secret";
     $r->get("/conference/sessions")->to("conference#sessions");
     $r->post("/conference/sessions/update")->to("conference#bulk_update_sessions");
     $r->get("/conference/external/twitter")->to("conference#external_twitter");
+    $r->get("/conference/external/twitter/credentials")->to("conference#external_twitter_callback");
     $r->get("/conference/external/twitter/callback")->to("conference#external_twitter_callback");
+    $r->post("/conference/external/twitter/post")->to("conference#external_twitter_post");
 
     $self->hook(around_action => sub {
         my ($next, $c, $action, $last) = @_;
