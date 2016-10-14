@@ -3,9 +3,34 @@
 <div class="row">
   <div class="col s12">
     <h4>Conference "[% conference.title %]" <a href="/conference/edit?id=[% conference.id %]" class="btn-floating btn-small red"><i class="large material-icons">mode_edit</i></a></h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <h5>Date/Time</h5>
+    <div class="row">
+      <div class="col s1">Timezone</div>
+      <div class="col s11">[% conference.timezone %]</div>
+    </div>
+    <div class="row">
+      <div class="col s1">Dates</div>
+      <div class="col s11">
 [% IF conference.dates %][% FOREACH date IN conference.dates %]
-    <div class="chip">[% date.date %][% IF date.open || date.close %] ([% IF date.open %][% date.open %][% END %]〜[% IF date.close %][% date.close %][% END %])[% END %]</div>
+    <div class="chip">
+[%- IF date.open %]
+[%- SET dt = in_timezone(date.open, conference.timezone) %]
+[%- dt.strftime("%Y-%m-%d %H:%M") %]
+[%- END %]
+〜
+[%- IF date.close %]
+[%- SET dt = in_timezone(date.close, conference.timezone) %]
+[%- dt.strftime("%Y-%m-%d %H:%M") %]
+[%- END %]
+    </div><!-- chip -->
 [% END %][% END %]
+      </div>
+    </div>
   </div>
 </div>
 

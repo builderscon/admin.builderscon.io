@@ -4,6 +4,7 @@ use Mojo::Util ();
 use JSON ();
 use MIME::Base64 ();
 use Net::Twitter;
+use Octav::AdminWeb::DateTime;
 
 sub list {
     my $self = shift;
@@ -58,6 +59,7 @@ sub edit {
     # XXX We should cache this
     $self->stash(series => $client->list_conference_series());
     $self->stash(venues => $client->list_venue());
+    $self->stash(timezones => Octav::AdminWeb::DateTime::timezones());
     $self->render(tx => "conference/edit");
 }
 
@@ -156,12 +158,16 @@ sub date_add {
         return
     }
 
+    my $conference = $self->stash('conference');
+    my $date = $self->param("date");
+    my $start = Octav::AdminWeb::DateTime::concat_time($date, $self->param('open'), $conference->{timezone});
+    my $end = Octav::AdminWeb::DateTime::concat_time($date, $self->param('close'), $conference->{timezone});
+
     my %params = (
         conference_id => $self->stash("conference")->{id},
         dates => [ {
-            date => $self->param("date"),
-            open => $self->param("open"),
-            close => $self->param("close"),
+            open => $start,
+            close => $end,
         } ],
         user_id => $self->stash('ui_user')->{id},
     );
@@ -370,6 +376,67 @@ sub sponsor_remove {
     );
     my $client = $self->client;
     if (! $client->delete_sponsor(\%params)) {
+        # XXX handle this properly
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
+}
+
+sub session_type_add {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my $ui_user = $self->stash('ui_user');
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        user_id => $ui_user->{id},
+    );
+
+    my @columns = ("name", "abstract", "duration", "is_default");
+    foreach my $column (@columns) {
+        if (my $v = $self->param($column)) {
+            if ($column eq "duration") {
+                $params{$column} = $v + 0;
+            } else {
+                $params{$column} = $v;
+            }
+        }
+    }
+    my $conference = $self->stash('conference');
+    foreach my $column (qw(submission_start submission_end)) {
+        my $date_key = "${column}_date";
+        my $time_key = "${column}_time";
+        my $date = $self->param($date_key);
+        my $time = $self->param($time_key);
+
+        $params{$column} = Octav::AdminWeb::DateTime::concat_time($date, $time, $conference->{timezone});
+    }
+
+    my $client = $self->client;
+    if (! $client->add_session_type(\%params)) {
+        # XXX handle this properly
+        die $client->last_error();
+    }
+
+    $self->redirect_to($self->url_for("/conference/lookup")->query(id => $self->stash("conference")->{id}));
+}
+
+sub session_type_remove {
+    my $self = shift;
+    if (!$self->_lookup()) {
+        return
+    }
+
+    my %params = (
+        conference_id => $self->stash("conference")->{id},
+        id => $self->param("session_type_id"),
+        user_id => $self->stash('ui_user')->{id},
+    );
+    my $client = $self->client;
+    if (! $client->delete_session_type(\%params)) {
         # XXX handle this properly
         die $client->last_error();
     }

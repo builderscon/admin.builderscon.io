@@ -98,6 +98,12 @@ warn "Setting credentials: $client_key, $client_secret";
             tag_start => '[%',
             tag_end   => '%]',
             function  => {
+                in_timezone => sub {
+                    my ($txt, $tz) = @_;
+                    my $dt = DateTime::Format::RFC3339->new()->parse_datetime($txt);
+                    $dt->set_time_zone($tz);
+                    return $dt;
+                },
                 markdown => sub {
                     return Text::Xslate::mark_raw($markdown->markdown($scrubber->scrub($_[0])));
                 }
@@ -140,7 +146,7 @@ warn "Setting credentials: $client_key, $client_secret";
         }
     }
 
-    for my $subr (qw(administrator date venue featured_speaker sponsor)) {
+    for my $subr (qw(administrator date venue featured_speaker sponsor session_type)) {
         $r->post("/conference/$subr/add")->to("conference#${subr}_add");
         $r->post("/conference/$subr/remove")->to("conference#${subr}_remove");
     }
@@ -177,6 +183,15 @@ warn "Setting credentials: $client_key, $client_secret";
                 $c->redirect_to($c->url_for("/auth"));
                 return
             }
+
+            if (! $session->{user}->{timezone}) {
+                delete $session->{user};
+                warn "Access to protected resource '$endpoint' detected, but old user information found in session";
+                $c->redirect_to($c->url_for("/auth"));
+                return
+            }
+            
+
             $c->stash(ui_user => $session->{user});
         }
 
