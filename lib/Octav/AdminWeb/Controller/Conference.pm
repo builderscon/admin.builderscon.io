@@ -480,8 +480,14 @@ sub bulk_update_sessions {
 
     my $client = $self->client;
     for my $p (@{$payload->{sessions}}) {
+        # only allow accepted fields
+        my %accepted;
+        for my $field (qw(id status date start_time room_id)) {
+            $accepted{$field} = $p->{$field};
+        }
+
         my $ok = $client->update_session({
-            %$p,
+            %accepted,
             user_id => $self->stash('ui_user')->{id},
         });
         if (! $ok) {
