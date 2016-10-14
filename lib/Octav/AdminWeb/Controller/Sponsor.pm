@@ -1,5 +1,6 @@
 package Octav::AdminWeb::Controller::Sponsor;
 use Mojo::Base qw(Mojolicious::Controller);
+use File::Temp;
 
 sub _lookup {
     my $self = shift;
