@@ -66,6 +66,23 @@
 </div>
 
 <div class="row">
+  <div class="col s6">
+    <label for="timezone">Timezone</label>
+    <select name="timezone">
+[%- SET defaultTZ = 'UTC' -%]
+[%- IF conference && conference.timezone -%]
+[%- SET defaultTZ = conference.timezone -%]
+[%- ELSIF (!conference || !conference.timezone) -%]
+[%- SET defaultTZ = ui_user.timezone -%]
+[%- END -%]
+[%- FOREACH tz IN timezones %]
+      <option value="[% tz %]"[% IF defaultTZ == tz %] selected="selected"[% END %]>[% tz %]</option>
+[% END -%]
+    </select>
+  </div>
+</div>
+
+<div class="row">
   <div class="col s12">
     <label for="description">Description (Markdown)</label>
     <textarea name="description" style="height: 20em">[% IF conference.item("description") %][% conference.item("description") %][% END %]</textarea>

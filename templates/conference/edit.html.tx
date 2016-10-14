@@ -229,6 +229,66 @@
   </div>
 </div><!-- outer row -->
 
+<div class="row">
+  <div class="col s12">
+    <h5>Session Types <a id="add-session_type-btn" class="btn-floating btn-small red"><i class="large material-icons">add_circle</i></a></h5>
+    <form id="session_type_form" action="/conference/session_type/add" method="POST" class="col s12">
+    <input type="hidden" name="id" value="[% conference.id %]">
+    <div class="row">
+      <div class="input-field col s3">
+        <input type="text" name="name" id="session_type_name">
+        <label for="session_type_name">Name (Human redable, e.g. "30 min")</label>
+      </div>
+      <div class="input-field col s3">
+        <input type="text" name="abstract" id="session_type_abstract">
+        <label for="session_type_abstract">Abstract (Details, if any)</label>
+      </div>
+      <div class="input-field col s3">
+        <input type="text" name="duration" id="session_type_duration">
+        <label for="session_type_duration">Duration (in seconds)</label>
+      </div>
+      <div class="input-field col s3">
+        <input type="checkbox" name="is_default" id="session_type_is_default">
+        <label for="session_type_is_default">Default selection</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s3">
+        <label for="submission_start_date">Submission Start Date</label>
+        <input type="text" name="submission_start_date" placeholder="YYYY-MM-DD" id="submission_start_date">
+      </div>
+      <div class="input-field col s3">
+        <label for="submission_start_time">Submission Start Time</label>
+        <input type="text" class="timepick" name="submission_start_time" placeholder="HH:MM" id="submission_start_time">
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s3">
+        <label for="submission_end_date">Submission End Date</label>
+        <input type="text" name="submission_end_date" placeholder="YYYY-MM-DD" id="submission_end_date">
+      </div>
+      <div class="input-field col s3">
+        <label for="submission_end_time">Submission End Time</label>
+        <input type="text" class="timepick" name="submission_end_time" placeholder="HH:MM" id="submission_end_time">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s3">
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit <i class="material-icons right">send</i></button>
+      </div>
+    </div>
+    </form>
+
+    <div class="row">
+      <ul class="collection col s12">
+[% FOREACH session_type IN conference.session_types %]
+        <li class="collection-item"><a href="/session_type/lookup?id=[% session_type.id %]">[% session_type.name %]</a> [<a href="#" data-id="[% session_type.id %]" class="remove-session_type">x</a>]</li>
+[% END %]
+      </ul>
+    </div>
+  </div>
+</div><!-- outer row -->
+
 <script type="text/javascript">
 <!--
     $(document).ready(function() {
@@ -289,6 +349,21 @@
                     "method": "POST",
                     "url": "/conference/sponsor/remove",
                     "data": {"id": "[% conference.id %]", "sponsor_id": $e.attr("data-id")},
+                    "success": function() { location.reload() },
+                    "error": function(xhr, st, err) { alert(err) }
+                });
+            });
+        });
+
+        $("#session_type_form").hide();
+        $("#add-session_type-btn").click(function() { $("#session_type_form").show("slide") });
+        $("a.remove-session_type").each(function(i, elem) {
+            $e = $(elem)
+            $e.click(function() {
+                $.ajax({
+                    "method": "POST",
+                    "url": "/conference/session_type/remove",
+                    "data": {"id": "[% conference.id %]", "session_type_id": $e.attr("data-id")},
                     "success": function() { location.reload() },
                     "error": function(xhr, st, err) { alert(err) }
                 });

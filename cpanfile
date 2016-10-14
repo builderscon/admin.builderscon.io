@@ -8,6 +8,9 @@ on 'test' => sub {
     requires 'Test::More', '0.98';
 };
 
+requires 'DateTime';
+requires 'DateTime::TimeZone';
+requires 'DateTime::Format::RFC3339';
 requires 'File::LibMagic';
 requires 'HTML::Scrubber';
 requires 'IO::Socket::SSL' => ">= 1.94";

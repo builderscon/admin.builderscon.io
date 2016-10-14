@@ -1,0 +1,89 @@
+#!/bin/bash
+
+
+if [[ -z "$PORT" ]]; then
+    PORT=5000
+fi
+
+if [[ -z "$BASE_URL" ]]; then
+    cat <<EOM
+ERROR: No BASE_URL set!
+
+You should first start a tunnel using ngrok:
+
+    ngrok http $PORT
+
+Then do 
+
+    BASE_URL=<URL given by ngrok> $0
+EOM
+    exit 1
+fi
+
+if [[ -z "$APISERVER_ENDPOINT" ]]; then
+    APISERVER_ENDPOINT=https://api.builderscon.io
+fi
+
+if [[ -z "$OCTAV_API_CLIENT_KEY" ]]; then
+    OCTAV_API_CLIENT_KEY=octav_key
+fi
+
+if [[ -z "$OCTAV_API_CLIENT_SECRET" ]]; then
+    OCTAV_API_CLIENT_SECRET=octav_secret
+fi
+
+if [[ -z "$OCTAV_GITHUB_CLIENT_ID" ]]; then
+    OCTAV_GITHUB_CLIENT_ID=github_id
+fi
+
+if [[ -z "$OCTAV_GITHUB_CLIENT_SECRET" ]]; then
+    OCTAV_GITHUB_CLIENT_SECRET=github_secret
+fi
+
+if [[ -z "$OCTAV_TWITTER_CONSUMER_KEY" ]]; then
+    OCTAV_TWITTER_CONSUMER_KEY=twitter_consumer_key
+fi
+
+if [[ -z "$OCTAV_TWITTER_CONSUMER_SECRET" ]]; then
+    OCTAV_TWITTER_CONSUMER_SECRET=twitter_consumer_secret
+fi
+
+OPTIONS=''
+if [[ "$RELOAD" == "1" ]]; then
+    OPTIONS=-R=lib,templates
+fi
+
+if [[ -z "$OCTAV_REDIS" ]]; then
+    OCTAV_REDIS=127.0.0.1:6379
+fi
+
+cat <<EOM
+Settings:
+    APISERVER_ENDPOINT=$APISERVER_ENDPOINT
+    BASE_URL=$BASE_URL
+    OCTAV_API_CLIENT_KEY=$OCTAV_API_CLIENT_KEY
+    OCTAV_API_CLIENT_SECRET=$OCTAV_API_CLIENT_SECRET
+    OCTAV_GITHUB_CLIENT_ID=$OCTAV_GITHUB_CLIENT_ID
+    OCTAV_GITHUB_CLIENT_SECRET=$OCTAV_GITHUB_CLIENT_SECRET
+    OCTAV_REDIS=$OCTAV_REDIS
+    OCTAV_TWITTER_CONSUMER_KEY=$OCTAV_TWITTER_CONSUMER_KEY
+    OCTAV_TWITTER_CONSUMER_SECRET=$OCTAV_TWITTER_CONSUMER_SECRET
+    PORT=$PORT
+
+Do not forget to update your OAuth callback URLs as
+
+    $BASE_URL/auth/github_cb
+
+EOM
+
+carton exec -- env \
+    APISERVER_ENDPOINT=$APISERVER_ENDPOINT \
+    BASE_URL=$BASE_URL \
+    OCTAV_API_CLIENT_KEY=$OCTAV_API_CLIENT_KEY \
+    OCTAV_API_CLIENT_SECRET=$OCTAV_API_CLIENT_SECRET \
+    OCTAV_GITHUB_CLIENT_ID=$OCTAV_GITHUB_CLIENT_ID \
+    OCTAV_GITHUB_CLIENT_SECRET=$OCTAV_GITHUB_CLIENT_SECRET \
+    OCTAV_REDIS=$OCTAV_REDIS \
+    OCTAV_TWITTER_CONSUMER_KEY=$OCTAV_TWITTER_CONSUMER_KEY \
+    OCTAV_TWITTER_CONSUMER_SECRET=$OCTAV_TWITTER_CONSUMER_SECRET \
+    plackup $OPTIONS -Ilib -l :$PORT
