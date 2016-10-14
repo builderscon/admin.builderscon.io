@@ -1,0 +1,18 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<div class="row">
+  <div class="col s12">
+    <h4>Conference Series "[% conference_series.title %]" <a href="/conference_series/edit?id=[% conference_series.id %]" class="btn-floating btn-small red"><i class="large material-icons">mode_edit</i></a></h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <h5>Organizers</h5>
+[% FOREACH user IN conference.administrators %]
+    <div class="chip">[% IF user.avatar_url %]<img src="[% user.avatar_url %]">[% END %]<a href="/user/lookup?id=[% user.id %]">[% user.nickname %]</a></div>
+[% END %]
+  </div>
+</div>
+
+[% END %]

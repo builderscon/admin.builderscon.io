@@ -15,6 +15,7 @@
 
 [% INCLUDE "conference/form.html.tx" WITH
     action = "/conference/update",
+    series = series,
     conference = conference,
 %]
 

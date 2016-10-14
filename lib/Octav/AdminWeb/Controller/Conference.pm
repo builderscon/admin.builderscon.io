@@ -119,6 +119,10 @@ sub input {
         $self->stash(conference => $h->{params});
     }
 
+    my $client = $self->client;
+    $self->stash(series => $client->list_conference_series());
+    $self->stash(venues => $client->list_venue());
+    $self->stash(timezones => Octav::AdminWeb::DateTime::timezones());
     $self->render(tx => "conference/input");
 }
 
@@ -126,7 +130,7 @@ sub input {
 sub create {
     my $self = shift;
 
-    my @columns = ("title", "sub_title", "title#ja", "sub_title#ja", "slug", "description", "description#ja", "cfp_lead_text", "cfp_lead_text#ja", "cfp_pre_submit_instructions", "cfp_pre_submit_instructions#ja", "cfp_post_submit_instructions", "cfp_post_submit_instructions#ja");
+    my @columns = ("series_id", "timezone", "title", "sub_title", "title#ja", "sub_title#ja", "slug", "description", "description#ja", "cfp_lead_text", "cfp_lead_text#ja", "cfp_pre_submit_instructions", "cfp_pre_submit_instructions#ja", "cfp_post_submit_instructions", "cfp_post_submit_instructions#ja");
     my %params = (user_id => $self->stash('ui_user')->{id});
     for my $pname (@columns) {
         my $pvalue = $self->param($pname);

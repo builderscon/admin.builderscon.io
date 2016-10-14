@@ -7,7 +7,15 @@
 [% END %]
 
 [% INCLUDE "conference/form.html.tx" WITH
+    series = series,
     action = "/conference/create",
 %]
 
+<script type="text/javascript">
+<!--
+    $(document).ready(function() {
+        $("select").material_select();
+    });
+-->
+</script>
 [% END %]
