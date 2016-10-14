@@ -13,10 +13,10 @@
   <div class="col s2">
     <label for="series_id">Conference Series</label>
   </div>
-  <div class="input-field col s10">
+  <div class="col s10">
     <select name="series_id">
 [% FOREACH s IN series %]
-        <option value="[% s.id %]"[% IF conference.series_id == s.id %] selected[% END %]>[% s.title %]</option>
+        <option value="[% s.id %]"[% IF conference.series_id == s.id %] selected="selected"[% END %]>[% s.title %]</option>
 [% END %]
     </select>
   </div>

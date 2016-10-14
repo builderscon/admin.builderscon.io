@@ -360,6 +360,7 @@ sub list_conference_series {
         $self->{last_error} = $res->status_line;
         return;
     }
+warn $res->decoded_content;
     return JSON::decode_json($res->decoded_content);
 }
 
