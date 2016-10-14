@@ -26,8 +26,9 @@
         <img style="width: 69px; height: 56px" src="https://builderscon.io/static/images/twitter-120px.png">
       </div>
       <div class="col s11">
-        <p><a href="/conference/external/twitter?id=[% conference.id %]">Authenticate with Twitter</a>, and allow us to post on your behalf
+        <p><a href="/conference/external/twitter/credentials?id=[% conference.id %]">Authenticate with Twitter</a>, and allow us to post on your behalf
         when there are new talk submissions</p>
+        <p>If you have already allowed us to access your account, you can <a href="/conference/external/twitter?id=[% conference.id %]">tweet</a> directly from here</p>
       </div>
     </div>
   </div>

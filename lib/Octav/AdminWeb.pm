@@ -79,8 +79,8 @@ warn "Setting credentials: $client_key, $client_secret";
             "client_key" => load_from_file($ENV{OCTAV_API_CLIENT_KEY}),
             "client_secret" => load_from_file($ENV{OCTAV_API_CLIENT_SECRET}),
             "twitter" => {
-                consumer_key => load_from_file($ENV{OCTAV_TWITTER_CONSUMER_KEY}),
-                consumer_secret => load_from_file($ENV{OCTAV_TWITTER_CONSUMER_SECRET}),
+                consumer_key => $ENV{OCTAV_TWITTER_CONSUMER_KEY},
+                consumer_secret => $ENV{OCTAV_TWITTER_CONSUMER_SECRET},
             },
         };
         return $config;
@@ -148,7 +148,9 @@ warn "Setting credentials: $client_key, $client_secret";
     $r->get("/conference/sessions")->to("conference#sessions");
     $r->post("/conference/sessions/update")->to("conference#bulk_update_sessions");
     $r->get("/conference/external/twitter")->to("conference#external_twitter");
+    $r->get("/conference/external/twitter/credentials")->to("conference#external_twitter_credentials");
     $r->get("/conference/external/twitter/callback")->to("conference#external_twitter_callback");
+    $r->post("/conference/external/twitter/post")->to("conference#external_twitter_post");
 
     $self->hook(around_action => sub {
         my ($next, $c, $action, $last) = @_;
