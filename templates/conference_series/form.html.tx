@@ -1,0 +1,39 @@
+<form action="[% action %]" method="POST" class="col s12" enctype="multipart/form-data">
+[% IF conference_series %]
+<div class="row">
+  <div class="input-field col s12">
+    <label for="id">ID</label>
+    <input type="text" readonly value="[% conference_series.id %]">
+    <input type="hidden" name="id" value="[% conference_series.id %]">
+  </div>
+</div>
+[% END %]
+
+<div class="row">
+  <div class="input-field col s6">
+    <label for="title">Title (English)</label>
+    <input placeholder="(Required) Main title of the conference series" id="title" name="title" type="text" class="validate[% IF conference_series.title %] active[% END %]"[% IF conference_series.title %] value="[% conference_series.title %]"[% END %]>
+  </div>
+  <div class="input-field col s6">
+    <label for="title#ja">Title (日本語）</label>
+    <input placeholder="(任意）日本語で表示する際のカンファレンスシリーズ名" id="title#ja" name="title#ja" type="text" class="validate[% IF conference_series.item("title#ja") %] active[% END %]"[% IF conference_series.item("title#ja") %] value="[% conference_series.item("title#ja") %]"[% END %]>
+  </div>
+</div>
+
+<div class="row">
+  <div class="input-field col s6">
+    <label for="title">Slug</label>
+    <input placeholder="(Required) String used as part of url" id="slug" name="slug" type="text" class="validate[% IF conference_series.slug %] active[% END %]"[% IF conference_series.slug %] value="[% conference_series.slug %]"[% END %]>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+      <i class="material-icons right">send</i>
+    </button>
+  </div>
+</div>
+</form>
+
+

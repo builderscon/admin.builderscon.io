@@ -1,0 +1,13 @@
+[% WRAPPER "layout/main.html.tx" %]
+
+<h4>Create a new conference series</h4>
+
+[% IF error %]
+<button class="alert hollow button" href="#">[% error %]</button>
+[% END %]
+
+[% INCLUDE "conference_series/form.html.tx" WITH
+    action = "/conference_series/create",
+%]
+
+[% END %]
