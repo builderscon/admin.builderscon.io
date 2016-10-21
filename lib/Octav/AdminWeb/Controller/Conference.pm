@@ -1,6 +1,7 @@
 package Octav::AdminWeb::Controller::Conference;
 use Mojo::Base qw(Mojolicious::Controller);
 use Mojo::Util ();
+use DateTime::Format::Strptime;
 use JSON ();
 use MIME::Base64 ();
 use Net::Twitter;
@@ -36,6 +37,21 @@ sub _lookup_conference_id {
         $self->render(text => "conference not found", status => 404);
         return;
     }
+
+    my $p = DateTime::Format::RFC3339->new();
+    if (my $dates = $conference->{dates}) {
+        foreach my $date (@$dates) {
+            foreach my $field (qw(open close)) {
+                my $v = $date->{$field};
+                next unless $v;
+
+                my $dt = $p->parse_datetime($v);
+                $dt->set_time_zone($conference->{timezone});
+                $date->{$field} = $dt;
+            }
+        }
+    }
+
     $self->stash(api_key => $self->config->{googlemaps}->{api_key});
     $self->stash(conference => $conference);
     return 1
@@ -465,6 +481,16 @@ sub sessions {
         die $client->last_error
     }
 
+    my $conference = $self->stash('conference');
+    my $p = DateTime::Format::RFC3339->new();
+    foreach my $session (@$sessions) {
+        if (my $starts_on = $session->{starts_on}) {
+            my $dt = $p->parse_datetime($starts_on);
+            $session->{starts_on} = $dt->set_time_zone($conference->{timezone});
+        }
+    }
+
+
     $self->stash(sessions => $sessions);
     $self->render(tx => "conference/sessions");
 }
@@ -478,14 +504,27 @@ sub bulk_update_sessions {
         return
     }
 
+    my $conference = $self->stash('conference');
+    my $parser = DateTime::Format::Strptime->new(
+        pattern => "%Y-%m-%d %H:%M",
+        time_zone => $conference->{timezone},
+    );
+    my $rfc3339 = DateTime::Format::RFC3339->new();
     my $client = $self->client;
     for my $p (@{$payload->{sessions}}) {
         # only allow accepted fields
         my %accepted;
-        for my $field (qw(id status date start_time room_id)) {
+        for my $field (qw(id status room_id)) {
+            next unless $p->{$field};
             $accepted{$field} = $p->{$field};
         }
 
+        my $date = $p->{date};
+        my $start_time = $p->{start_time};
+        if ($date && $start_time) {
+            my $s = sprintf("%s %s", $date, $start_time);
+            $accepted{starts_on} = $rfc3339->format_datetime($parser->parse_datetime($s));
+        }
         my $ok = $client->update_session({
             %accepted,
             user_id => $self->stash('ui_user')->{id},

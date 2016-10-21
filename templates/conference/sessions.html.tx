@@ -35,15 +35,17 @@
 [% END %]
             </select>
           </div>
+[% SET starts_on_datestr = session.starts_on.strftime("%Y-%m-%d") %]
           <div class="col s2">
             <select name="session-date">
-[% FOREACH date IN conference.dates %]
-              <option value="[% date.date %]">[% date.date %]</option>
+              <option value="">---</option>
+[% FOREACH date IN conference.dates %][% datestr = date.open.strftime("%Y-%m-%d") %]
+              <option value="[% datestr %]"[% IF datestr == starts_on_datestr %] selected="selected"[% END %]>[% date.open.strftime("%Y-%m-%d") %]</option>
 [% END %]
             </select>
           </div>
           <div class="col s2">
-            <input type="text" placeholder="Start Time" name="start_time"[% IF session.starts_on %] value="[% session.starts_on %]"[% END %]>
+            <input type="text" placeholder="Start Time" name="start_time"[% IF session.starts_on %] value="[% session.starts_on.strftime("%H:%M") %]"[% END %]>
           </div>
         </div>
       </div>
