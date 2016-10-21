@@ -169,14 +169,14 @@ sub date_add {
 
     my %params = (
         conference_id => $self->stash("conference")->{id},
-        dates => [ {
+        date => {
             open => $start,
             close => $end,
-        } ],
+        },
         user_id => $self->stash('ui_user')->{id},
     );
     my $client = $self->client;
-    if (! $client->add_conference_dates(\%params)) {
+    if (! $client->add_conference_date(\%params)) {
         # XXX handle this properly
         die $client->last_error();
     }
