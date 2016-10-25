@@ -140,6 +140,20 @@
 
 <div class="row">
   <div class="col s12">
+    <label for="contact_information">Contact Information(Markdown)</label>
+    <textarea name="contact_information" style="height: 20em">[% IF conference.item("contact_information") %][% conference.item("contact_information") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <label for="contact_information#ja">連絡先等(Markdown)</label>
+    <textarea name="contact_information#ja" style="height: 20em">[% IF conference.item("contact_information#ja") %][% conference.item("contact_information#ja") %][% END %]</textarea>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
     <button class="btn waves-effect waves-light" type="submit" name="action">Submit
       <i class="material-icons right">send</i>
     </button>
