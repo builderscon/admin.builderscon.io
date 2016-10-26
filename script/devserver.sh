@@ -76,7 +76,7 @@ Do not forget to update your OAuth callback URLs as
 
 EOM
 
-carton exec -- env \
+exec carton exec -- env \
     APISERVER_ENDPOINT=$APISERVER_ENDPOINT \
     BASE_URL=$BASE_URL \
     OCTAV_API_CLIENT_KEY=$OCTAV_API_CLIENT_KEY \

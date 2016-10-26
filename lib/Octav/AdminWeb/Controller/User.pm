@@ -5,42 +5,84 @@ sub dashboard {
     my $self = shift;
 }
 
+sub verify {
+    my $self = shift;
+    my $user = $self->_lookup();
+    if (! $user) {
+        return
+    }
+
+    my $client = $self->client();
+    my %params = (
+        id => $user->{id},
+        user_id => $self->stash('ui_user')->{id},
+    );
+    $client->verify_user(\%params);
+    $self->redirect_to($self->url_for("/user/lookup")->query(id => $user->{id}));
+}
+
 sub list {
     my $self = shift;
 
     my $client = $self->client();
-    my $users = $client->list_user();
+    my @args;
+    if (my $since = $self->param('since')) {
+        push @args, (since => $since)
+    }
+    my $users = $client->list_user({@args});
     $self->stash(users => $users);
     $self->render(tx => "user/list");
 }
 
-sub lookup {
+sub _lookup {
     my $self = shift;
 
     my $id = $self->param('id');
     if (!$id) {
-        return $self->render(text => "not found", status => 404);
+        $self->render(text => "not found", status => 404);
+        return
     }
 
     my $client = $self->client;
     my $user = $client->lookup_user({id => $id, lang => "all"});
+    if (! $user) {
+        $self->render(text => "not found", status => 404);
+        return
+    }
+
     $self->stash(user => $user);
+    return $user;
+}
+
+sub lookup {
+    my $self = shift;
+    my $user = $self->_lookup();
+    if (! $user) {
+        return
+    }
+
     $self->render(tx => "user/lookup");
+}
+
+sub edit {
+    my $self = shift;
+    my $user = $self->_lookup();
+    if (! $user) {
+        return
+    }
+
+    $self->render(tx => "user/edit");
 }
 
 sub update {
     my $self = shift;
-
-    my $id = $self->param('id');
-    if (!$id) {
-        return $self->render(text => "not found", status => 404);
+    my $user = $self->_lookup();
+    if (! $user) {
+        return
     }
 
-    my $client = $self->client;
-    my $user = $client->lookup_user({id => $id, lang => "all"});
-
     my %params = (
-        id => $id,
+        id => $user->{id},
         user_id => $self->stash('ui_user')->{id},
     );
     for my $pname (qw(FIXME)) {
@@ -50,11 +92,12 @@ sub update {
         }
     }
 
+    my $client = $self->client;
     if (!$client->update_user(\%params)) {
         die "failed";
     }
 
-    $self->redirect_to($self->url_for('/user/lookup')->query(id => $id));
+    $self->redirect_to($self->url_for('/user/lookup')->query(id => $user->{id}));
 }
 
 1;

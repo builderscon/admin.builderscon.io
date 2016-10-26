@@ -151,6 +151,7 @@ warn "Setting credentials: $client_key, $client_secret";
         $r->post("/conference/$subr/remove")->to("conference#${subr}_remove");
     }
     $r->get("/user/dashboard")->to("user#dashboard");
+    $r->post("/user/verify")->to("user#verify");
     $r->get("/conference/sessions")->to("conference#sessions");
     $r->post("/conference/sessions/update")->to("conference#bulk_update_sessions");
     $r->get("/conference/external/twitter")->to("conference#external_twitter");
