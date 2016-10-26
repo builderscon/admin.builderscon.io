@@ -9,12 +9,30 @@ sub list {
     my $self = shift;
 
     my $client = $self->client();
-    my $users = $client->list_user();
+    my @args;
+    if (my $since = $self->param('since')) {
+        push @args, (since => $since)
+    }
+    my $users = $client->list_user({@args});
     $self->stash(users => $users);
     $self->render(tx => "user/list");
 }
 
 sub lookup {
+    my $self = shift;
+
+    my $id = $self->param('id');
+    if (!$id) {
+        return $self->render(text => "not found", status => 404);
+    }
+
+    my $client = $self->client;
+    my $user = $client->lookup_user({id => $id, lang => "all"});
+    $self->stash(user => $user);
+    $self->render(tx => "user/lookup");
+}
+
+sub edit {
     my $self = shift;
 
     my $id = $self->param('id');
