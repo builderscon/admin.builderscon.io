@@ -1,1 +1,19 @@
 /* style.css */
+
+table th.label,
+table td.label {
+    font-weight: bold;
+    width: 10em;
+}
+
+div.box {
+    margin: 1em;
+    border: 1px solid #888;
+    border-radius: 5px;
+}
+
+div.box .box-header {
+    font-weight: bold;
+    font-size: 1.5em;
+    background-color: #a99;
+}
