@@ -83,9 +83,30 @@
           <td class="label">Bulk Edit</td>
           <td><a href="/conference/sessions?id=[% conference.id %]">List</a></td>
         </tr>
+        <tr>
+          <td class="label">Send Selection Result Notifications</td>
+          <td><a class="waves-effect waves-light btn modal-trigger" href="#send-result-notification-modal">Send notifications</a></td>
+        </tr>
       </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+<div id="send-result-notification-modal" class="modal">
+  <div class="modal-content">
+    <h4>Are you sure ?</h4>
+    <p>When you proceed with this operation, YOU WILL SEND EMAILS
+    TO EVERYONE with accepted or rejected sessions. <strong>EVERYONE</strong>.</p>
+    <p>We can undo the records int he database, but we can't undo
+    emails that were already sent. <strong>BE VERY CAREFUL</strong></p>
+  </div>
+  <div class="modal-footer">
+    <form id="send-result-notification-form" action="/conference/result/send" method="POST">
+      <input type="hidden" value="[% conference.id %]">
+      <button id="send-result-notification-proceed-btn" class="modal-action modal-close waves-effect waves-red btn-flat">Proceed</a>
+      <button id="send-result-notification-cancel-btn" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </form>
   </div>
 </div>
 
@@ -124,6 +145,14 @@ function initMap() {
   })()
 [% END %]
 }
+
+$(document).ready(function(){
+  $('.modal-trigger').leanModal();
+  $('button', '#send-result-notification-form').click(function(e) {
+    console.log(e);
+    return $(e.target).attr('id') == 'send-result-notification-proceed-btn';
+  })
+});
 -->
 </script>
 
