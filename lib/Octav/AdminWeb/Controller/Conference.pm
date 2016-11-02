@@ -537,6 +537,25 @@ sub bulk_update_sessions {
     $self->redirect_to($self->url_for("/conference/sessions")->query(id => $self->stash("conference")->{id}));
 }
 
+sub send_result_notification {
+    my $self = shift;
+
+    if (! $self->_lookup()) {
+        return
+    }
+
+    my $client = $self->client;
+    my %payload = (
+        conference_id => $self->stash('conference')->{id},
+        user_id => $self->stash('ui_user')->{id},
+    );
+    if (! $client->send_all_selection_result_notification(\%payload)) {
+        die $client->last_error();
+    }
+
+    $self->render(text => "all ok");
+}
+
 sub twitter_client {
     my $self = shift;
     my $config = $self->config;

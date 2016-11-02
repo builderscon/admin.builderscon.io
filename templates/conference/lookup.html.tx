@@ -103,7 +103,7 @@
   </div>
   <div class="modal-footer">
     <form id="send-result-notification-form" action="/conference/result/send" method="POST">
-      <input type="hidden" value="[% conference.id %]">
+      <input type="hidden" name="id" value="[% conference.id %]">
       <button id="send-result-notification-proceed-btn" class="modal-action modal-close waves-effect waves-red btn-flat">Proceed</a>
       <button id="send-result-notification-cancel-btn" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
     </form>
