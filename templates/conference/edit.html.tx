@@ -10,8 +10,10 @@
 %]
 
 <div class="row">
-
-<h4>Conference "[% conference.title %]"</h4>
+  <div class="col s12">
+    <h4>Conference "[% conference.title %]"</h4>
+  </div>
+</div>
 
 [% INCLUDE "conference/form.html.tx" WITH
     action = "/conference/update",

@@ -1,74 +1,37 @@
 <form action="[% action %]" method="POST" class="col s12" enctype="multipart/form-data">
+
+<div class="box">
+  <div class="row box-header">
+    <div class="s12 col">Basics</div>
+  </div>
 [% IF conference %]
-<div class="row">
-  <div class="input-field col s12">
-    <label for="id">ID</label>
-    <input type="text" readonly value="[% conference.id %]">
-    <input type="hidden" name="id" value="[% conference.id %]">
+  <div class="row">
+    <div class="input-field col s12">
+      <label for="id">ID</label>
+      <input type="text" readonly value="[% conference.id %]">
+      <input type="hidden" name="id" value="[% conference.id %]">
+    </div>
   </div>
-</div>
 [% END %]
 
-<div class="row">
-  <div class="col s2">
-    <label for="series_id">Conference Series</label>
-  </div>
-  <div class="col s10">
-    <select name="series_id">
+  <div class="row">
+    <div class="col s6">
+      <label for="series_id">Conference Series</label>
+      <select name="series_id">
 [% FOREACH s IN series %]
-        <option value="[% s.id %]"[% IF conference.series_id == s.id %] selected="selected"[% END %]>[% s.title %]</option>
+          <option value="[% s.id %]"[% IF conference.series_id == s.id %] selected="selected"[% END %]>[% s.title %]</option>
 [% END %]
-    </select>
+      </select>
+    </div>
+    <div class="col s6">
+      <label for="title">Slug</label>
+      <input placeholder="(Required) String used as part of url" id="slug" name="slug" type="text" class="validate[% IF conference.slug %] active[% END %]"[% IF conference.slug %] value="[% conference.slug %]"[% END %]>
+    </div>
   </div>
-</div>
-
-[% IF conference.cover_url %]
-<div class="row">
-  <img class="s12 col" src="[% conference.cover_url %]">
-</div>
-[% END %]
-
-<div class="row">
-  <div class="s2 col">
-    <label for="cover">Cover Image</label>
-  </div>
-  <div class="s10 col">
-    <input type="file" name="cover">
-  </div>
-</div>
-<div class="row">
-  <div class="input-field col s6">
-    <label for="title">Title (English)</label>
-    <input placeholder="(Required) Main title of the conference" id="title" name="title" type="text" class="validate[% IF conference.title %] active[% END %]"[% IF conference.title %] value="[% conference.title %]"[% END %]>
-  </div>
-  <div class="input-field col s6">
-    <label for="title#ja">Title (日本語）</label>
-    <input placeholder="(任意）日本語で表示する際のカンファレンス名" id="title#ja" name="title#ja" type="text" class="validate[% IF conference.item("title#ja") %] active[% END %]"[% IF conference.item("title#ja") %] value="[% conference.item("title#ja") %]"[% END %]>
-  </div>
-</div>
-
-<div class="row">
-  <div class="input-field col s6">
-    <label for="sub_title">Sub Title</label>
-    <input placeholder="(Optional)" id="sub_title" name="sub_title" type="text" class="validate[% IF conference.sub_title %] active[% END %]"[% IF conference.sub_title %] value="[% conference.sub_title %]"[% END %]>
-  </div>
-  <div class="input-field col s6">
-    <label for="sub_title#ja">Sub Title (日本語）</label>
-    <input placeholder="(任意）日本語で表示する際のカンファレンスサブタイトル" id="sub_title#ja" name="sub_title#ja" type="text" class="validate[% IF conference.item("sub_title#ja") %] active[% END %]"[% IF conference.item("sub_title#ja") %] value="[% conference.item("sub_title#ja") %]"[% END %]>
-  </div>
-</div>
-
-<div class="row">
-  <div class="input-field col s6">
-    <label for="title">Slug</label>
-    <input placeholder="(Required) String used as part of url" id="slug" name="slug" type="text" class="validate[% IF conference.slug %] active[% END %]"[% IF conference.slug %] value="[% conference.slug %]"[% END %]>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s6">
-    <label for="timezone">Timezone</label>
-    <select name="timezone">
+  <div class="row">
+    <div class="col s6">
+      <label for="timezone">Timezone</label>
+      <select name="timezone">
 [%- SET defaultTZ = 'UTC' -%]
 [%- IF conference && conference.timezone -%]
 [%- SET defaultTZ = conference.timezone -%]
@@ -76,79 +39,119 @@
 [%- SET defaultTZ = ui_user.timezone -%]
 [%- END -%]
 [%- FOREACH tz IN timezones %]
-      <option value="[% tz %]"[% IF defaultTZ == tz %] selected="selected"[% END %]>[% tz %]</option>
+        <option value="[% tz %]"[% IF defaultTZ == tz %] selected="selected"[% END %]>[% tz %]</option>
 [% END -%]
-    </select>
+      </select>
+    </div>
+    <div class="input-field col s6">
+      <label for="cover">Cover Image</label>
+      <input type="text" readonly value="[% conference.cover_url %]">
+      <input type="file" name="cover">
+    </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col s12">
-    <label for="description">Description (Markdown)</label>
-    <textarea name="description" style="height: 20em">[% IF conference.item("description") %][% conference.item("description") %][% END %]</textarea>
+<div class="box">
+  <div class="row box-header">
+    <div class="s12 col">Texts</div>
   </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="description#ja">開催概要 (Markdown)</label>
-    <textarea name="description#ja" style="height: 20em">[% IF conference.item("description#ja") %][% conference.item("description#ja") %][% END %]</textarea>
+  <div class="row">
+    <div class="s12 col">
+      <ul class="tabs">
+        <li class="tab col s2"><a href="#en-text">English</a></li>
+        <li class="tab col s2"><a href="#ja-text">Japanese</a></li>
+        <li class="tab col s2">&nbsp;</li>
+        <li class="tab col s2">&nbsp;</li>
+        <li class="tab col s2">&nbsp;</li>
+        <li class="tab col s2">&nbsp;</li>
+      </ul>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col s12">
-    <label for="cfp_lead_text">CFP Lead Text (Markdown)</label>
-    <textarea name="cfp_lead_text" style="height: 20em">[% IF conference.item("cfp_lead_text") %][% conference.item("cfp_lead_text") %][% END %]</textarea>
+  <div id="en-text">
+    <div class="row">
+      <div class="input-field col s6">
+        <label for="title">Title</label>
+        <input placeholder="(Required) Main title of the conference" id="title" name="title" type="text" class="validate[% IF conference.title %] active[% END %]"[% IF conference.title %] value="[% conference.title %]"[% END %]>
+      </div>
+      <div class="input-field col s6">
+        <label for="sub_title">Sub Title</label>
+        <input placeholder="(Optional)" id="sub_title" name="sub_title" type="text" class="validate[% IF conference.sub_title %] active[% END %]"[% IF conference.sub_title %] value="[% conference.sub_title %]"[% END %]>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="description">Description (Markdown)</label>
+        <textarea name="description" style="height: 20em">[% IF conference.item("description") %][% conference.item("description") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="cfp_lead_text">CFP Lead Text (Markdown)</label>
+        <textarea name="cfp_lead_text" style="height: 20em">[% IF conference.item("cfp_lead_text") %][% conference.item("cfp_lead_text") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="cfp_pre_submit_instructions">CFP Pre-Submission Instruction Text (Markdown)</label>
+        <textarea name="cfp_pre_submit_instructions" style="height: 20em">[% IF conference.item("cfp_pre_submit_instructions") %][% conference.item("cfp_pre_submit_instructions") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="cfp_post_submit_instructions">CFP Post-Submission Instruction Text (Markdown)</label>
+        <textarea name="cfp_post_submit_instructions" style="height: 20em">[% IF conference.item("cfp_post_submit_instructions") %][% conference.item("cfp_post_submit_instructions") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="contact_information">Contact Information(Markdown)</label>
+        <textarea name="contact_information" style="height: 20em">[% IF conference.item("contact_information") %][% conference.item("contact_information") %][% END %]</textarea>
+      </div>
+    </div>
   </div>
-</div>
 
-<div class="row">
-  <div class="col s12">
-    <label for="cfp_lead_text#ja">CFP募集序文 (Markdown)</label>
-    <textarea name="cfp_lead_text#ja" style="height: 20em">[% IF conference.item("cfp_lead_text#ja") %][% conference.item("cfp_lead_text#ja") %][% END %]</textarea>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="cfp_pre_submit_instructions">CFP Pre-Submission Instruction Text (Markdown)</label>
-    <textarea name="cfp_pre_submit_instructions" style="height: 20em">[% IF conference.item("cfp_pre_submit_instructions") %][% conference.item("cfp_pre_submit_instructions") %][% END %]</textarea>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="cfp_pre_submit_instructions#ja">CFP募集要項 (Markdown)</label>
-    <textarea name="cfp_pre_submit_instructions#ja" style="height: 20em">[% IF conference.item("cfp_pre_submit_instructions#ja") %][% conference.item("cfp_pre_submit_instructions#ja") %][% END %]</textarea>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="cfp_post_submit_instructions">CFP Post-Submission Instruction Text (Markdown)</label>
-    <textarea name="cfp_post_submit_instructions" style="height: 20em">[% IF conference.item("cfp_post_submit_instructions") %][% conference.item("cfp_post_submit_instructions") %][% END %]</textarea>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="cfp_post_submit_instructions#ja">CFP募集要項（フォーム送信後） (Markdown)</label>
-    <textarea name="cfp_post_submit_instructions#ja" style="height: 20em">[% IF conference.item("cfp_post_submit_instructions#ja") %][% conference.item("cfp_post_submit_instructions#ja") %][% END %]</textarea>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="contact_information">Contact Information(Markdown)</label>
-    <textarea name="contact_information" style="height: 20em">[% IF conference.item("contact_information") %][% conference.item("contact_information") %][% END %]</textarea>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <label for="contact_information#ja">連絡先等(Markdown)</label>
-    <textarea name="contact_information#ja" style="height: 20em">[% IF conference.item("contact_information#ja") %][% conference.item("contact_information#ja") %][% END %]</textarea>
+  <div id="ja-text">
+    <div class="row">
+      <div class="input-field col s6">
+        <label for="title#ja">Title</label>
+        <input placeholder="(任意）日本語で表示する際のカンファレンス名" id="title#ja" name="title#ja" type="text" class="validate[% IF conference.item("title#ja") %] active[% END %]"[% IF conference.item("title#ja") %] value="[% conference.item("title#ja") %]"[% END %]>
+      </div>
+      <div class="input-field col s6">
+        <label for="sub_title#ja">Sub Title</label>
+        <input placeholder="(任意）日本語で表示する際のカンファレンスサブタイトル" id="sub_title#ja" name="sub_title#ja" type="text" class="validate[% IF conference.item("sub_title#ja") %] active[% END %]"[% IF conference.item("sub_title#ja") %] value="[% conference.item("sub_title#ja") %]"[% END %]>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="description#ja">開催概要 (Markdown)</label>
+        <textarea name="description#ja" style="height: 20em">[% IF conference.item("description#ja") %][% conference.item("description#ja") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="cfp_lead_text#ja">CFP募集序文 (Markdown)</label>
+        <textarea name="cfp_lead_text#ja" style="height: 20em">[% IF conference.item("cfp_lead_text#ja") %][% conference.item("cfp_lead_text#ja") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="cfp_pre_submit_instructions#ja">CFP募集要項 (Markdown)</label>
+        <textarea name="cfp_pre_submit_instructions#ja" style="height: 20em">[% IF conference.item("cfp_pre_submit_instructions#ja") %][% conference.item("cfp_pre_submit_instructions#ja") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="cfp_post_submit_instructions#ja">CFP募集要項（フォーム送信後） (Markdown)</label>
+        <textarea name="cfp_post_submit_instructions#ja" style="height: 20em">[% IF conference.item("cfp_post_submit_instructions#ja") %][% conference.item("cfp_post_submit_instructions#ja") %][% END %]</textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <label for="contact_information#ja">連絡先等(Markdown)</label>
+        <textarea name="contact_information#ja" style="height: 20em">[% IF conference.item("contact_information#ja") %][% conference.item("contact_information#ja") %][% END %]</textarea>
+      </div>
+    </div>
   </div>
 </div>
 

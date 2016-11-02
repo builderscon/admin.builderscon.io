@@ -1,5 +1,19 @@
 [% WRAPPER "layout/main.html.tx" %]
 
-<h4>Octav Administrator UI</h4>
+<div class="row">
+  <div class="col s12">
+    <h4>Octav Administrator UI</h4>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col s12">
+    <ul>
+      <li><a href="/conference/list">Conferences</a></li>
+      <li><a href="/user/list">Users</a></li>
+      <li><a href="/venue/list">Venues</a></li>
+    </ul>
+  </div>
+</div>
 
 [% END %]

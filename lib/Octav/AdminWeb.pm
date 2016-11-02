@@ -154,6 +154,8 @@ warn "Setting credentials: $client_key, $client_secret";
     $r->post("/user/verify")->to("user#verify");
     $r->get("/conference/sessions")->to("conference#sessions");
     $r->post("/conference/sessions/update")->to("conference#bulk_update_sessions");
+    $r->post("/conference/result/send")->to("conference#send_result_notification");
+
     $r->get("/conference/external/twitter")->to("conference#external_twitter");
     $r->get("/conference/external/twitter/credentials")->to("conference#external_twitter_credentials");
     $r->get("/conference/external/twitter/callback")->to("conference#external_twitter_callback");

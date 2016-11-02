@@ -6,18 +6,23 @@
   </div>
 </div>
 
-<div class="row">
-  <div class="col s12">
-    <h5>Date/Time</h5>
-    <div class="row">
-      <div class="col s1">Timezone</div>
-      <div class="col s11">[% conference.timezone %]</div>
-    </div>
-    <div class="row">
-      <div class="col s1">Dates</div>
-      <div class="col s11">
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">Date/Time</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <table class="bordered">
+      <tbody>
+        <tr>
+          <td class="label">Timezone</td>
+          <td>[% conference.timezone %]</td>
+        </tr>
+        <tr>
+          <td class="label">Dates</td>
+          <td>
 [% IF conference.dates %][% FOREACH date IN conference.dates %]
-    <div class="chip">
+            <div class="chip">
 [%- IF date.open %]
 [%- SET dt = in_timezone(date.open, conference.timezone) %]
 [%- dt.strftime("%Y-%m-%d %H:%M") %]
@@ -27,67 +32,99 @@
 [%- SET dt = in_timezone(date.close, conference.timezone) %]
 [%- dt.strftime("%Y-%m-%d %H:%M") %]
 [%- END %]
-    </div><!-- chip -->
+            </div><!-- chip -->
 [% END %][% END %]
-      </div>
+          </td>
+        </tr>
+      </tbody>
+      </table>
     </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col s12">
-    <h5>Organizers</h5>
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">Organizers</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
 [% FOREACH user IN conference.administrators %]
-    <div class="chip">[% IF user.avatar_url %]<img src="[% user.avatar_url %]">[% END %]<a href="/user/lookup?id=[% user.id %]">[% user.nickname %]</a></div>
+      <div class="chip">[% IF user.avatar_url %]<img src="[% user.avatar_url %]">[% END %]<a href="/user/lookup?id=[% user.id %]">[% user.nickname %]</a></div>
 [% END %]
-  </div>
-</div>
-
-<div class="row">
-  <div class="col s12">
-    <h5>External Services</h5>
-    <div class="row">
-      <div class="col s1">
-        <img style="width: 69px; height: 56px" src="https://builderscon.io/static/images/twitter-120px.png">
-      </div>
-      <div class="col s11">
-        <p><a href="/conference/external/twitter/credentials?id=[% conference.id %]">Authenticate with Twitter</a>, and allow us to post on your behalf
-        when there are new talk submissions</p>
-        <p>If you have already allowed us to access your account, you can <a href="/conference/external/twitter?id=[% conference.id %]">tweet</a> directly from here</p>
-      </div>
     </div>
   </div>
 </div>
 
-<div class="row">
-  <div class="col s12">
-    <h5>Sessions</h5>
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">External Services</div>
+  </div>
+  <div class="row">
+    <div class="col s1">
+      <img style="width: 69px; height: 56px" src="https://builderscon.io/static/images/twitter-120px.png">
+    </div>
+    <div class="col s11">
+      <p><a href="/conference/external/twitter/credentials?id=[% conference.id %]">Authenticate with Twitter</a>, and allow us to post on your behalf
+      when there are new talk submissions</p>
+      <p>If you have already allowed us to access your account, you can <a href="/conference/external/twitter?id=[% conference.id %]">tweet</a> directly from here</p>
+    </div>
   </div>
 </div>
-<div class="row">
-  <div class="col s12">
-    <ul>
-      <li><a href="/conference/sessions?id=[% conference.id %]">List of sessions</a></li>
-    </ul>
+
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">Sessions</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <table class="bordered">
+      <tbody>
+        <tr>
+          <td class="label">Bulk Edit</td>
+          <td><a href="/conference/sessions?id=[% conference.id %]">List</a></td>
+        </tr>
+        <tr>
+          <td class="label">Send Selection Result Notifications</td>
+          <td><a class="waves-effect waves-light btn modal-trigger" href="#send-result-notification-modal">Send notifications</a></td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="send-result-notification-modal" class="modal">
+  <div class="modal-content">
+    <h4>Are you sure ?</h4>
+    <p>When you proceed with this operation, YOU WILL SEND EMAILS
+    TO EVERYONE with accepted or rejected sessions. <strong>EVERYONE</strong>.</p>
+    <p>We can undo the records int he database, but we can't undo
+    emails that were already sent. <strong>BE VERY CAREFUL</strong></p>
+  </div>
+  <div class="modal-footer">
+    <form id="send-result-notification-form" action="/conference/result/send" method="POST">
+      <input type="hidden" name="id" value="[% conference.id %]">
+      <button id="send-result-notification-proceed-btn" class="modal-action modal-close waves-effect waves-red btn-flat">Proceed</a>
+      <button id="send-result-notification-cancel-btn" class="modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </form>
   </div>
 </div>
 
 [% IF conference.venues %]
-<div class="row">
-  <div class="col s12">
-    <h5>Venue</h5>
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">Venue</div>
   </div>
-</div>
 [% FOREACH venue IN conference.venues %]
-<div class="row">
-  <div class="col s3">
-    <h6><a href="/venue/lookup?id=[% venue.id %]">[% venue.name %]</a></h6>
-    [% venue.address %]
+  <div class="row">
+    <div class="col s3">
+      <h6><a href="/venue/lookup?id=[% venue.id %]">[% venue.name %]</a></h6>
+      <div>[% venue.address %]</div>
+    </div>
+    <div class="col s9">
+      <div id="map-[% loop.index %]" style="height: 200px"></div>
+    </div>
   </div>
-  <div class="col s9">
-    <div id="map-[% loop.index %]" style="height: 200px"></div>
-  </div>
-</div>
 [% END %]
 <script type="text/javascript">
 <!--
@@ -108,6 +145,14 @@ function initMap() {
   })()
 [% END %]
 }
+
+$(document).ready(function(){
+  $('.modal-trigger').leanModal();
+  $('button', '#send-result-notification-form').click(function(e) {
+    console.log(e);
+    return $(e.target).attr('id') == 'send-result-notification-proceed-btn';
+  })
+});
 -->
 </script>
 
