@@ -25,6 +25,10 @@ with_conference = app.hooks.with_conference
 with_conference_series_list = app.hooks.with_conference_series_list
 with_venue_list = app.hooks.with_venue_list
 
+@page.route('/conference')
+def index():
+    return flask.render_template('conference/index.html')
+
 @page.route('/conference/<id>/view')
 @functools.partial(with_conference, lang='all')
 @with_conference_series_list

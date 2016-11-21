@@ -3,12 +3,15 @@ import flask
 import flasktools
 import functools
 
+@admin.app.before_request
+def detect_default_language():
+    flask.g.lang = admin.get_locale()
+
 def load_logged_in_user():
     if 'user_id' in flask.session:
         user = admin.api.lookup_user(flask.session.get('user_id'))
         if user:
             flask.g.stash['user'] = user
-            flask.g.lang = admin.get_locale()
             return True
         del flask.session['user_id']
     return False
@@ -57,6 +60,19 @@ def with_conference(cb, lang='en'):
 
     return functools.update_wrapper(functools.partial(_load_conference, cb, lang=lang), cb)
 
+def with_conference_list(cb, **args):
+    def _load_conference_list(cb, **args):
+        if 'lang' not in args:
+            args[lang] = flask.g.lang
+
+        conferences = admin.api.list_conference(**args)
+        if not serieses:
+            return flask.abort(404)
+        flask.g.stash['conferences'] = conferences
+        return cb()
+
+    return functools.update_wrapper(functools.partial(_load_conference_list, cb, **args), cb)
+
 def with_conference_series_list(cb):
     def _load_conference_series_list(cb):
         serieses = admin.api.list_conference_series()
@@ -67,12 +83,24 @@ def with_conference_series_list(cb):
 
     return functools.update_wrapper(functools.partial(_load_conference_series_list, cb), cb)
 
-def with_venue_list(cb, lang='en'):
-    def _load_venue_list(cb, lang):
-        venues = admin.api.list_venue(lang=lang)
-        if not venues:
+def with_venue(cb, lang=None):
+    def _load_venue(cb, id, lang):
+        if lang is None:
+            lang = flask.g.lang
+        venue = admin.api.lookup_venue(id=id, lang=lang)
+        if not venue:
             return flask.abort(404)
-        flask.g.stash['venues'] = venues
+        flask.g.stash['venue'] = venue
+        return cb()
+
+    return functools.update_wrapper(functools.partial(_load_venue, cb, lang=lang), cb)
+
+def with_venue_list(cb, lang=None):
+    def _load_venue_list(cb, lang):
+        if lang is None:
+            lang = flask.g.lang
+        venues = admin.api.list_venue(lang=lang)
+        flask.g.stash['venues'] = venues or []
         return cb()
 
     return functools.update_wrapper(functools.partial(_load_venue_list, cb, lang=lang), cb)

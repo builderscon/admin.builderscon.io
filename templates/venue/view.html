@@ -1,0 +1,142 @@
+{% extends 'layouts/base.html' %}
+
+{% block main %}
+<div id="message-modal" class="modal">
+  <div class="modal-content">
+    <h4 class="title"></h4>
+    <p class="message"></p>
+  </div>
+</div>
+
+{% include 'venue/form.html' %}
+
+<div id="rooms" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Rooms{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a href="#add-room-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new room</a>
+    </div>
+  </div>
+  <div id="add-room-form" class="modal modal-fixed-footer">
+    <form action="/api/venue/room/add" method="POST">
+    <input type="hidden" name="venue_id" value="{{ venue.id }}">
+    <div class="row">
+      <div class="col s12">
+        <ul class="tabs">
+          <li class="tab col s3"><a href="#room-basic-en">{% trans %}English{% endtrans %}</a></li>
+          <li class="tab col s3"><a href="#room-basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="room-basic-en">
+      <div class="row">
+        <div class="col s2">{% trans %}Name (English){% endtrans %}</div>
+        <div class="col s10">
+          <input type="text" name="name" placeholder="{% trans %}Name (English){% endtrans %}">
+        </div>
+      </div>
+    </div>
+    <div id="room-basic-ja">
+      <div class="row">
+        <div class="col s2">{% trans %}Name (Japanese){% endtrans %}</div>
+        <div class="col s10">
+          <input type="text" name="name#ja" placeholder="{% trans %}Name (Japanese){% endtrans %}">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s2">{% trans %}Capacity{% endtrans %}</div>
+      <div class="col s10">
+        <input type="text" name="capacity" placeholder="{% trans %}Approximate capacity{% endtrans %}">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div class="row">
+        <div class="col s12">
+          <button id="add-room-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+
+  <div class="rooms"></div>
+</div>
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  $(document).ready(function() {
+    setupRooms();
+    $('.modal').modal();
+  });
+
+  function errorModal(err) {
+    var $m = $('#message-modal');
+    $('.title', $m).text('{% trans %}Error{% endtrans %}');
+    $('.message', $m).text(err);
+    $m.modal('open');
+  }
+
+  function setupRooms() {
+{% if venue.rooms %}
+    drawRooms({% autoescape false %}{{ venue.rooms | tojson }}{% endautoescape %});
+{% endif %}
+    $('#add-room-proceed').click(function() {
+      var $f = $('form', '#add-room-form');
+      $.ajax({
+        url: $f.attr('action'),
+        method: $f.attr('method'),
+        data: $f.serialize(),
+        error: function(xhr, status, err) {
+          errorModal('{% trans %}Failed to create new room{% endtrans %}: ' + err);
+        },
+        success: function(data) {
+          if (data.error) {
+            errorModal('{% trans %}Failed to create new room{% endtrans %}: ' + data.error)
+            return
+          }
+          var $m = $('#message-modal');
+          $('.title', $m).text('{% trans %}Success{% endtrans %}');
+          $('.message', $m).text('{% trans %}Successfully created new room{% endtrans %}');
+          $m.modal({
+            complete: function() {
+              location.href = '/venue/{{ venue.id }}/view';
+            }
+          });
+          $m.modal('open')
+        }
+      });
+      return false;
+    });
+  }
+
+  function drawRooms(rooms) {
+    var $c = $(".rooms", "#rooms");
+    $c.empty();
+    $(rooms).each(function(i, room) {
+      $c.append(
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s3').append(
+            $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', room.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
+              '{% trans %}Remove{% endtrans %}'
+            )
+          )
+        ).append(
+          $('<div />').addClass('col').addClass('s3').text(room.name + ' (' + room.capacity + ')')
+        )
+      );
+    });
+  }
+-->
+</script>
+
+{% include 'venue/form_scripts.html' %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap"></script>
+{% endblock %}

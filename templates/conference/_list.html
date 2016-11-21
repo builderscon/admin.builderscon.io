@@ -1,0 +1,45 @@
+<script type="text/javascript">
+<!--
+  $(document).ready(load_conferences);
+
+  function load_conferences() {
+    $.ajax({
+      url: {{ list_url | tojson | safe }},
+      data: {% autoescape false %}{{ data or {} | tojson | safe }}{% endautoescape %},
+      success: function(data) {
+        $container = $("#conferences");
+        $container.empty();
+
+        $table = $("<table />")
+          .addClass("striped")
+        ;
+        $container.append($table);
+
+        $(data).each(function(i, e) {
+          $table.append(
+            $("<tr />")
+              .append(
+                $("<td />")
+                  .append(
+                    $("<a />").attr("href", "https://builderscon.io/" + e.series.slug + "/" + e.slug).text(e.title)
+                  )
+              )
+              .append(
+                $("<td />")
+                  .append(
+                    $("<a />").attr("href", "/conference/" + e.id + "/view")
+                      .append(
+                        $("<i />")
+                          .addClass("material-icons")
+                          .text("mode_edit")
+                      )
+                  )
+              )
+          )
+        });
+      }
+    });
+  }
+-->
+</script>
+

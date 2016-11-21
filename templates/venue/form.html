@@ -1,0 +1,79 @@
+{% set leftcol = 3 %}
+{% set rightcol = 12 - leftcol %}
+<form action="/venue/input" method="POST">
+<div id="basic" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Basic Information{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
+        <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="basic-en">
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Name (English){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="name" placeholder="{% trans %}Name of the venue (English){% endtrans %}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Address (English){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="address" placeholder="{% trans %}Address of the venue (English){% endtrans %}">
+      </div>
+    </div>
+  </div>
+  <div id="basic-ja">
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Name (Japanese){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="name#ja" placeholder="{% trans %}Name of the venue (Japanese){% endtrans %}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Address (Japanese){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="address#ja" placeholder="{% trans %}Address of the venue (Japanese){% endtrans %}">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button class="submit">{% trans %}Create{% endtrans %}</button>
+    </div>
+  </div>
+</div>
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Location{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Latitude{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <input type="text" name="latitude">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Longitude{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <input type="text" name="longitude">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <div id="map" style="height: 300px"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button class="submit">{% trans %}Create{% endtrans %}</button>
+    </div>
+  </div>
+</div>
+</form>
+
+

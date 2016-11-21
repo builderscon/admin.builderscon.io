@@ -1,0 +1,39 @@
+<script type="text/javascript">
+<!--
+  var defaultLatlng = {lat: 35.65869018850232, lng: 139.7017197449951};
+  var venue = {% if venue %}{{ venue | tojson }}{% else %}{}{% endif %};
+  function initMap() {
+    var e = document.getElementById('map');
+    var lat = venue.latitude ? venue.latitude : defaultLatlng.lat;
+    var lng = venue.longitude ? venue.longitude : defaultLatlng.lng;
+
+    $("input[name='longitude']").val(lat);
+    $("input[name='latitude']").val(lng);
+    var map = new google.maps.Map(e, {
+      center: {'lat': lat, 'lng': lng},
+      scrollwheel: false,
+      zoom: 14
+    });
+    var marker = new google.maps.Marker({
+      position: {'lat': lat, 'lng': lng},
+      map: map,
+    });
+    map.addListener('center_changed', function() {
+      var latlng = map.getCenter();
+      marker.setPosition(latlng);
+      $("input[name='longitude']").val(latlng.lng());
+      $("input[name='latitude']").val(latlng.lat());
+    });
+  }
+
+  $(document).ready(function() {
+    var keys = ['name', 'address', 'name#ja', 'address#ja' ];
+    $(keys).each(function(i, k) {
+      if (venue[k]) {
+        $("input[name='" + k + "']").val(venue[k]);
+      }
+    });
+  });
+-->
+</script>
+

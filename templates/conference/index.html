@@ -5,13 +5,13 @@
 {% block main %}
 <div id="conference-series"></div>
 <div id="conference-pange">
-  <h2>{% trans %}My Conferences{% endtrans %}</h2>
+  <h2>{% trans %}Conferences{% endtrans %}</h2>
   <div id="conferences"></div>
 </div>
 {% endblock %}
 
 {% block embedded_scripts %}
-{% with list_url='/api/my/conferences' %}
+{% with list_url='/api/conference/list', data={'status':'any'} %}
 {% include 'conference/_list.html' %}
 {% endwith %}
 {% endblock %}

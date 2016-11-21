@@ -9,6 +9,16 @@ require_login = app.hooks.require_login
 
 with_venue_list = app.hooks.with_venue_list
 
+def _stock_response(ok, api):
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": api.last_error()
+    })
+
 @page.route('/api/my/conferences')
 @require_login
 def my_conferences():
@@ -25,7 +35,7 @@ def my_conferences():
 def venue_list():
     return flask.jsonify(flask.g.stash.get('venues'))
 
-@page.route('/api/venue/delete')
+@page.route('/api/venue/delete', methods=['POST'])
 @require_login
 def venue_delete():
     ok = app.api.delete_venue(
@@ -34,6 +44,18 @@ def venue_delete():
     )
     return flask.jsonify({"message": "success"})
 
+@page.route('/api/venue/room/add', methods=['POST'])
+@require_login
+def venue_room_add():
+    vals = flask.request.values
+    args = {}
+    for k in vals:
+        args[k] = vals[k]
+    args['capacity'] = float(args['capacity']) # numify
+    args['user_id'] = flask.g.stash.get('user').get('id')
+    ok = app.api.create_room(**args)
+    return _stock_response(ok, app.api)
+
 @page.route('/api/user/incremental')
 @require_login
 def user_incremental():
@@ -41,6 +63,16 @@ def user_incremental():
     return flask.jsonify({
         "suggestions": map(lambda x: {"data":x.get('id'),"value": "%s (%s)" % (x.get('nickname'), x.get('auth_via')) }, users)
     })
+
+@page.route('/api/conference/list')
+@require_login
+def conference_list():
+    args = flask.request.args
+    conferences = app.api.list_conference(
+        lang=flask.g.lang,
+        **args
+    )
+    return flask.jsonify(conferences)
 
 @page.route('/api/conference/administrator/list')
 @require_login
@@ -59,14 +91,7 @@ def add_conference_administrator():
         admin_id=flask.request.values.get('user_id'),
         user_id=flask.g.stash.get('user').get('id')
     )
-    if ok:
-        return flask.jsonify({
-            "success": True
-        })
-    return flask.jsonify({
-        "success": False,
-        "error": app.api.last_error()
-    })
+    return _stock_response(ok, app.api)
 
 @page.route('/api/conference/administrator/remove', methods=['POST'])
 @require_login

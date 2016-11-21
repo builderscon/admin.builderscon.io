@@ -20,10 +20,16 @@ REQUIRED = {
     'longitude': True
 }
 
+with_venue = app.hooks.with_venue
 
 @page.route('/venue/')
 def list():
     return flask.render_template('venue/index.html')
+
+@page.route('/venue/<id>/view')
+@functools.partial(with_venue, lang='all')
+def view():
+    return flask.render_template('venue/view.html')
 
 @page.route('/venue/input', methods=['GET'])
 def input():

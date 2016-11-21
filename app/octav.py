@@ -1,5 +1,5 @@
 """OCTAV Client Library"""
-"""DO NOT EDIT: This file was generated from ../spec/v1/api.json on Thu Nov 10 15:15:42 2016"""
+"""DO NOT EDIT: This file was generated from ../spec/v1/api.json on Tue Nov 22 07:25:51 2016"""
 
 import certifi
 import json
@@ -431,7 +431,7 @@ class Octav(object):
         self.error = repr(e)
         return None
 
-  def lookup_venue (self, id):
+  def lookup_venue (self, id, lang=None):
     try:
         payload = {}
         hdrs = {}
@@ -440,6 +440,8 @@ class Octav(object):
         payload['id'] = id
         if id is not None:
             payload['id'] = id
+        if lang is not None:
+            payload['lang'] = lang
         uri = '%s/v1/venue/lookup' % self.endpoint
         qs = urlencode(payload, True)
         if self.debug:

@@ -12,6 +12,14 @@
 
 {% block main %}
 
+<div id="delete-modal" class="modal">
+  <div class="modal-content">
+    <p class="message"></p>
+  </div>
+  <div class="modal-footer">
+    <button class="proceed-btn btn waves-effect waves-light" type="submit" name="action">Submit</button>
+  </div>
+</div>
 <div id="success-modal" class="modal">
   <div class="modal-content">
     <h4>{% trans %}Success{% endtrans %}</h4>
@@ -49,25 +57,64 @@
 
 <div id="venues" class="box">
   <div class="row box-header">
-    <div class="col s12">{% trans %}Venue{% endtrans %}
-      <a href="#" id="add-venue-btn"><i class="material-icons">library_add</i></a>
+    <div class="col s12">{% trans %}Venue{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a href="#add-venue-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new venue</a>
     </div>
   </div>
   <div id="venue-list"></div>
-  <div id="add-venue-form">
+  <div id="add-venue-form" class="modal modal-fixed-footer">
     <form action="/api/conference/venue/add" method="POST">
-      <input type="hidden" name="conference_id" value="{{ conference.id }}">
+    <input type="hidden" name="conference_id" value="{{ conference.id }}">
+    <div class="modal-content">
       <div class="row">
         <div class="col s{{ leftcol }} label">{% trans %}Venue{% endtrans %}</div>
         <div class="col s{{ rightcol }}">
           <select name="venue_id"></select>
         </div>
       </div>
+    </div>
+    <div class="modal-footer">
       <div class="row">
         <div class="col s12">
           <button id="add-venue-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
             <i class="material-icons right">send</i>
           </button>
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+<div id="tracks" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Tracks{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a id="add-track-btn" href="#add-track-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new track</a>
+    </div>
+  </div>
+  <div class="tracks"></div>
+  <div id="add-track-form" class="modal modal-fixed-footer">
+    <form action="/api/conference/track/add" method="POST">
+      <input type="hidden" name="conference_id" value="{{ conference.id }}">
+      <div class="modal-content">
+        <div class="row">
+          <div class="col s2 label">{% trans %}Room{% endtrans %}</div>
+          <div class="col s10">
+            <select name="room_id"></select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col s12">
+            <button disabled="disabled">{% trans %}Add{% endtrans %}</button>
+          </div>
         </div>
       </div>
     </form>
@@ -76,28 +123,32 @@
 
 <div id="organizers" class="box">
   <div class="row box-header">
-    <div class="col s12">{% trans %}Organizers{% endtrans %}
-      <a href="#" id="add-organizer-btn"><i class="material-icons">library_add</i></a>
-    </div>
+    <div class="col s12">{% trans %}Organizers{% endtrans %}</div>
   </div>
   <div class="row">
-    <div class="col s12 users"></div>
+    <div class="col s12">
+      <a href="#add-organizer-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new organizer</a>
+    </div>
   </div>
-  <div id="add-organizer-form">
+  <div class="users"></div>
+  <div id="add-organizer-form" class="modal modal-fixed-footer>
     <form action="/api/conference/administrator/add" method="POST">
       <input type="hidden" name="conference_id" value="{{ conference.id }}">
-    <div class="row">
-      <div class="col s12">
-        <input type="text" name="autocomplete_user_id">
-        <input type="hidden" name="user_id">
+      <div class="modal-content">
+        <div class="row">
+          <div class="col s12">
+            <input type="text" name="autocomplete_user_id" placeholder="Type a user nickname (e.g. 'uzulla')">
+            <input type="hidden" name="user_id">
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col s12">
-        <button disabled="disabled">{% trans %}Add{% endtrans %}</button>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col s12">
+            <button disabled="disabled">{% trans %}Add{% endtrans %}</button>
+          </div>
+        </div>
       </div>
-    </div>
-
     </form>
   </div>
 </div>
@@ -299,24 +350,30 @@
     });
   }
 
+  var _venues = {};
   function drawVenues(venues) {
     var $c = $("#venue-list");
     $c.empty();
+    _venues = {};
     $(venues).each(function(i, venue) {
+      _venues[venue.id] = venue;
       var id = 'map-' + i;
       $c.append(
         $('<div />').addClass('row').append(
           $('<div />').addClass('col').addClass('s2').append(
-            $('<button />').addClass('delete-venue-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', venue.id).attr('type', 'submit').attr('name', 'action').text("{% trans %}Delete{% endtrans %}")
+            $('<button />').addClass('delete-venue-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', venue.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
+              '{% trans %}Remove{% endtrans %}'
+            )
           )
         ).append(
-          $('<div />').addClass('col').addClass('s2').append(
+          $('<div />').addClass('col').addClass('s3').append(
             $("<a />").attr("href", "/venue/" + venue.id + "/view").text(venue.name)
           ).append(
             $("<div />").text(venue.address)
           )
         ).append(
-          $("<div />").addClass('col').addClass('s8').append(
+          $("<div />").addClass('col').addClass('s7').append(
             $("<div />").attr("id", id).addClass("map")
           )
         )
@@ -334,37 +391,51 @@
         title: venue.name,
       });
     });
+
     $('.delete-venue-btn').click(function(e) {
       var $t = $(e.target);
       var id = $t.attr('data-id');
-      $.ajax({
-        url: '/api/conference/venue/delete',
-        method: 'POST',
-        data: { venue_id: id, conference_id: {{ conference.id | tojson }} },
-        error: function(xhr, status, err) {
-          console.log(err);
-        },
-        success: function(data) {
-          var $m = $('#success-modal');
-          $('.message', $m).text('{% trans %}Successfully deleted venue{% endtrans %}');
-          $m.modal({
-            complete: function() {
-              console.log("delete complete");
-              location.href = '/conference/{{ conference.id }}/view';
-            }
-          });
-          $m.modal('open');
-        }
+      var $m = $('#delete-modal');
+      var v = _venues[id];
+      $('.message', $m).append(
+        $('<p />').text('{% trans %}Are you sure you want to remove the following venue ?{% endtrans %}')
+      ).append(
+        $('<div />').text(v.name)
+      )
+
+      $('.proceed-btn', $m).click(function() {
+        $.ajax({
+          url: '/api/conference/venue/delete',
+          method: 'POST',
+          data: { venue_id: id, conference_id: {{ conference.id | tojson }} },
+          error: function(xhr, status, err) {
+            console.log(err);
+          },
+          success: function(data) {
+            var $m = $('#success-modal');
+            $('.message', $m).text('{% trans %}Successfully deleted venue{% endtrans %}');
+            $m.modal({
+              complete: function() {
+                console.log("delete complete");
+                location.href = '/conference/{{ conference.id }}/view';
+              }
+            });
+            $m.modal('open');
+          }
+        });
+        return true;
       });
+      $m.modal('open')
+
       return false;
     });
   }
 
   function setupVenues() {
-    $("#add-venue-form").hide();
-    $("#add-venue-btn").click(function() {
-      $("#add-venue-form").show("slide");
-      return false;
+    $("#add-venue-form").modal({
+      ready: function() {
+        $('select[name="venue_id"]').mtaerial_select();
+      }
     });
     $("#add-venue-proceed").click(function() {
       var $s = $("select[name='venue_id']", "#venues");
@@ -393,7 +464,7 @@
 
     var $s = $("select[name='venue_id']", "#venues");
     $s.empty();
-    $s.append($('<option />').attr('disabled', 'disabled').text('---'));
+    $s.append($('<option />').text('---'));
     var venues = {{ venues | tojson }};
     $(venues).each(function(i, venue) {
       $s.append(
@@ -403,32 +474,71 @@
     $s.material_select();
   }
 
-  function listOrganizers(data) {
+  function listTracks(data) {
+    var $c = $('.tracks', '#tracks');
+    $(data).each(function(i, track) {
+      $c.append(
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', track.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
+              '{% trans %}Remove{% endtrans %}'
+            )
+          )
+        ).append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $('<a />').attr('href', '/track/' + track.id + '/view').text(track.name)
+          )
+        ).append(
+          $('<div />').addClass('col').addClass('s8').text(track.room_id)
+        )
+      )
+    });
+  }
+
+  function setupTracks() {
+    listTracks({% autoescape false %}{{ conference.tracks or [] | tojson | safe }}{% endautoescape %});
+
+    $('#add-track-btn').click(function() {
+      var $m = $('#add-track-form');
+      var $s = $('select[name="room_id"]', $m);
+      $s.empty();
+      $(_venues).each(function(k, venue) {
+        $(venue.rooms).each(function(i, room) {
+          $s.append(
+            $('<option />').attr('value', room.id).text(room.name)
+          )
+        });
+      });
+      $s.material_select();
+      $m.modal('open');
+    });
+  }
+
+  function drawOrganizers(data) {
     var $c = $('.users', '#organizers');
     $c.empty();
     $(data).each(function(i, user) {
       var user_id = user.id;
       $c.append(
-        $('<div />')
-          .addClass('chip')
-          .append(
-            $('<img />')
-              .attr('src', user.avatar_url)
-          )
-          .append(
-            $('<a />')
-              .attr('href', '/user/' + user.id + '/view')
-              .text(user.nickname)
-          )
-          .append(
-            $('<a />')
-              .attr('href', '#')
-              .append(
-                $('<i />')
-                  .addClass('material-icons')
-                  .text('delete')
-              )
-              .click(function() {
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', user.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
+              '{% trans %}Remove{% endtrans %}'
+            ).click(function() {
+              var $m = $('#delete-modal');
+              $('.message', $m).append(
+                $('<p />').text('{% trans %}Are you sure you want to remove the following administrator ?{% endtrans %}')
+              ).append(
+                $('<div />').addClass('chip').append(
+                  $('<img />').attr('src', user.avatar_url)
+                ).append(
+                  $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+                )
+              );
+              $m.modal('open');
+              $('.proceed-btn', $m).click(function() {
                 $.ajax({
                   url: '/api/conference/administrator/remove',
                   method: 'POST',
@@ -437,16 +547,23 @@
                     'admin_id': user_id
                   }
                 }).done(function(data) {
-                  $.ajax({
-                    url: '/api/conference/administrator/list',
-                    data: { conference_id: {{ conference.id | tojson }} }
-                  }).done(function(data) {
-                    listOrganizers(data);
-                  });
+                  listOrganizers()
+                }).done(function(data) {
+                  listOrganizers();
                 });
-                return false;
-              })
+              });
+              return false;
+            })
           )
+        ).append(
+          $('<div />').addClass('col').addClass('s3').append(
+            $('<div />').addClass('chip').append(
+              $('<img />').attr('src', user.avatar_url)
+            ).append(
+              $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+            )
+          )
+        )
       )
     });
   }
@@ -469,21 +586,25 @@
     });
   }
 
+  function listOrganizers() {
+    $.ajax({
+      url: '/api/conference/administrator/list',
+      data: { conference_id: {{ conference.id | tojson }} },
+      success: drawOgranizers
+    });
+  }
+
   function setupOrganizers() {
 {% if conference.administrators %}
-    listOrganizers({{ conference.administrators | tojson }});
+    drawOrganizers({{ conference.administrators | tojson }});
 {% endif %}
-    $("#add-organizer-form").hide();
+    $("#add-organizer-form").modal();
     $("input[name='autocomplete_user_id']", "#add-organizer-form").devbridgeAutocomplete({
       serviceUrl: "/api/user/incremental",
       onSelect: function(suggestion) {
         $('input[name="user_id"]', '#add-organizer-form').attr('value', suggestion.data);
         $('button', '#add-organizer-form').removeAttr('disabled');
       }
-    });
-    $("#add-organizer-btn").click(function() {
-      $("#add-organizer-form").show("slide");
-      return false;
     });
     $("#add-organizer-form").submit(function(e) {
       var $f = $(e.target);
@@ -497,9 +618,7 @@
         $.ajax({
           url: '/api/conference/administrator/list',
           data: { conference_id: '{{ conference.id | tojson }}' }
-        }).done(function(data) {
-          listOrganizers(data);
-        });
+        }).done(drawOrganizers);
       }).fail(function(xhr, status, err) {
         console.log(err);
       });
@@ -601,6 +720,7 @@
 
   $(document).ready(function() {
     setupVenues();
+    setupTracks();
     setupTimezones();
     setupOrganizers();
     setupDates();
