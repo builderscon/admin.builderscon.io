@@ -1,0 +1,24 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}venue{% endblock %}
+
+{% block main %}
+<div class="row">
+  <div class="col s12">
+    <h2>{% trans %}Venue Created{% endtrans %}</h2>
+  </div>
+</div>
+
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">&nbsp;</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a href="/venue/{{ venue.id }}/view">{% trans %}Back to venue page{% endtrans %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

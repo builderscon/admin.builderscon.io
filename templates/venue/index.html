@@ -1,0 +1,124 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}top{% endblock %}
+
+{% block main %}
+<div id="success-modal" class="modal">
+  <div class="modal-content">
+    <h4>{% trans %}Success{% endtrans %}</h4>
+    <p>{% trans %}Venue has been deleted{% endtrans %}</p>
+  </div>
+</div>
+
+<div id="delete-modal" class="modal modal-fixed-footer bottom-sheet">
+  <div class="modal-content">
+    <h4>{% trans %}Are you sure?{% endtrans %}</h4>
+    <p>{% trans %}You are about to <strong>PERMANENTLY DELETE</strong> venue "<span id="venue-name"></span>"{% endtrans %}</p>
+  </div>
+  <div class="modal-footer">
+    <button id="delete-proceed">Delete</button>
+  </div>
+</div>
+
+<div>
+<div class="row">
+  <div class="col s11">
+    <h2>{% trans %}Venues{% endtrans %}</h2>
+    <a href="/venue/input"><i class="vmiddle material-icons">library_add</i> Create a new venue</a>
+  </div>
+</div>
+<div class="row">
+  <div class="col s12">
+    <div id="venues"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  var venues;
+
+  function loadVenues() {
+    $.ajax({
+      url: "/api/venue/list",
+      success: function(data) {
+        $container = $("#venues");
+        $container.empty();
+
+        $table = $("<table />").addClass("striped");
+        $container.append($table);
+
+        var m = {}
+        $(data).each(function(i, e) {
+          m[e.id] = e;
+          $table.append(
+            $("<tr />").append(
+              $("<td />").text(e.name)
+            )
+            .append(
+              $("<td />").append(
+                $("<a />").attr("href", "/venue/" + e.id + "/view").append(
+                  $("<i />").addClass("material-icons").text("mode_edit")
+                )
+              )
+            )
+            .append(
+              $("<td />").append(
+                $("<a />").attr("href", "#delete-modal").addClass("modal-trigger").append(
+                  $("<i />").attr('data-id', e.id).addClass("material-icons").text("delete")
+                )
+              )
+            )
+          )
+        });
+        applyModal();
+        venues = m;
+      }
+    });
+  }
+
+  function deleteBtnTrigger(e) {
+    var $t = $(e.target);
+    var id = $t.attr('data-id');
+    var v = venues[id];
+    if (v == null) {
+      return false;
+    }
+
+    var $c = $('#delete-modal');
+    var $n = $('#venue-name', $c);
+    $n.empty().append($('<a />').attr('href', '/venue/' + v.id + '/view').text(v.name));
+    $c.modal('open');
+    var $b = $('#delete-proceed', $c);
+    $b.click(function() {
+      $c.modal('close');
+      $.ajax({
+        url: "/api/venue/delete",
+        data: { id: v.id },
+        error: function(xhr, sttatus, err) {
+          var $e = $('.error-text', '#error');
+          $e.text(err);
+        },
+        success: function(data) {
+          $('#success-modal').modal('open');
+          loadVenues();
+        }
+      });
+    });
+    return false;
+  }
+
+  function applyModal() {
+    $(".modal").modal();
+    $('.modal-trigger').click(deleteBtnTrigger)
+  }
+
+  $(document).ready(function() {
+    loadVenues();
+  });
+
+-->
+</script>
+{% endblock %}

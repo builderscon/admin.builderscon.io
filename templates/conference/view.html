@@ -1,0 +1,617 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}conference{% endblock %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="/static/css/materialize.clockpicker.css">
+{% endblock %}
+{% block additional_scripts %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery.devbridge-autocomplete/1.2.26/jquery.autocomplete.min.js"></script>
+<script src="/static/js/materialize.clockpicker.js"></script>
+{% endblock %}
+
+{% block main %}
+
+<div id="success-modal" class="modal">
+  <div class="modal-content">
+    <h4>{% trans %}Success{% endtrans %}</h4>
+    <p class="message"></p>
+  </div>
+</div>
+
+{% set leftcol = 2 -%}
+{%- set rightcol = 12 - leftcol -%}
+<div class="row">
+  <div class="col s12">
+    <h2>{{ conference.title }}</h2>
+  </div>
+</div>
+
+<div id="twitter" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Twitter{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <p><a href="/conference/{{ conference.id }}/twitter/authenticate">{% trans %}Authenticate Twitter Account{% endtrans %}</a></p>
+      <form action="/conference/{{ conference.id }}/twitter/post" method="POST">
+        <div class="input-field">
+          <label for="tweet">Tweet</label>
+          <textarea name="tweet"></textarea>
+        </div>
+        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+          <i class="material-icons right">send</i>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="venues" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Venue{% endtrans %}
+      <a href="#" id="add-venue-btn"><i class="material-icons">library_add</i></a>
+    </div>
+  </div>
+  <div id="venue-list"></div>
+  <div id="add-venue-form">
+    <form action="/api/conference/venue/add" method="POST">
+      <input type="hidden" name="conference_id" value="{{ conference.id }}">
+      <div class="row">
+        <div class="col s{{ leftcol }} label">{% trans %}Venue{% endtrans %}</div>
+        <div class="col s{{ rightcol }}">
+          <select name="venue_id"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <button id="add-venue-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="organizers" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Organizers{% endtrans %}
+      <a href="#" id="add-organizer-btn"><i class="material-icons">library_add</i></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12 users"></div>
+  </div>
+  <div id="add-organizer-form">
+    <form action="/api/conference/administrator/add" method="POST">
+      <input type="hidden" name="conference_id" value="{{ conference.id }}">
+    <div class="row">
+      <div class="col s12">
+        <input type="text" name="autocomplete_user_id">
+        <input type="hidden" name="user_id">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12">
+        <button disabled="disabled">{% trans %}Add{% endtrans %}</button>
+      </div>
+    </div>
+
+    </form>
+  </div>
+</div>
+
+<form action="/conference/{{ conference.id }}/edit" method="POST">
+<div id="basic" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Basic Information{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Conference Series{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <select name="series_id">
+{% for series in conference_series %}
+        <option value="{{ series.id }}">{{ series.title }}</option>
+{% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Timetable Available{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <input type="checkbox" class="filled-in" id="timetable_available-checkbox" name="timetable_available" value="true"{% if conference.timezone_available %} checked="checked"{% endif %}>
+      <label for="timetable_available-checkbox">{% trans %}Yes{% endtrans %}</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Timezone{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+       <select id="timezone-select" name="timezone"></select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
+        <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="basic-en">
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="title" placeholder="{% trans %}Conference Title (English){% endtrans %}" value="{{ conference.title }}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="sub_title" placeholder="{% trans %}Conference Sub Title (English){% endtrans %}" value="{{ conference.sub_title }}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <textarea name="description" placeholder="{% trans %}Description (English){% endtrans %}">{{ conference.description }}</textarea>
+      </div>
+    </div>
+  </div>
+  <div id="basic-ja">
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="title#ja" placeholder="{% trans %}Conference Title (Japanese){% endtrans %}" value="{{ conference.get('title#ja') or '' }}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="sub_title#ja" placeholder="{% trans %}Conference Sub Title (Japanese){% endtrans %}" value="{{ conference.get('sub_title#ja') or '' }}">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <textarea name="description#ja" placeholder="{% trans %}Description (Japanese){% endtrans %}">{{ conference.get('description#ja') or '' }}</textarea>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button id="conference-update">{% trans %}Update{% endtrans %}</button>
+    </div>
+  </div>
+</div>
+</form>
+
+<div id="dates" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Dates{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <table class="bordered">
+      <tbody>
+        <tr>
+          <td class="label">{% trans %}Timezone{% endtrans %}</td>
+          <td>{% if conference.timezone %}
+{{ conference.timezone }}
+{% else %}
+{% trans %}Timezone not set{% endtrans %}
+{% endif %}
+          </td>
+        </tr>
+        <tr>
+          <td class="label">{% trans %}Dates{% endtrans %} <a href="#" id="add-date-btn"><i class="material-icons">library_add</i></a></td>
+          <td>
+            <div class="row">
+              <div class="col s12 dates"></div>
+            </div>
+            <div id="add-date-form">
+              <form action="/api/conference/date/add" method="POST">
+                <input type="hidden" name="conference_id" value="{{ conference.id }}">
+                <table class="striped">
+                <tbody>
+                  <tr>
+                    <td class="label">{% trans %}Date{% endtrans %}</td>
+                    <td><input type="text" name="date" class="date"></td>
+                  </tr>
+                  <tr>
+                    <td class="label">{% trans %}Start Time{% endtrans %}</td>
+                    <td><input type="text" name="start_time" class="time"></td>
+                  </tr>
+                  <tr>
+                    <td class="label">{% trans %}End Time{% endtrans %}</td>
+                    <td><input type="text" name="end_time" class="time"></td>
+                  </tr>
+                </tbody>
+                </table>
+                <button id="add-date-form-btn">{% trans %}Add{% endtrans %}</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="sponsors" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Sponsors{% endtrans %}
+      <a href="#" id="add-sponsor-btn"><i class="material-icons">library_add</i></a>
+    </div>
+  </div>
+  <div class="row sponsors"></div>
+  <div id="add-sponsor-form" class="row">
+    <div class="col s12">
+      <form action="/api/conference/sponsor/add" method="POST">
+      <table>
+      <tbody>
+        <tr>
+          <td>{% trans %}Name{% endtrans %}</td>
+          <td><input type="text" name="name" placeholder="Sponsor Name (English)"></td>
+        </tr>
+        <tr>
+          <td>{% trans %}Name (Japanese){% endtrans %}</td>
+          <td><input type="text" name="name#ja" placeholder="日本語表記"></td>
+        </tr>
+        <tr>
+          <td>{% trans %}URL{% endtrans %}</td>
+          <td><input type="text" name="url" placeholder="http://www.company.com"></td>
+        </tr>
+        <tr>
+          <td>{% trans %}Group Name{% endtrans %}</td>
+          <td><input type="text" name="group_name" placeholder="tier-1"></td>
+        </tr>
+        <tr>
+          <td>{% trans %}Sort Order{% endtrans %}</td>
+          <td><input type="text" name="sort_order"></td>
+        </tr>
+      </tbody>
+      </table>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  function initMap() {
+{%- if conference.get('venues') %}
+    var venues = {{ conference.get('venues') | tojson }};
+    drawVenues(venues);
+{% endif %}
+  }
+
+  function loadVenues() {
+    $.ajax({
+      url: '/api/conference/venue/list',
+      data: { id: {{ conference.id | tojson }} },
+      method: 'GET',
+      success: drawVenues
+    });
+  }
+
+  function drawVenues(venues) {
+    var $c = $("#venue-list");
+    $c.empty();
+    $(venues).each(function(i, venue) {
+      var id = 'map-' + i;
+      $c.append(
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $('<button />').addClass('delete-venue-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', venue.id).attr('type', 'submit').attr('name', 'action').text("{% trans %}Delete{% endtrans %}")
+          )
+        ).append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $("<a />").attr("href", "/venue/" + venue.id + "/view").text(venue.name)
+          ).append(
+            $("<div />").text(venue.address)
+          )
+        ).append(
+          $("<div />").addClass('col').addClass('s8').append(
+            $("<div />").attr("id", id).addClass("map")
+          )
+        )
+      );
+      var e = document.getElementById(id);
+      var latlng = {lat: venue.latitude, lng: venue.longitude };
+      var map = new google.maps.Map(e, {
+        center: latlng,
+        scrollwheel: false,
+        zoom: 14
+      });
+      var marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        title: venue.name,
+      });
+    });
+    $('.delete-venue-btn').click(function(e) {
+      var $t = $(e.target);
+      var id = $t.attr('data-id');
+      $.ajax({
+        url: '/api/conference/venue/delete',
+        method: 'POST',
+        data: { venue_id: id, conference_id: {{ conference.id | tojson }} },
+        error: function(xhr, status, err) {
+          console.log(err);
+        },
+        success: function(data) {
+          var $m = $('#success-modal');
+          $('.message', $m).text('{% trans %}Successfully deleted venue{% endtrans %}');
+          $m.modal({
+            complete: function() {
+              console.log("delete complete");
+              location.href = '/conference/{{ conference.id }}/view';
+            }
+          });
+          $m.modal('open');
+        }
+      });
+      return false;
+    });
+  }
+
+  function setupVenues() {
+    $("#add-venue-form").hide();
+    $("#add-venue-btn").click(function() {
+      $("#add-venue-form").show("slide");
+      return false;
+    });
+    $("#add-venue-proceed").click(function() {
+      var $s = $("select[name='venue_id']", "#venues");
+      $.ajax({
+        method: "POST",
+        url: "/api/conference/venue/add",
+        data: {
+          venue_id: $s.val(),
+          conference_id: {{ conference.id | tojson }}
+        },
+        success: function(data) {
+          var $m = $('#success-modal');
+          $('.message', $m).text('{% trans %}Successfully added venue{% endtrans %}');
+          $m.modal({
+            dismissible: true,
+            complete: function() {
+              console.log("add complete");
+              location.href = '/conference/{{ conference.id }}/view'
+            }
+          });
+          $m.modal('open');
+        }
+      });
+      return false;
+    });
+
+    var $s = $("select[name='venue_id']", "#venues");
+    $s.empty();
+    $s.append($('<option />').attr('disabled', 'disabled').text('---'));
+    var venues = {{ venues | tojson }};
+    $(venues).each(function(i, venue) {
+      $s.append(
+        $("<option />").attr("value", venue.id).text(venue.name)
+      )
+    });
+    $s.material_select();
+  }
+
+  function listOrganizers(data) {
+    var $c = $('.users', '#organizers');
+    $c.empty();
+    $(data).each(function(i, user) {
+      var user_id = user.id;
+      $c.append(
+        $('<div />')
+          .addClass('chip')
+          .append(
+            $('<img />')
+              .attr('src', user.avatar_url)
+          )
+          .append(
+            $('<a />')
+              .attr('href', '/user/' + user.id + '/view')
+              .text(user.nickname)
+          )
+          .append(
+            $('<a />')
+              .attr('href', '#')
+              .append(
+                $('<i />')
+                  .addClass('material-icons')
+                  .text('delete')
+              )
+              .click(function() {
+                $.ajax({
+                  url: '/api/conference/administrator/remove',
+                  method: 'POST',
+                  data: {
+                    'conference_id': {{ conference.id | tojson }}, 
+                    'admin_id': user_id
+                  }
+                }).done(function(data) {
+                  $.ajax({
+                    url: '/api/conference/administrator/list',
+                    data: { conference_id: {{ conference.id | tojson }} }
+                  }).done(function(data) {
+                    listOrganizers(data);
+                  });
+                });
+                return false;
+              })
+          )
+      )
+    });
+  }
+
+  function listDates(data) {
+    var $c = $('.dates', '#dates');
+    $c.empty();
+    var $ul = $('<ul />');
+    $c.append($ul)
+    $(data).each(function(i, dt) {
+      var open_dt = new Date(Date.parse(dt.open));
+      var close_dt = new Date(Date.parse(dt.close));
+      $ul.append(
+        $('<li />').text(
+          open_dt.toLocaleDateString() + " " +
+          open_dt.toLocaleTimeString().substring(0, 5) + " ~ " +
+          close_dt.toLocaleTimeString().substring(0, 5)
+        )
+      );
+    });
+  }
+
+  function setupOrganizers() {
+{% if conference.administrators %}
+    listOrganizers({{ conference.administrators | tojson }});
+{% endif %}
+    $("#add-organizer-form").hide();
+    $("input[name='autocomplete_user_id']", "#add-organizer-form").devbridgeAutocomplete({
+      serviceUrl: "/api/user/incremental",
+      onSelect: function(suggestion) {
+        $('input[name="user_id"]', '#add-organizer-form').attr('value', suggestion.data);
+        $('button', '#add-organizer-form').removeAttr('disabled');
+      }
+    });
+    $("#add-organizer-btn").click(function() {
+      $("#add-organizer-form").show("slide");
+      return false;
+    });
+    $("#add-organizer-form").submit(function(e) {
+      var $f = $(e.target);
+      $.ajax({
+        url: $f.attr("action"),
+        method: $f.attr("method"),
+        data: $f.serialize()
+      }).done(function(msg) {
+        $('#add-organizer-form').hide('slide');
+        $('input[name="autocomplete_user_id"]', '#add-organizer-form').devbridgeAutocomplete().clear();
+        $.ajax({
+          url: '/api/conference/administrator/list',
+          data: { conference_id: '{{ conference.id | tojson }}' }
+        }).done(function(data) {
+          listOrganizers(data);
+        });
+      }).fail(function(xhr, status, err) {
+        console.log(err);
+      });
+      return false;
+    });
+  }
+
+  function setupDates() {
+{% if conference.dates %}
+    listDates({{ conference.dates | tojson }});
+{% endif %}
+    $('#add-date-form').hide();
+    $('input.date', '#add-date-form').pickadate({
+      format: 'yyyy-mm-dd',
+      selectMonths: true,
+      selectYears: 5,
+    });
+    $('input.time', '#add-date-form').pickatime({
+      twelvehour: false
+    });
+    $('#add-date-btn').click(function() {
+      $('#add-date-form').show("slide");
+      return false;
+    });
+    $('#add-date-form-btn').click(function() {
+      var $f = $('form', '#add-date-form');
+      $.ajax({
+        url: $f.attr('action'),
+        method: $f.attr('method'),
+        data: $f.serialize(),
+      }).done(function(msg) {
+        $.ajax({
+          url: '/api/conference/date/list',
+          data: { conference_id: '{{ conference.id | tojson }}' },
+        }).done(function(data) {
+          listDates(data);
+        });
+      }).fail(function(chr, status, err) {
+        console.log(err)
+      });
+      return false;
+    });
+  }
+
+  function listSponsors(data) {
+    var $c = $('.sponsors', '#sponsors');
+    $c.empty();
+    var row;
+    $(data).each(function(i, sponsor) {
+      if (i == 0) {
+        row = $("<div />").addClass("row");
+        $c.append(row);
+      }
+      row.append(
+        $("<div />").addClass("col").addClass("s2").addClass("sponsor")
+          .append(
+            $("<a />")
+              .attr("href", "/conference/{{ conference.id }}/sponsor/" + sponsor.id + "/view")
+              .append(
+                $("<img />").attr("src", sponsor.logo_url1)
+              )
+              .append($("<br />"))
+              .append(sponsor.name)
+          )
+      );
+    });
+  }
+    
+  function setupSponsors() {
+{% if conference.sponsors %}
+    listSponsors({{ conference.sponsors | tojson }});
+{% endif %}
+    $('#add-sponsor-form').hide();
+    $('#add-sponsor-btn').click(function() {
+      $('#add-sponsor-form').show("slide");
+      return false;
+    });
+  }
+
+  function setupTimezones() {
+    var $c = $("#timezone-select");
+    $c.append($("<option />").attr("value", "").text("---"));
+    var timezones = {{ timezones | tojson }};
+    for (i in timezones) {
+      var tz = timezones[i];
+      $c.append(
+        $("<option />").attr("value", tz).text(tz)
+      );
+    }
+    {% if conference.timezone %}$c.val({{ conference.timezone | tojson }});{% endif %}
+    $c.material_select();
+  }
+
+  function setupConferenceSeries() {
+    var $c = $("select[name='series_id']");
+    {% if conference.series_id %}$c.val({{ conference.series_id | tojson }});{% endif %}
+    $c.material_select();
+  }
+
+  $(document).ready(function() {
+    setupVenues();
+    setupTimezones();
+    setupOrganizers();
+    setupDates();
+    setupSponsors();
+    setupConferenceSeries();
+    $('.modal').modal();
+  });
+-->
+</script>
+
+{% if conference.venues |length > 0 %}
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap"></script>
+{% endif %}
+{% endblock %}

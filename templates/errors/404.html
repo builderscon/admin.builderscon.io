@@ -1,0 +1,10 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}error{% endblock %}
+
+{% block main %}
+<div class="row">
+  <div class="col s3 error-label">{% trans %}Error{% endtrans %}</div>
+  <div class="col s9">{{ error }}</div>
+</div>
+{% endblock %}

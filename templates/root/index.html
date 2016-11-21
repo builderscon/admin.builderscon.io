@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}top{% endblock %}
+
+{% block main %}
+<div id="conference-series"></div>
+<div id="conference-pange">
+  <h2>{% trans %}My Conferences{% endtrans %}</h2>
+  <div id="conferences"></div>
+</div>
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  $(document).ready(function() {
+    load_conferences()
+  });
+
+  function load_conferences() {
+    $.ajax({
+      url: "/api/my/conferences",
+      success: function(data) {
+        $container = $("#conferences");
+        $container.empty();
+
+        $table = $("<table />")
+          .addClass("striped")
+        ;
+        $container.append($table);
+
+        $(data).each(function(i, e) {
+          $table.append(
+            $("<tr />")
+              .append(
+                $("<td />")
+                  .append(
+                    $("<a />").attr("href", "https://builderscon.io/" + e.series.slug + "/" + e.slug).text(e.title)
+                  )
+              )
+              .append(
+                $("<td />")
+                  .append(
+                    $("<a />").attr("href", "/conference/" + e.id + "/view")
+                      .append(
+                        $("<i />")
+                          .addClass("material-icons")
+                          .text("mode_edit")
+                      )
+                  )
+              )
+          )
+        });
+      }
+    });
+  }
+-->
+</script>
+{% endblock %}

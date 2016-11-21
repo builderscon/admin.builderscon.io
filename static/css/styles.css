@@ -1,0 +1,112 @@
+#header .inner h1 {
+    float: left;
+    margin: 7px 10px 7px;
+    font-size: 1em;
+}
+
+#header .inner h1 img {
+    height: 50px;
+    width: auto;
+}
+
+#header #menu *:first-child {
+    margin-left: 10px;
+}
+
+#error .error-label {
+    font-weight: bold;
+    font-size: 1.5em;
+    color: #900;
+}
+
+#contents {
+    clear: both;
+    padding: 1em;
+}
+
+.login-icon img {
+    height: auto;
+    width: 60px;
+}
+
+.login-link a {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 2em;
+}
+
+div.box {
+  border: 1px solid #888;
+  border-radius: 5px;
+  margin-bottom: 1em;
+}
+
+div.box .box-header {
+  font-weight: bold;
+  font-size: 1.5em;
+  background-color: #a99;
+}
+
+div.cols {
+  padding-left: 1em;
+}
+
+.label {
+  font-weight: bold;
+  width: 200px;
+}
+
+#conference textarea[name="tweet"] {
+  height: 5em;
+  width: 90%;
+}
+
+#conference #venues .name {
+  vertical-align: top;
+  width: 200px;
+}
+
+#conference #venues .name a {
+  font-weight: bold;
+}
+
+#conference #venues .map {
+  height: 200px;
+}
+
+#conference #sponsors .sponsor {
+  text-align: center;
+  margin-bottom: 1em;
+}
+#conference #sponsors .sponsor img {
+  border: 1px solid #999;
+  width: 100%;
+  height: auto;
+}
+
+.vmiddle {
+  vertical-align: middle;
+}
+
+#add-venue-btn > i,
+#add-organizer-btn > i,
+#add-sponsor-btn > i {
+  font-size: 90%;
+  padding: 2px;
+  border: 1px solid #888;
+  border-radius: 5px;
+  background-color: #fff;
+  vertical-align: middle;
+}
+
+div.chip > a > i,
+td.label > a > i {
+  vertical-align: middle;
+}
+
+.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
+.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #F0F0F0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
+.autocomplete-group { padding: 2px 5px; }
+.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
