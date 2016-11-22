@@ -20,6 +20,12 @@
     <button class="proceed-btn btn waves-effect waves-light" type="submit" name="action">Submit</button>
   </div>
 </div>
+<div id="message-modal" class="modal">
+  <div class="modal-content">
+    <h4 class="title"></h4>
+    <p class="message"></p>
+  </div>
+</div>
 <div id="success-modal" class="modal">
   <div class="modal-content">
     <h4>{% trans %}Success{% endtrans %}</h4>
@@ -100,20 +106,50 @@
   </div>
   <div class="tracks"></div>
   <div id="add-track-form" class="modal modal-fixed-footer">
-    <form action="/api/conference/track/add" method="POST">
+    <form action="/api/track/create" method="POST">
       <input type="hidden" name="conference_id" value="{{ conference.id }}">
       <div class="modal-content">
+        <div class="row">
+          <div class="col s12">
+            <ul class="tabs">
+              <li class="tab col s3"><a href="#track-basic-en">{% trans %}English{% endtrans %}</a></li>
+              <li class="tab col s3"><a href="#track-basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="track-basic-en">
+          <div class="row">
+            <div class="col s2 label">{% trans %}Name (English){% endtrans %}</div>
+            <div class="col s10">
+              <input type="text" name="name" placeholder="{% trans %}Name (English){% endtrans %}" />
+            </div>
+          </div>
+        </div>
+        <div id="track-basic-ja">
+          <div class="row">
+            <div class="col s2 label">{% trans %}Name (Japanese){% endtrans %}</div>
+            <div class="col s10">
+              <input type="text" name="name#ja" placeholder="{% trans %}Name (Japanese){% endtrans %}" />
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col s2 label">{% trans %}Room{% endtrans %}</div>
           <div class="col s10">
             <select name="room_id"></select>
           </div>
         </div>
+        <div class="row">
+          <div class="col s2 label">{% trans %}Sort Order{% endtrans %}</div>
+          <div class="col s10">
+            <input type="text" name="sort_order" placeholder="0-99, ascending order" />
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <div class="row">
           <div class="col s12">
-            <button disabled="disabled">{% trans %}Add{% endtrans %}</button>
+            <button id="add-track-proceed" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add Track{% endtrans %}</button>
           </div>
         </div>
       </div>
@@ -145,7 +181,7 @@
       <div class="modal-footer">
         <div class="row">
           <div class="col s12">
-            <button disabled="disabled">{% trans %}Add{% endtrans %}</button>
+            <button id="add-organizer-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
           </div>
         </div>
       </div>
@@ -334,11 +370,17 @@
 {% block embedded_scripts %}
 <script type="text/javascript">
 <!--
+  var initialVenues = {% autoescape false %}{{ (conference.get('venues') or []) | tojson }}{% endautoescape %};
+
   function initMap() {
-{%- if conference.get('venues') %}
-    var venues = {{ conference.get('venues') | tojson }};
-    drawVenues(venues);
-{% endif %}
+    drawVenues(initialVenues);
+  }
+
+  function errorModal(err) {
+    var $m = $('#message-modal');
+    $('.title', $m).text('{% trans %}Error{% endtrans %}');
+    $('.message', $m).text(err);
+    $m.modal('open');
   }
 
   function loadVenues() {
@@ -346,17 +388,35 @@
       url: '/api/conference/venue/list',
       data: { id: {{ conference.id | tojson }} },
       method: 'GET',
-      success: drawVenues
+      success: function(data) {
+        registerVenues(data);
+        drawVenues(data);
+      }
     });
   }
 
   var _venues = {};
+  var _rooms = {};
+  function registerVenues(venues) {
+    console.log("registerVenues");
+    _venues = {};
+    _rooms = {};
+    $.each(venues, function(i, venue) {
+      console.log("register venue " + venue.id)
+      _venues[venue.id] = venue;
+      $.each(venue.rooms, function(i, room) {
+      console.log("register room " + room.id)
+        _rooms[room.id] = room
+      });
+    });
+    console.log(_venues);
+    console.log(_rooms);
+  }
+
   function drawVenues(venues) {
     var $c = $("#venue-list");
     $c.empty();
-    _venues = {};
-    $(venues).each(function(i, venue) {
-      _venues[venue.id] = venue;
+    $.each(venues, function(i, venue) {
       var id = 'map-' + i;
       $c.append(
         $('<div />').addClass('row').append(
@@ -490,20 +550,22 @@
             $('<a />').attr('href', '/track/' + track.id + '/view').text(track.name)
           )
         ).append(
-          $('<div />').addClass('col').addClass('s8').text(track.room_id)
+          $('<div />').addClass('col').addClass('s8').text(_rooms[track.room_id].name)
         )
       )
     });
   }
 
   function setupTracks() {
-    listTracks({% autoescape false %}{{ conference.tracks or [] | tojson | safe }}{% endautoescape %});
+{% if conference.tracks %}
+    listTracks({% autoescape false %}{{ conference.tracks | tojson | safe }}{% endautoescape %});
+{% endif %}
 
     $('#add-track-btn').click(function() {
       var $m = $('#add-track-form');
       var $s = $('select[name="room_id"]', $m);
       $s.empty();
-      $(_venues).each(function(k, venue) {
+      $.each(_venues, function(k, venue) {
         $(venue.rooms).each(function(i, room) {
           $s.append(
             $('<option />').attr('value', room.id).text(room.name)
@@ -511,7 +573,36 @@
         });
       });
       $s.material_select();
+
       $m.modal('open');
+    });
+    $('#add-track-proceed').click(function() {
+      var $m = $('#add-track-form');
+      var $f = $('form', $m);
+      $.ajax({
+        url: $f.attr('action'),
+        method: $f.attr('method'),
+        data: $f.serialize(),
+        error: function(xhr, status, err) {
+          errorModal(err);
+        },
+        success: function(data) {
+          if (data.error) {
+            errorModal('{% trans %}Failed to create new track{% endtrans %}: ' + data.error)
+            return
+          }
+          var $m = $('#message-modal');
+          $('.title', $m).text('{% trans %}Success{% endtrans %}');
+          $('.message', $m).text('{% trans %}Successfully created new track{% endtrans %}');
+          $m.modal({
+            complete: function() {
+              location.href = '/conference/{{ conference.id }}/view';
+            }
+          });
+          $m.modal('open')
+        }
+      });
+      return false;
     });
   }
 
@@ -719,6 +810,7 @@
   }
 
   $(document).ready(function() {
+    registerVenues(initialVenues);
     setupVenues();
     setupTracks();
     setupTimezones();

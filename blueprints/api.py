@@ -200,4 +200,36 @@ def delete_conference_venue():
         "error": app.api.last_error()
     })
 
+@page.route('/api/track/create', methods=['POST'])
+@require_login
+def create_track():
+    ok = app.api.create_track(
+        conference_id=flask.request.values.get('conference_id'),
+        room_id=flask.request.values.get('room_id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": app.api.last_error()
+    })
+
+@page.route('/api/track/delete', methods=['POST'])
+@require_login
+def delete_track():
+    ok = app.api.delete_track(
+        id=flask.request.values.get('id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": app.api.last_error()
+    })
 
