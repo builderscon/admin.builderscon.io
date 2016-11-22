@@ -23,7 +23,8 @@ class Config(object):
         o = self.cfg.get(name)
         if o is None:
             if create:
-                self.cfg[name] = {}
+                o = {}
+                self.cfg[name] = o
             else:
                 raise Exception("config section %s is missing" % (name))
         return o
