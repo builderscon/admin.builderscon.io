@@ -15,10 +15,11 @@ class Config(object):
         self.populate_from_env('OCTAV_CLIENT_DEBUG', 'OCTAV', 'debug')
         self.populate_from_env('OCTAV_CLIENT_KEY', 'OCTAV', 'key')
         self.populate_from_env('OCTAV_CLIENT_SECRET', 'OCTAV', 'secret')
+        self.populate_from_env('ADMINWEB_FLASK_SECRET', 'FLASK', 'secret')
         for t in ['GITHUB', 'FACEBOOK', 'TWITTER']:
             self.populate_from_env('ADMINWEB_%s_CLIENT_ID' % t, t, 'client_id')
             self.populate_from_env('ADMINWEB_%s_SECRET' % t, t, 'client_secret')
- 
+
         for t in ['host', 'port', 'db']:
             self.populate_from_env('ADMINWEB_REDIS_%s' % t.upper(), 'REDIS', t)
 
