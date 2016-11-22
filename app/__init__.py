@@ -10,6 +10,7 @@ import requestlogger
 import sys
 
 assert hooks
+assert filters
 
 api = admin.api
 app = requestlogger.WSGILogger(

@@ -63,10 +63,10 @@ def with_conference(cb, lang='en'):
 def with_conference_list(cb, **args):
     def _load_conference_list(cb, **args):
         if 'lang' not in args:
-            args[lang] = flask.g.lang
+            args['lang'] = flask.g.lang
 
         conferences = admin.api.list_conference(**args)
-        if not serieses:
+        if not conferences:
             return flask.abort(404)
         flask.g.stash['conferences'] = conferences
         return cb()
