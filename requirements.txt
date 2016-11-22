@@ -1,0 +1,13 @@
+certifi
+flask
+flask_babel
+flask_oauth
+flask_session
+jinja2
+iso8601
+pytz
+redis
+urllib3
+wsgi-request-logger
+werkzeug
+
