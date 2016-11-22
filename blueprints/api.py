@@ -206,6 +206,7 @@ def create_track():
     ok = app.api.create_track(
         conference_id=flask.request.values.get('conference_id'),
         room_id=flask.request.values.get('room_id'),
+        name=flask.request.values.get('name'),
         user_id=flask.g.stash.get('user').get('id')
     )
     if ok:

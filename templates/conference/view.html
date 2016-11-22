@@ -543,7 +543,40 @@
             $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', track.id).attr('type', 'submit').attr('name', 'action').append(
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
               '{% trans %}Remove{% endtrans %}'
-            )
+            ).click(function() {
+              var $m = $('#delete-modal');
+              $('.message', $m).append(
+                $('<p />').text('{% trans %}Are you sure you want to remove the following track ?{% endtrans %}')
+              ).append(
+                $('<div />').append(track.name + ' ' + _rooms[track.room_id].name)
+              );
+              $m.modal('open');
+              $('.proceed-btn', $m).click(function() {
+                $.ajax({
+                  url: '/api/track/delete',
+                  method: 'POST',
+                  data: { 'id': track.id }
+                }).fail(function(xhr, status, err) {
+                  errorModal(err);
+                }).done(function(data) {
+                  if (data.error) {
+                    errorModal(data.error);
+                    return
+                  }
+                  $m.modal('close');
+                  $m = $('#message-modal');
+                  $('.title', $m).text('{% trans %}Success{% endtrans %}');
+                  $('.message', $m).text('{% trans %}Successfully deleted track{% endtrans %}');
+                  $m.modal({
+                    complete: function() {
+                      location.href = '/conference/{{ conference.id }}/view';
+                    }
+                  });
+                  $m.modal('open');
+                });
+              });
+              return false;
+            })
           )
         ).append(
           $('<div />').addClass('col').addClass('s2').append(
