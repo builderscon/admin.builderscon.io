@@ -25,7 +25,7 @@ def initialize():
     cfg = config.Config(config_file)
 
     api = octav.Octav(**cfg.section('OCTAV'))
-    app.secret_key = cfg.section('FLASK').get('secret_key')
+    app.secret_key = cfg.section('FLASK').get('secret')
     app.base_url = cfg.section('FLASK').get('base_url', 'https://admin.builderscon.io')
     app.session_interface = sessionmgr.build(os.getenv('SESSION_BACKEND', 'Redis'), cfg)
 
