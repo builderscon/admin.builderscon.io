@@ -1,5 +1,5 @@
 """OCTAV Client Library"""
-"""DO NOT EDIT: This file was generated from ../spec/v1/api.json on Tue Nov 22 10:03:40 2016"""
+"""DO NOT EDIT: This file was generated from ../spec/v1/api.json on Tue Nov 22 14:39:45 2016"""
 
 import certifi
 import json
@@ -2805,7 +2805,7 @@ class Octav(object):
         self.error = repr(e)
         return None
 
-  def create_track (self, conference_id, room_id, user_id):
+  def create_track (self, conference_id, room_id, user_id, name=None, **args):
     try:
         payload = {}
         hdrs = {}
@@ -2820,10 +2820,17 @@ class Octav(object):
         payload['user_id'] = user_id
         if conference_id is not None:
             payload['conference_id'] = conference_id
+        if name is not None:
+            payload['name'] = name
         if room_id is not None:
             payload['room_id'] = room_id
         if user_id is not None:
             payload['user_id'] = user_id
+        patterns = [re.compile('name#[a-z]+')]
+        for key in args:
+            for p in patterns:
+                if p.match(key):
+                    payload[key] = args[key]
         uri = '%s/v1/track/create' % self.endpoint
         hdrs = urllib3.util.make_headers(
             basic_auth='%s:%s' % (self.key, self.secret),
