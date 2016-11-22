@@ -20,7 +20,7 @@ class Config(object):
             self.populate_from_env('ADMINWEB_%s_SECRET' % t, t, 'client_secret')
  
         for t in ['host', 'port', 'db']:
-            self.populate_from_env('ADMINWEB_REDIS_%s' % t.upper(), t, t)
+            self.populate_from_env('ADMINWEB_REDIS_%s' % t.upper(), 'REDIS', t)
 
     def section(self, name, create=False):
         o = self.cfg.get(name)
