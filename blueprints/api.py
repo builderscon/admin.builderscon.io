@@ -42,7 +42,7 @@ def venue_delete():
         id=flask.request.values.get('id'),
         user_id=flask.g.stash.get('user').get('id')
     )
-    return flask.jsonify({"message": "success"})
+    return _stock_response(ok, app.api)
 
 @page.route('/api/venue/room/add', methods=['POST'])
 @require_login
