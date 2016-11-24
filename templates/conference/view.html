@@ -167,7 +167,7 @@
     </div>
   </div>
   <div class="users"></div>
-  <div id="add-organizer-form" class="modal modal-fixed-footer>
+  <div id="add-organizer-form" class="modal modal-fixed-footer">
     <form action="/api/conference/administrator/add" method="POST">
       <input type="hidden" name="conference_id" value="{{ conference.id }}">
       <div class="modal-content">
@@ -841,8 +841,10 @@
                   }
                 }).done(function(data) {
                   listOrganizers()
-                }).done(function(data) {
-                  listOrganizers();
+                }).fail(function(xhr, status, err) {
+                  errorModal(err);
+                }).always(function() {
+                  $m.modal('close');
                 });
               });
               return false;
@@ -892,35 +894,33 @@
     $.ajax({
       url: '/api/conference/administrator/list',
       data: { conference_id: {{ conference.id | tojson }} },
-      success: drawOgranizers
+      success: drawOrganizers
     });
   }
 
   function setupOrganizers() {
     drawOrganizers(conference.administrators);
-    $("#add-organizer-form").modal();
-    $("input[name='autocomplete_user_id']", "#add-organizer-form").devbridgeAutocomplete({
+    var $m = $("#add-organizer-form");
+    $m.modal();
+    $("input[name='autocomplete_user_id']", $m).devbridgeAutocomplete({
       serviceUrl: "/api/user/incremental",
       onSelect: function(suggestion) {
-        $('input[name="user_id"]', '#add-organizer-form').attr('value', suggestion.data);
-        $('button', '#add-organizer-form').removeAttr('disabled');
+        $('input[name="user_id"]', $m).attr('value', suggestion.data);
+        $('button', $m).removeAttr('disabled');
       }
     });
-    $("#add-organizer-form").submit(function(e) {
-      var $f = $(e.target);
+    var $f = $('form', $m);
+    $f.submit(function(e) {
       $.ajax({
         url: $f.attr("action"),
         method: $f.attr("method"),
         data: $f.serialize()
       }).done(function(msg) {
-        $('#add-organizer-form').hide('slide');
-        $('input[name="autocomplete_user_id"]', '#add-organizer-form').devbridgeAutocomplete().clear();
-        $.ajax({
-          url: '/api/conference/administrator/list',
-          data: { conference_id: '{{ conference.id | tojson }}' }
-        }).done(drawOrganizers);
+        listOrganizers();
       }).fail(function(xhr, status, err) {
-        console.log(err);
+        errorModal(err);
+      }).always(function() {
+        $m.modal('close');
       });
       return false;
     });
@@ -1069,7 +1069,6 @@
       });
       $.each(keys, function(i, key) {
         $('*[name="' + key + '"]').each(function(i, c) {
-          console.log("setting " + key);
           $(c).val(conference[key]);
         });
       });
