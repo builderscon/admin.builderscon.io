@@ -83,6 +83,19 @@ def with_conference_series_list(cb):
 
     return functools.update_wrapper(functools.partial(_load_conference_series_list, cb), cb)
 
+def with_track(cb, lang=None):
+    def _load_track(cb, id, lang):
+        if lang is None:
+            lang = flask.g.lang
+        track = admin.api.lookup_track(id=id, lang=lang)
+        if not track:
+            return flask.abort(404)
+        flask.g.stash['track_id'] = id
+        flask.g.stash['track'] = track
+        return cb()
+
+    return functools.update_wrapper(functools.partial(_load_track, cb, lang=lang), cb)
+
 def with_venue(cb, lang=None):
     def _load_venue(cb, id, lang):
         if lang is None:

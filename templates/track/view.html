@@ -1,0 +1,98 @@
+{% extends 'layouts/base.html' %}
+
+{% block main %}
+<form action="/track/{{ track.id }}/edit" method="POST">
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Basic{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s2 label">{% trans %}Conference{% endtrans %}</div>
+    <div class="col s10"><a href="/conference/{{ conference.id }}/view">{{ conference.title }}</a></div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
+        <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="basic-en">
+    <div class="row">
+      <div class="col s2 label">{% trans %}Name (English){% endtrans %}</div>
+      <div class="col s10">
+        <input type="text" name="name">
+      </div>
+    </div>
+  </div>
+  <div id="basic-ja">
+    <div class="row">
+      <div class="col s2 label">{% trans %}Name (Japanese){% endtrans %}</div>
+      <div class="col s10">
+        <input type="text" name="name#ja">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s2 label">{% trans %}Room{% endtrans %}</div>
+    <div class="col s10">
+      <select name="room_id"></select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s2 label">{% trans %}Sort Order{% endtrans %}</div>
+    <div class="col s10">
+      <input type="text" name="sort_order" placeholder="0-99">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+        <i class="material-icons right">send</i>
+      </button>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  var track = {% autoescape false %}{{ track | tojson }}{% endautoescape %};
+  var conference = {% autoescape false %}{{ conference | tojson }}{% endautoescape %};
+
+  function setupRooms() {
+    var $c = $('select[name="room_id"]');
+    $c.append($('<option />').text('---'));
+    $.each(conference.venues, function(i, venue) {
+      $.each(venue.rooms, function(j, room) {
+        $c.append(
+          $('<option />').attr('value', room.id).text(room.name)
+        )
+      });
+    });
+    $c.val(track.room_id);
+    $c.material_select();
+  }
+
+  $(document).ready(function() {
+    setupRooms();
+    $.each(['name', 'sort_order'], function(n, f) {
+      var keys = [f];
+      $.each(['ja'], function(i, l) {
+        keys.push(f + '#' + l)
+      });
+      $.each(keys, function(i, key) {
+        console.log("checking " + key);
+        $('input[name="' + key + '"]').each(function(j, input) {
+          console.log("setting " + key);
+          $(input).val(track[key]);
+        });
+      });
+    });
+  });
+-->
+</script>
+{% endblock %}

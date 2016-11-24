@@ -1,5 +1,5 @@
 """OCTAV Client Library"""
-"""DO NOT EDIT: This file was generated from ../spec/v1/api.json on Tue Nov 22 14:39:45 2016"""
+"""DO NOT EDIT: This file was generated from ../spec/v1/api.json on Thu Nov 24 15:46:01 2016"""
 
 import certifi
 import json
@@ -2805,7 +2805,7 @@ class Octav(object):
         self.error = repr(e)
         return None
 
-  def create_track (self, conference_id, room_id, user_id, name=None, **args):
+  def create_track (self, conference_id, room_id, user_id, name=None, sort_order=None, **args):
     try:
         payload = {}
         hdrs = {}
@@ -2824,6 +2824,8 @@ class Octav(object):
             payload['name'] = name
         if room_id is not None:
             payload['room_id'] = room_id
+        if sort_order is not None:
+            payload['sort_order'] = sort_order
         if user_id is not None:
             payload['user_id'] = user_id
         patterns = [re.compile('name#[a-z]+')]
@@ -2832,6 +2834,52 @@ class Octav(object):
                 if p.match(key):
                     payload[key] = args[key]
         uri = '%s/v1/track/create' % self.endpoint
+        hdrs = urllib3.util.make_headers(
+            basic_auth='%s:%s' % (self.key, self.secret),
+        )
+        if self.debug:
+            print('POST %s' % uri)
+        hdrs['Content-Type']= 'application/json'
+        res = self.http.request('POST', uri, headers=hdrs, body=json.dumps(payload))
+        if self.debug:
+            print(res)
+        self.res = res
+        if res.status != 200:
+            self.extract_error(res)
+            return None
+        return True
+    except BaseException as e:
+        if self.debug:
+            print("error during http access: " + repr(e))
+        self.error = repr(e)
+        return None
+
+  def update_track (self, id, user_id, name=None, room_id=None, sort_order=None, **args):
+    try:
+        payload = {}
+        hdrs = {}
+        if id is None:
+            raise MissingRequiredArgument('property id must be provided')
+        payload['id'] = id
+        if user_id is None:
+            raise MissingRequiredArgument('property user_id must be provided')
+        payload['user_id'] = user_id
+        if id is not None:
+            payload['id'] = id
+        if name is not None:
+            payload['name'] = name
+        if room_id is not None:
+            payload['room_id'] = room_id
+        if sort_order is not None:
+            payload['sort_order'] = sort_order
+        if user_id is not None:
+            payload['user_id'] = user_id
+        patterns = [re.compile('name#[a-z]+')]
+        for key in args:
+            for p in patterns:
+                if p.match(key):
+                    payload[key] = args[key]
+        uri = '%s/v1/track/update' % self.endpoint
         hdrs = urllib3.util.make_headers(
             basic_auth='%s:%s' % (self.key, self.secret),
         )
@@ -2881,6 +2929,35 @@ class Octav(object):
             self.extract_error(res)
             return None
         return True
+    except BaseException as e:
+        if self.debug:
+            print("error during http access: " + repr(e))
+        self.error = repr(e)
+        return None
+
+  def lookup_track (self, id, lang=None):
+    try:
+        payload = {}
+        hdrs = {}
+        if id is None:
+            raise MissingRequiredArgument('property id must be provided')
+        payload['id'] = id
+        if id is not None:
+            payload['id'] = id
+        if lang is not None:
+            payload['lang'] = lang
+        uri = '%s/v1/track/lookup' % self.endpoint
+        qs = urlencode(payload, True)
+        if self.debug:
+            print('GET %s?%s' % (uri, qs))
+        res = self.http.request('GET', '%s?%s' % (uri, qs), headers=hdrs)
+        if self.debug:
+            print(res)
+        self.res = res
+        if res.status != 200:
+            self.extract_error(res)
+            return None
+        return json.loads(res.data)
     except BaseException as e:
         if self.debug:
             print("error during http access: " + repr(e))
