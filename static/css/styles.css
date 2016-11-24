@@ -104,6 +104,18 @@ td.label > a > i {
   vertical-align: middle;
 }
 
+#basic textarea {
+  margin: 2em;
+  width: 80%;
+  height: 10em;
+}
+
+#components .collapsible-body textarea {
+  margin: 2em;
+  width: 80%;
+  height: 10em;
+}
+
 .autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
 .autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; }
 .autocomplete-selected { background: #F0F0F0; }

@@ -229,19 +229,19 @@
     <div class="row">
       <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
       <div class="col s{{ rightcol }}">
-        <input type="text" name="title" placeholder="{% trans %}Conference Title (English){% endtrans %}" value="{{ conference.title }}">
+        <input type="text" name="title" placeholder="{% trans %}Conference Title (English){% endtrans %}">
       </div>
     </div>
     <div class="row">
       <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
       <div class="col s{{ rightcol }}">
-        <input type="text" name="sub_title" placeholder="{% trans %}Conference Sub Title (English){% endtrans %}" value="{{ conference.sub_title }}">
+        <input type="text" name="sub_title" placeholder="{% trans %}Conference Sub Title (English){% endtrans %}">
       </div>
     </div>
     <div class="row">
       <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
       <div class="col s{{ rightcol }}">
-        <textarea name="description" placeholder="{% trans %}Description (English){% endtrans %}">{{ conference.description }}</textarea>
+        <textarea name="description" placeholder="{% trans %}Description (English){% endtrans %}"></textarea>
       </div>
     </div>
   </div>
@@ -249,25 +249,106 @@
     <div class="row">
       <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
       <div class="col s{{ rightcol }}">
-        <input type="text" name="title#ja" placeholder="{% trans %}Conference Title (Japanese){% endtrans %}" value="{{ conference.get('title#ja') or '' }}">
+        <input type="text" name="title#ja" placeholder="{% trans %}Conference Title (Japanese){% endtrans %}">
       </div>
     </div>
     <div class="row">
       <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
       <div class="col s{{ rightcol }}">
-        <input type="text" name="sub_title#ja" placeholder="{% trans %}Conference Sub Title (Japanese){% endtrans %}" value="{{ conference.get('sub_title#ja') or '' }}">
+        <input type="text" name="sub_title#ja" placeholder="{% trans %}Conference Sub Title (Japanese){% endtrans %}">
       </div>
     </div>
     <div class="row">
       <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
       <div class="col s{{ rightcol }}">
-        <textarea name="description#ja" placeholder="{% trans %}Description (Japanese){% endtrans %}">{{ conference.get('description#ja') or '' }}</textarea>
+        <textarea name="description#ja" placeholder="{% trans %}Description (Japanese){% endtrans %}"></textarea>
       </div>
     </div>
   </div>
   <div class="row">
     <div class="col s12">
-      <button id="conference-update">{% trans %}Update{% endtrans %}</button>
+      <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Update{% endtrans %}</button>
+    </div>
+  </div>
+</div>
+</form>
+
+<form action="/conference/{{ conference.id }}/edit" method="POST">
+<div id="components" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Text Components{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#components-en">{% trans %}English{% endtrans %}</a></li>
+        <li class="tab col s3"><a href="#components-ja">{% trans %}Japanese{% endtrans %}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="row" id="components-en">
+    <div class="col s12">
+      <ul class="collapsible" data-collapsible="expandable">
+        <li>
+          <div class="collapsible-header active">{% trans %}Contact Information (English){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="contact_information"></textarea>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header">{% trans %}CFP Lead Text (English){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="cfp_lead_text"></textarea>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header">{% trans %}CFP Pre-Submit Instructions (English){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="cfp_pre_submit_instructions"></textarea>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header">{% trans %}CFP Post-Submit Instructions (English){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="cfp_post_submit_instructions"></textarea>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row" id="components-ja">
+    <div class="col s12">
+      <ul class="collapsible" data-collapsible="expandable">
+        <li>
+          <div class="collapsible-header active">{% trans %}Contact Information (Japanese){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="contact_information#ja"></textarea>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header">{% trans %}CFP Lead Text (Japanese){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="cfp_lead_text#ja"></textarea>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header">{% trans %}CFP Pre-Submit Instructions (Japanese){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="cfp_pre_submit_instructions#ja"></textarea>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header">{% trans %}CFP Post-Submit Instructions (Japanese){% endtrans %}</div>
+          <div class="collapsible-body">
+            <textarea name="cfp_post_submit_instructions#ja"></textarea>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button id="components-update" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Update{% endtrans %}</button>
     </div>
   </div>
 </div>
@@ -315,7 +396,7 @@
                   </tr>
                 </tbody>
                 </table>
-                <button id="add-date-form-btn">{% trans %}Add{% endtrans %}</button>
+                <button id="add-date-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
               </form>
             </div>
           </td>
@@ -370,10 +451,19 @@
 {% block embedded_scripts %}
 <script type="text/javascript">
 <!--
-  var initialVenues = {% autoescape false %}{{ (conference.get('venues') or []) | tojson }}{% endautoescape %};
+  var conference = {% autoescape false %}{{ conference | tojson }}{% endautoescape %};
+  if (! conference.venues) {
+    conference.venues = [];
+  }
+  if (! conference.venues) {
+    conference.tracks = [];
+  }
+  if (! conference.administrators) {
+    conference.administrators = [];
+  }
 
   function initMap() {
-    drawVenues(initialVenues);
+    drawVenues(conference.venues);
   }
 
   function errorModal(err) {
@@ -590,9 +680,7 @@
   }
 
   function setupTracks() {
-{% if conference.tracks %}
-    listTracks({% autoescape false %}{{ conference.tracks | tojson | safe }}{% endautoescape %});
-{% endif %}
+    listTracks(conference.tracks);
 
     $('#add-track-btn').click(function() {
       var $m = $('#add-track-form');
@@ -719,9 +807,7 @@
   }
 
   function setupOrganizers() {
-{% if conference.administrators %}
-    drawOrganizers({{ conference.administrators | tojson }});
-{% endif %}
+    drawOrganizers(conference.administrators);
     $("#add-organizer-form").modal();
     $("input[name='autocomplete_user_id']", "#add-organizer-form").devbridgeAutocomplete({
       serviceUrl: "/api/user/incremental",
@@ -751,9 +837,8 @@
   }
 
   function setupDates() {
-{% if conference.dates %}
-    listDates({{ conference.dates | tojson }});
-{% endif %}
+    listDates(conference.dates);
+
     $('#add-date-form').hide();
     $('input.date', '#add-date-form').pickadate({
       format: 'yyyy-mm-dd',
@@ -812,9 +897,7 @@
   }
     
   function setupSponsors() {
-{% if conference.sponsors %}
-    listSponsors({{ conference.sponsors | tojson }});
-{% endif %}
+    listSponsors(conference.sponsors);
     $('#add-sponsor-form').hide();
     $('#add-sponsor-btn').click(function() {
       $('#add-sponsor-form').show("slide");
@@ -832,18 +915,22 @@
         $("<option />").attr("value", tz).text(tz)
       );
     }
-    {% if conference.timezone %}$c.val({{ conference.timezone | tojson }});{% endif %}
+    if (conference.timezone) {
+      $c.val(conference.timezone);
+    }
     $c.material_select();
   }
 
   function setupConferenceSeries() {
     var $c = $("select[name='series_id']");
-    {% if conference.series_id %}$c.val({{ conference.series_id | tojson }});{% endif %}
+    if (conference.series_id) {
+      $c.val(conference.series_id);
+    }
     $c.material_select();
   }
 
   $(document).ready(function() {
-    registerVenues(initialVenues);
+    registerVenues(conference.venues);
     setupVenues();
     setupTracks();
     setupTimezones();
@@ -852,6 +939,19 @@
     setupSponsors();
     setupConferenceSeries();
     $('.modal').modal();
+
+    for (k in conference) {
+      var keys = [k];
+      $.each(["ja"], function(i, l) {
+        keys.push(k + '#' + l);
+      });
+      $.each(keys, function(i, key) {
+        $('*[name="' + key + '"]').each(function(i, c) {
+          console.log("setting " + key);
+          $(c).val(conference[key]);
+        });
+      });
+    }
   });
 -->
 </script>

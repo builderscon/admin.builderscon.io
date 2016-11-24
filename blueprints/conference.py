@@ -7,18 +7,26 @@ import uuid
 
 page = flask.Blueprint('conference', __name__)
 COLUMNS = [
-    'title',
-    'sub_title',
-    'description',
-    'title#ja',
-    'sub_title#ja',
-    'description#ja',
-    'status',
-    'series_id',
+    'cfp_lead_text',
+    'cfp_lead_text#ja',
+    'cfp_pre_submit_instructions',
+    'cfp_pre_submit_instructions#ja',
+    'cfp_post_submit_instructions',
+    'cfp_post_submit_instructions#ja',
+    'contact_information',
+    'contact_information#ja',
     'cover_url',
+    'description',
+    'description#ja',
+    'series_id',
     'slug',
+    'status',
+    'sub_title',
+    'sub_title#ja',
     'timezone_available',
     'timezone'
+    'title',
+    'title#ja',
 ]
 
 with_conference = app.hooks.with_conference
