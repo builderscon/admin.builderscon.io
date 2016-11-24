@@ -17,24 +17,21 @@
 
         $(data).each(function(i, e) {
           $table.append(
-            $("<tr />")
-              .append(
-                $("<td />")
-                  .append(
-                    $("<a />").attr("href", "https://builderscon.io/" + e.series.slug + "/" + e.slug).text(e.title)
-                  )
+            $("<tr />").append(
+              $("<td />").text(e.title)
+            ).append(
+              $("<td />").append(
+                $("<a />").attr("href", "https://builderscon.io/" + e.series.slug + "/" + e.slug).append(
+                  $("<i />").addClass("material-icons").text("visibility")
+                )
               )
-              .append(
-                $("<td />")
-                  .append(
-                    $("<a />").attr("href", "/conference/" + e.id + "/view")
-                      .append(
-                        $("<i />")
-                          .addClass("material-icons")
-                          .text("mode_edit")
-                      )
-                  )
+            ).append(
+              $("<td />").append(
+                $("<a />").attr("href", "/conference/" + e.id + "/view").append(
+                  $("<i />").addClass("material-icons").text("mode_edit")
+                )
               )
+            )
           )
         });
       }
