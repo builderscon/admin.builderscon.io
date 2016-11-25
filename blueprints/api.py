@@ -2,7 +2,6 @@ import app
 import datetime
 import flask
 import iso8601
-import json
 import pytz
 
 page = flask.Blueprint('api', __name__)
