@@ -53,8 +53,8 @@
           <label for="tweet">Tweet</label>
           <textarea name="tweet"></textarea>
         </div>
-        <button class="btn waves-effect waves-light" type="submit" name="action">Submit
-          <i class="material-icons right">send</i>
+        <button class="btn waves-effect waves-light" type="submit" name="action">
+          <i class="material-icons left">send</i>Submit
         </button>
       </form>
     </div>
@@ -67,7 +67,7 @@
   </div>
   <div class="row">
     <div class="col s12">
-      <a href="#add-venue-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new venue</a>
+      <a href="#add-venue-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new venue</a>
     </div>
   </div>
   <div id="venue-list"></div>
@@ -86,7 +86,8 @@
       <div class="row">
         <div class="col s12">
           <button id="add-venue-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
-            <i class="material-icons right">send</i>
+            <i class="material-icons left">send</i>
+            {% trans %}Proceed{% endtrans %}
           </button>
         </div>
       </div>
@@ -267,7 +268,10 @@
   </div>
   <div class="row">
     <div class="col s12">
-      <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Update{% endtrans %}</button>
+      <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">
+        <i class="material-icons left">send</i>
+        {% trans %}Update{% endtrans %}
+      </button>
     </div>
   </div>
 </div>
@@ -348,7 +352,10 @@
   </div>
   <div class="row">
     <div class="col s12">
-      <button id="components-update" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Update{% endtrans %}</button>
+      <button id="components-update" class="btn waves-effect waves-light" type="submit" name="action">
+        <i class="material-icons left">send</i>
+        {% trans %}Update{% endtrans %}
+      </button>
     </div>
   </div>
 </div>
@@ -594,16 +601,13 @@
           $('<div />').addClass('col').addClass('s2').append(
             $('<button />').addClass('delete-venue-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', venue.id).attr('type', 'submit').attr('name', 'action').append(
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
-              '{% trans %}Remove{% endtrans %}'
+              ' {% trans %}Remove{% endtrans %}'
             )
-          )
-        ).append(
+          ),
           $('<div />').addClass('col').addClass('s3').append(
-            $("<a />").attr("href", "/venue/" + venue.id + "/view").text(venue.name)
-          ).append(
+            $("<a />").attr("href", "/venue/" + venue.id + "/view").text(venue.name),
             $("<div />").text(venue.address)
-          )
-        ).append(
+          ),
           $("<div />").addClass('col').addClass('s7').append(
             $("<div />").attr("id", id).addClass("map")
           )
@@ -628,9 +632,8 @@
       var id = $t.attr('data-id');
       var $m = $('#delete-modal');
       var v = _venues[id];
-      $('.message', $m).append(
-        $('<p />').text('{% trans %}Are you sure you want to remove the following venue ?{% endtrans %}')
-      ).append(
+      $('.message', $m).empty().append(
+        $('<p />').text('{% trans %}Are you sure you want to remove the following venue ?{% endtrans %}'),
         $('<div />').text(v.name)
       )
 
@@ -713,12 +716,11 @@
           $('<div />').addClass('col').addClass('s2').append(
             $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', track.id).attr('type', 'submit').attr('name', 'action').append(
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
-              '{% trans %}Remove{% endtrans %}'
+              ' {% trans %}Remove{% endtrans %}'
             ).click(function() {
               var $m = $('#delete-modal');
-              $('.message', $m).append(
-                $('<p />').text('{% trans %}Are you sure you want to remove the following track ?{% endtrans %}')
-              ).append(
+              $('.message', $m).empty().append(
+                $('<p />').text('{% trans %}Are you sure you want to remove the following track ?{% endtrans %}'),
                 $('<div />').append(track.name + ' ' + _rooms[track.room_id].name)
               );
               $m.modal('open');
@@ -748,12 +750,10 @@
               });
               return false;
             })
-          )
-        ).append(
+          ),
           $('<div />').addClass('col').addClass('s2').append(
             $('<a />').attr('href', '/track/' + track.id + '/view').text(track.name)
-          )
-        ).append(
+          ),
           $('<div />').addClass('col').addClass('s8').text(_rooms[track.room_id].name)
         )
       )
@@ -818,15 +818,14 @@
           $('<div />').addClass('col').addClass('s2').append(
             $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', user.id).attr('type', 'submit').attr('name', 'action').append(
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
-              '{% trans %}Remove{% endtrans %}'
+              ' {% trans %}Remove{% endtrans %}'
             ).click(function() {
               var $m = $('#delete-modal');
               $('.message', $m).append(
                 $('<p />').text('{% trans %}Are you sure you want to remove the following administrator ?{% endtrans %}')
               ).append(
                 $('<div />').addClass('chip').append(
-                  $('<img />').attr('src', user.avatar_url)
-                ).append(
+                  $('<img />').attr('src', user.avatar_url),
                   $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
                 )
               );
@@ -853,8 +852,7 @@
         ).append(
           $('<div />').addClass('col').addClass('s3').append(
             $('<div />').addClass('chip').append(
-              $('<img />').attr('src', user.avatar_url)
-            ).append(
+              $('<img />').attr('src', user.avatar_url),
               $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
             )
           )
@@ -876,14 +874,16 @@
       var close_dt = new Date(Date.parse(dt.close));
       $tbody.append(
         $('<tr />').append(
-          $('<td />').text(
+          $('<td />').append(
+            $('<button />').addClass('delete-date-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', dt.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
+              ' {% trans %}Remove{% endtrans %}'
+            )
+          ),
+          $('<td />').append(
             open_dt.toLocaleDateString() + " " +
             open_dt.toLocaleTimeString().substring(0, 5) + " ~ " +
             close_dt.toLocaleTimeString().substring(0, 5)
-          )
-        ).append(
-          $('<td />').append(
-            $('<i />').addClass('material-icons').text('delete')
           )
         )
       );
@@ -974,13 +974,11 @@
       row.append(
         $("<div />").addClass("col").addClass("s2").addClass("sponsor")
           .append(
-            $("<a />")
-              .attr("href", "/conference/{{ conference.id }}/sponsor/" + sponsor.id + "/view")
-              .append(
-                $("<img />").attr("src", sponsor.logo_url1)
-              )
-              .append($("<br />"))
-              .append(sponsor.name)
+            $("<a />").attr("href", "/conference/{{ conference.id }}/sponsor/" + sponsor.id + "/view").append(
+              $("<img />").attr("src", sponsor.logo_url1),
+              $("<br />"),
+              sponsor.name
+            )
           )
       );
     });
@@ -1019,6 +1017,53 @@
     $c.material_select();
   }
 
+  function drawSessionTypes(data) {
+    var $c = $(".session_types", "#session_types");
+    var $tbody = $('<tbody />');
+    $c.append(
+      $('<table />').addClass('bordered').append(
+        $('<thead />').append(
+          $('<tr />').append(
+            $('<td />'),
+            $('<td />').text('Default'),
+            $('<td />').text('Name'),
+            $('<td />').text('Duration (sec)'),
+            $('<td />').text('Submission Start'),
+            $('<td />').text('Submission End')
+          )
+        ),
+        $tbody
+      )
+    );
+
+    if (! data) {
+      return
+    }
+
+    $.each(data, function(i, stype) {
+      $tbody.append(
+        $('<tr />').append(
+          $('<td />').append(
+            $('<button />').addClass('delete-session-type-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', stype.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('left').text('delete'),
+              '{% trans %}Remove{% endtrans %}'
+            ),
+            ' ',
+            $('<a />').addClass('delete-session-type-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('href', '/session_type/' + stype.id + '/view').attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('left').text('mode_edit'),
+              '{% trans %}Edit{% endtrans %}'
+            )
+          ),
+          $('<td />').text(stype.is_default ? 'default' : '-'),
+          $('<td />').text(stype.name),
+          $('<td />').text(stype.duration),
+          $('<td />').text(stype.submission_start ? new Date(Date.parse(stype.submission_start)).toLocaleString() : '-'),
+          $('<td />').text(stype.submission_end ? new Date(Date.parse(stype.submission_end)).toLocaleString() : '-')
+        )
+      );
+    });
+  }
+
   function setupSessionTypes() {
     $('input.date', '#add-session-type-form').pickadate({
       format: 'yyyy-mm-dd',
@@ -1028,26 +1073,8 @@
     $('input.time', '#add-session-type-form').pickatime({
       twelvehour: false
     }).css('width', '25%').attr('placeholder', 'hh:mm');
-    var $c = $(".session_types", "#session_types");
-    if (conference.session_types) {
-      var $tbody = $('<tbody />');
-      $c.append(
-        $('<table />').addClass('bordered').append($tbody)
-      );
-      $.each(conference.session_types, function(i, stype) {
-        $tbody.append(
-          $('<tr />').append(
-            $('<td />').text(stype.name)
-          ).append(
-            $('<td />').text(stype.duration + " {% trans %}seconds{% endtrans %}")
-          ).append(
-            $('<td />').append(
-              $('<i />').addClass('material-icons').text('delete')
-            )
-          )
-        );
-      });
-    }
+
+    drawSessionTypes(conference.session_types);
   }
 
   $(document).ready(function() {
