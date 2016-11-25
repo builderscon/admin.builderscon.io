@@ -1,0 +1,30 @@
+{% set modal_id = 'message-modal' -%}
+<script type="text/javascript">
+<!--
+  function msgModal() {
+    return $({% autoescape false %}{{ ('#' + modal_id) | tojson }}{% endautoescape %});
+  }
+
+  function showModalMessage(title, message, options) {
+    var $m = msgModal();
+    $('.title', $m).empty().append(title);
+    $('.message', $m).empty().append(message);
+    if (options) {
+      $m.modal(options);
+    }
+    $m.modal('open');
+  }
+
+  function showModalError(err) {
+    showModalMessage('{% trans %}Error{% endtrans %}', err);
+  }
+-->
+</script>
+
+<div id="{{ modal_id }}" class="modal">
+  <div class="modal-content">
+    <h4 class="title"></h4>
+    <p class="message"></p>
+  </div>
+</div>
+

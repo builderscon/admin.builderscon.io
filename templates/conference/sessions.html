@@ -1,0 +1,148 @@
+{% extends 'layouts/base.html' %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="/static/css/materialize.clockpicker.css">
+{% endblock %}
+{% block additional_scripts %}
+<script src="/static/js/materialize.clockpicker.js"></script>
+{% endblock %}
+
+{% block main %}
+{% include 'component/message-modal.html' %}
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Session List{% endtrans %}</div>
+  </div>
+  <div id="sessions"></div>
+  <div class="row">
+    <div class="col s12">
+      <button id="bulk-update-btn" class="btn waves-effect waves-light" type="submit" name="action">
+        <i class="material-icons left">send</i>
+        Bulk Update
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  var conference = {% autoescape false %}{{ conference | tojson }}{% endautoescape %};
+  var sessions = {% autoescape false %}{{ sessions | tojson }}{% endautoescape %};
+
+  function collectData(id) {
+    var data = {};
+    $.each($('*[session-id="' + id + '"]'), function(i, e) {
+      var $e = $(e);
+      if ($e.val()) {
+        data[$e.attr('name')] = $e.val();
+      }
+    });
+    return data;
+  }
+
+  function makeUpdateSingle(id) {
+    return function(e) {
+      var data = collectData(id);
+      return false;
+    }
+  }
+
+  function setupSessions() {
+    var $c = $('#sessions');
+    var status_select = $('<select />').attr('name', 'status').append(
+      $('<option />').attr('value', 'pending').text('{% trans %}pending{% endtrans %}'),
+      $('<option />').attr('value', 'rejected').text('{% trans %}rejected{% endtrans %}'),
+      $('<option />').attr('value', 'accepted').text('{% trans %}accepted{% endtrans %}')
+    );
+    var date_select = $('<select />').attr('name', 'date').append(
+      $('<option />').attr('value', '').text('---')
+    );
+    $.each(conference.dates, function(i, date) {
+      var dt = fmtdate(new Date(Date.parse(date.open)));
+      date_select.append($('<option />').attr('value', dt).text(dt));
+    });
+    var $time = $('<input />').attr('type', 'text').attr('name', 'time');
+    $.each(sessions, function(i, session) {
+      var starts_on;
+      var starts_on_date;
+      var starts_on_time;
+      if (session.starts_on) {
+        starts_on = new Date(Date.parse(session.starts_on));
+        starts_on_date = fmtdate(starts_on);
+        starts_on_time = fmttime(starts_on);
+      }
+      $c.append(
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $('<div />').addClass('chip').append(
+              $('<img />').attr('src', session.speaker.avatar_url),
+              $('<a />').attr('href', '/user/' + session.speaker.id + '/view').text(session.speaker.nickname)
+            )
+          ),
+          $('<div />').addClass('col s7').append(
+            $('<div />').addClass('row').append(
+              $('<div />').addClass('col s12').append(
+                $('<a />').attr('href', '/session/' + session.id + '/view').text(session.title)
+              )
+            ),
+            $('<div />').addClass('row').append(
+              $('<div />').addClass('col s3').append(
+                status_select.clone().attr('session-id', session.id).val(session.status)
+              ),
+              $('<div />').addClass('col s3').append(
+                date_select.clone().attr('session-id', session.id).val(starts_on_date)
+              ),
+              $('<div />').addClass('col s3').append(
+                $time.clone().attr('session-id', session.id).val(starts_on_time)
+              )
+            )
+          ),
+          $('<div />').addClass('col').addClass('s3').append(
+            $('<button />').addClass('btn wafes-effect waves-light').attr('data-id', session.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons left').text('send'),
+              '{% trans %}Update{% endtrans %}'
+            ).click(makeUpdateSingle(session.id))
+          )
+        )
+      );
+    });
+  }
+
+  function updateBulk() {
+    var data = {};
+    $.each(sessions, function(i, session) {
+      data[session.id] = collectData(session.id);
+    });
+    $.ajax({
+      url: "/api/session/bulk_update",
+      method: "POST",
+      contentType: 'application/json; charset=UTF-8',
+      data: JSON.stringify(data)
+    }).done(function(data) {
+      showModalMessage(
+        '{% trans %}Success{% endtrans %}',
+        '{% trans %}Successfully updated sessions{% endtrans %}',
+        {
+          complete: function() { location.href = location.href }
+        }
+      );
+    }).fail(function(xhr, status, err) {
+      showModalError(err);
+    });
+    return false;
+  }
+
+  $(document).ready(function() {
+    setupSessions();
+    $('select').material_select();
+    $('input[name="time"]').pickatime({
+      twelvehour: false
+    }).attr('placeholder', 'hh:mm');
+    $('#bulk-update-btn').click(updateBulk);
+    $(".modal").modal();
+  });
+-->
+</script>
+{% endblock %}

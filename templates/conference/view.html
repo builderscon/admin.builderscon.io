@@ -11,19 +11,13 @@
 {% endblock %}
 
 {% block main %}
-
+{% include 'component/message-modal.html' %}
 <div id="delete-modal" class="modal">
   <div class="modal-content">
     <p class="message"></p>
   </div>
   <div class="modal-footer">
     <button class="proceed-btn btn waves-effect waves-light" type="submit" name="action">Submit</button>
-  </div>
-</div>
-<div id="message-modal" class="modal">
-  <div class="modal-content">
-    <h4 class="title"></h4>
-    <p class="message"></p>
   </div>
 </div>
 <div id="success-modal" class="modal">
@@ -57,6 +51,17 @@
           <i class="material-icons left">send</i>Submit
         </button>
       </form>
+    </div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Sessions{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a href="/conference/{{ conference.id }}/sessions">{% trans %}Session List{% endtrans %}</a>
     </div>
   </div>
 </div>
@@ -554,13 +559,6 @@
     drawVenues(conference.venues);
   }
 
-  function errorModal(err) {
-    var $m = $('#message-modal');
-    $('.title', $m).text('{% trans %}Error{% endtrans %}');
-    $('.message', $m).text(err);
-    $m.modal('open');
-  }
-
   function loadVenues() {
     $.ajax({
       url: '/api/conference/venue/list',
@@ -730,22 +728,20 @@
                   method: 'POST',
                   data: { 'id': track.id }
                 }).fail(function(xhr, status, err) {
-                  errorModal(err);
+                  showModalError(err);
                 }).done(function(data) {
                   if (data.error) {
-                    errorModal(data.error);
+                    showModalError(data.error);
                     return
                   }
                   $m.modal('close');
-                  $m = $('#message-modal');
-                  $('.title', $m).text('{% trans %}Success{% endtrans %}');
-                  $('.message', $m).text('{% trans %}Successfully deleted track{% endtrans %}');
-                  $m.modal({
-                    complete: function() {
-                      location.href = '/conference/{{ conference.id }}/view';
+                  showModalMessage(
+                    '{% trans %}Success{% endtrans %}',
+                    '{% trans %}Successfully deleted track{% endtrans %}',
+                    {
+                      complete: function() { location.href = location.href }
                     }
-                  });
-                  $m.modal('open');
+                  );
                 });
               });
               return false;
@@ -786,22 +782,20 @@
         method: $f.attr('method'),
         data: $f.serialize(),
         error: function(xhr, status, err) {
-          errorModal(err);
+          showModalError(err);
         },
         success: function(data) {
           if (data.error) {
-            errorModal('{% trans %}Failed to create new track{% endtrans %}: ' + data.error)
+            showModalError('{% trans %}Failed to create new track{% endtrans %}: ' + data.error)
             return
           }
-          var $m = $('#message-modal');
-          $('.title', $m).text('{% trans %}Success{% endtrans %}');
-          $('.message', $m).text('{% trans %}Successfully created new track{% endtrans %}');
-          $m.modal({
-            complete: function() {
-              location.href = '/conference/{{ conference.id }}/view';
+          showModalMessage(
+            '{% trans %}Success{% endtrans %}',
+            '{% trans %}Successfully created new track{% endtrans %}',
+            {
+              complete: function() { location.href = location.href }
             }
-          });
-          $m.modal('open')
+          );
         }
       });
       return false;
@@ -841,7 +835,7 @@
                 }).done(function(data) {
                   listOrganizers()
                 }).fail(function(xhr, status, err) {
-                  errorModal(err);
+                  showModalError(err);
                 }).always(function() {
                   $m.modal('close');
                 });
@@ -918,7 +912,7 @@
       }).done(function(msg) {
         listOrganizers();
       }).fail(function(xhr, status, err) {
-        errorModal(err);
+        showModalError(err);
       }).always(function() {
         $m.modal('close');
       });
