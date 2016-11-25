@@ -119,3 +119,14 @@ def update():
 
     del flask.session[subskey][subs]
     return flask.render_template('conference/update.html')
+
+@page.route('/conference/<id>/sessions')
+@with_conference
+def sessions():
+    sessions = app.api.list_sessions(
+        conference_id=flask.g.stash.get('conference_id'),
+        lang=flask.g.lang,
+        status=['accepted', 'rejected']
+    )
+    flask.g.stash['sessions'] = sessions;
+    return flask.render_template('conference/sessions.html')

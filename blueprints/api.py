@@ -234,3 +234,20 @@ def delete_track():
         "error": app.api.last_error()
     })
 
+@page.route('/api/session/bulk_update', methods=['POST'])
+@require_login
+def update_session_bulk():
+    errors = []
+    for session_id in flask.request.json:
+        data = flask.request.json[session_id]
+        for k in data:
+            ok = app.api.update_session(id=k, **data[k])
+            if not ok:
+                errors.append(app.api.last_error())
+
+    if len(errors) == 0:
+        return flask.jsonify({"success": True})
+    return flask.jsonify({
+        "success": False,
+        "error": errors
+    })
