@@ -17,16 +17,12 @@ REQUIRED = {
 }
 
 with_track = app.hooks.with_track
+with_associated_conference = app.hooks.with_associated_conference
 
 @page.route('/track/<id>/view')
 @functools.partial(with_track, lang='all')
+@functools.partial(with_associated_conference, id_getter=lambda: flask.g.stash.get('track').get('conference_id'))
 def view():
-    lang = flask.g.lang
-    conf_id = flask.g.stash.get('track').get('conference_id')
-    conf = app.api.lookup_conference(id=conf_id, lang=lang)
-    if not conf:
-      return flask.abort(404)
-    flask.g.stash['conference'] = conf
     return flask.render_template('track/view.html')
 
 @page.route('/track/<id>/edit', methods=['POST'])

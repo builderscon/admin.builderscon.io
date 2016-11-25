@@ -119,4 +119,3 @@ def update():
 
     del flask.session[subskey][subs]
     return flask.render_template('conference/update.html')
-

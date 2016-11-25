@@ -15,6 +15,7 @@ def initialize():
     app.register_blueprint(blueprints.auth.page)
     app.register_blueprint(blueprints.conference.page)
     app.register_blueprint(blueprints.root.page)
+    app.register_blueprint(blueprints.session_type.page)
     app.register_blueprint(blueprints.track.page)
     app.register_blueprint(blueprints.venue.page)
 

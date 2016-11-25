@@ -49,9 +49,19 @@ def check_email(cb, **args):
 
     return cb(**args)
 
-def with_conference(cb, lang='en'):
+def with_associated_conference(cb, id_getter, lang=None):
+    def _load_associated_conference(cb, id_getter):
+        conf_id = id_getter()
+        conf = admin.api.lookup_conference(id=conf_id, lang=lang or flask.g.lang)
+        if not conf:
+          return flask.abort(404)
+        flask.g.stash['conference'] = conf
+        return cb()
+    return functools.update_wrapper(functools.partial(_load_associated_conference, cb, id_getter), cb)
+
+def with_conference(cb, lang=None):
     def _load_conference(cb, id, lang):
-        conf = admin.api.lookup_conference(id=id, lang=lang)
+        conf = admin.api.lookup_conference(id=id, lang=lang or flask.g.lang)
         if not conf:
             return flask.abort(404)
         flask.g.stash['conference'] = conf
@@ -110,10 +120,18 @@ def with_venue(cb, lang=None):
 
 def with_venue_list(cb, lang=None):
     def _load_venue_list(cb, lang):
-        if lang is None:
-            lang = flask.g.lang
-        venues = admin.api.list_venue(lang=lang)
+        venues = admin.api.list_venue(lang=lang or flask.g.lang)
         flask.g.stash['venues'] = venues or []
         return cb()
 
     return functools.update_wrapper(functools.partial(_load_venue_list, cb, lang=lang), cb)
+
+def with_session_type(cb, lang=None):
+    def _load_session_type(cb, id, lang):
+        session_type = admin.api.lookup_session_type(id=id, lang=lang or flask.g.lang)
+        if not session_type:
+            return flask.abort(404)
+        flask.g.stash['session_type_id'] = id
+        flask.g.stash['session_type'] = session_type
+        return cb()
+    return functools.update_wrapper(functools.partial(_load_session_type, cb, lang=lang), cb)
