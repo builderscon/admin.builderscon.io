@@ -13,6 +13,7 @@ def initialize():
     import blueprints
     app.register_blueprint(blueprints.api.page)
     app.register_blueprint(blueprints.auth.page)
+    app.register_blueprint(blueprints.blog_entry.page)
     app.register_blueprint(blueprints.conference.page)
     app.register_blueprint(blueprints.root.page)
     app.register_blueprint(blueprints.session_type.page)
