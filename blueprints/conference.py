@@ -130,3 +130,15 @@ def sessions():
     )
     flask.g.stash['sessions'] = sessions;
     return flask.render_template('conference/sessions.html')
+
+@page.route('/conference/<id>/blog_entries')
+@with_conference
+def blog_entries():
+    blog_entries = app.api.list_blog_entries(
+        conference_id=flask.g.stash.get('conference_id'),
+        lang=flask.g.lang,
+        status=['public', 'private']
+    )
+    flask.g.stash['blog_entries'] = blog_entries or [];
+    return flask.render_template('conference/blog_entries.html')
+

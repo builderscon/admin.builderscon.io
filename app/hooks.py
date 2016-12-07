@@ -135,3 +135,25 @@ def with_session_type(cb, lang=None):
         flask.g.stash['session_type'] = session_type
         return cb()
     return functools.update_wrapper(functools.partial(_load_session_type, cb, lang=lang), cb)
+
+def with_blog_entry(cb, lang=None):
+    def _load_blog_entry(cb, id, lang):
+        blog_entry = admin.api.lookup_blog_entry(id=id, lang=lang or flask.g.lang)
+        if not blog_entry:
+            return flask.abort(404)
+        flask.g.stash['blog_entry_id'] = id
+        flask.g.stash['blog_entry'] = blog_entry
+        return cb()
+    return functools.update_wrapper(functools.partial(_load_blog_entry, cb, lang=lang), cb)
+
+def with_session(cb, lang=None):
+    def _load_session(cb, id, lang):
+        session = admin.api.lookup_session(id=id, lang=lang or flask.g.lang)
+        if not session:
+            return flask.abort(404)
+        flask.g.stash['session_id'] = id
+        flask.g.stash['session'] = session
+        return cb()
+    return functools.update_wrapper(functools.partial(_load_session, cb, lang=lang), cb)
+
+
