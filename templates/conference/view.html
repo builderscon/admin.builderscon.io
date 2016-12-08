@@ -224,6 +224,21 @@
     </div>
   </div>
   <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Status{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <select name="status">
+        <option value="private">{% trans %}private{% endtrans %}</option>
+        <option value="public">{% trans %}public{% endtrans %}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Redirect URL{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <input type="text" name="redirect_url" value="{{ (conference.redirect_url or '') | e }}">
+    </div>
+  </div>
+  <div class="row">
     <div class="col s{{ leftcol }} label">{% trans %}Timetable Available{% endtrans %}</div>
     <div class="col s{{ rightcol }}">
       <input type="checkbox" class="filled-in" id="timetable_available-checkbox" name="timetable_available" value="true"{% if conference.timezone_available %} checked="checked"{% endif %}>
@@ -1084,6 +1099,12 @@
     drawSessionTypes(conference.session_types);
   }
 
+  function setupStatus() {
+    var $s = $('select[name="status"]')
+    $s.val(conference.status);
+    $s.material_select();
+  }
+
   $(document).ready(function() {
     registerVenues(conference.venues);
     setupVenues();
@@ -1091,6 +1112,7 @@
     setupTimezones();
     setupOrganizers();
     setupDates();
+    setupStatus();
     setupSessionTypes();
     setupSponsors();
     setupConferenceSeries();
