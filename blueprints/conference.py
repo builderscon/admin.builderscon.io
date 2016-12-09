@@ -42,6 +42,12 @@ def index():
 @with_conference_series_list
 @with_venue_list
 def view():
+    staff = app.api.list_conference_staff(
+        conference_id=flask.g.stash.get('conference_id'),
+        lang=flask.g.lang
+    )
+    flask.g.stash['staff'] = staff or []
+
     flask.g.stash['timezones'] = pytz.all_timezones
     return flask.render_template('conference/view.html')
 
