@@ -251,3 +251,41 @@ def update_session_bulk():
         "success": False,
         "error": errors
     })
+
+@page.route('/api/conference/staff/list')
+@require_login
+def list_conference_staff():
+    confs = app.api.list_conference_staff(
+        conference_id=flask.request.values.get('conference_id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    return flask.jsonify(confs)
+
+@page.route('/api/conference/staff/add', methods=['POST'])
+@require_login
+def add_conference_staff():
+    ok = app.api.add_conference_staff(
+        conference_id=flask.request.values.get('conference_id'),
+        staff_id=flask.request.values.get('user_id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    return _stock_response(ok, app.api)
+
+@page.route('/api/conference/staff/remove', methods=['POST'])
+@require_login
+def remove_conference_staff():
+    ok = app.api.delete_conference_staff(
+        conference_id=flask.request.values.get('conference_id'),
+        staff_id=flask.request.values.get('staff_id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": app.api.last_error()
+    })
+
+

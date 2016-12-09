@@ -208,6 +208,38 @@
   </div>
 </div>
 
+<div id="staff" class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Staff{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a href="#add-staff-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new staff</a>
+    </div>
+  </div>
+  <div class="users"></div>
+  <div id="add-staff-form" class="modal modal-fixed-footer">
+    <form action="/api/conference/staff/add" method="POST">
+      <input type="hidden" name="conference_id" value="{{ conference.id }}">
+      <div class="modal-content">
+        <div class="row">
+          <div class="col s12">
+            <input type="text" name="autocomplete_user_id" placeholder="Type a user nickname (e.g. 'uzulla')">
+            <input type="hidden" name="user_id">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="row">
+          <div class="col s12">
+            <button id="add-staff-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <form action="/conference/{{ conference.id }}/edit" method="POST">
 <div id="basic" class="box">
   <div class="row box-header">
@@ -582,6 +614,7 @@
   if (! conference.administrators) {
     conference.administrators = [];
   }
+  var staff = {% autoescape false %}{{ staff | tojson }}{% endautoescape %};
 
   function initMap() {
     drawVenues(conference.venues);
@@ -883,6 +916,61 @@
     });
   }
 
+  function drawStaff(data) {
+    var $c = $('.users', '#staff');
+    $c.empty();
+    $(data).each(function(i, user) {
+      var user_id = user.id;
+      $c.append(
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s2').append(
+            $('<button />').addClass('delete-track-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', user.id).attr('type', 'submit').attr('name', 'action').append(
+              $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
+              ' {% trans %}Remove{% endtrans %}'
+            ).click(function() {
+              var $m = $('#delete-modal');
+              $('.message', $m).append(
+                $('<p />').text('{% trans %}Are you sure you want to remove the following staff ?{% endtrans %}')
+              ).append(
+                $('<div />').addClass('chip').append(
+                  $('<img />').attr('src', user.avatar_url),
+                  $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+                )
+              );
+              $m.modal('open');
+              $('.proceed-btn', $m).click(function() {
+                $.ajax({
+                  url: '/api/conference/staff/remove',
+                  method: 'POST',
+                  data: {
+                    'conference_id': {{ conference.id | tojson }}, 
+                    'staff_id': user_id
+                  }
+                }).done(function(data) {
+                  listStaff()
+                }).fail(function(xhr, status, err) {
+                  showModalError(err);
+                }).always(function() {
+                  $m.modal('close');
+                });
+              });
+              return false;
+            })
+          )
+        ).append(
+          $('<div />').addClass('col').addClass('s3').append(
+            $('<div />').addClass('chip').append(
+              $('<img />').attr('src', user.avatar_url),
+              $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+            )
+          )
+        )
+      )
+    });
+  }
+
+
+
   function listDates(data) {
     var $c = $('.dates', '#dates');
     $c.empty();
@@ -909,6 +997,14 @@
           )
         )
       );
+    });
+  }
+
+  function listStaff() {
+    $.ajax({
+      url: '/api/conference/staff/list',
+      data: { conference_id: {{ conference.id | tojson }} },
+      success: drawStaff
     });
   }
 
@@ -939,6 +1035,34 @@
         data: $f.serialize()
       }).done(function(msg) {
         listOrganizers();
+      }).fail(function(xhr, status, err) {
+        showModalError(err);
+      }).always(function() {
+        $m.modal('close');
+      });
+      return false;
+    });
+  }
+
+  function setupStaff() {
+    drawStaff(staff);
+    var $m = $("#add-staff-form");
+    $m.modal();
+    $("input[name='autocomplete_user_id']", $m).devbridgeAutocomplete({
+      serviceUrl: "/api/user/incremental",
+      onSelect: function(suggestion) {
+        $('input[name="user_id"]', $m).attr('value', suggestion.data);
+        $('button', $m).removeAttr('disabled');
+      }
+    });
+    var $f = $('form', $m);
+    $f.submit(function(e) {
+      $.ajax({
+        url: $f.attr("action"),
+        method: $f.attr("method"),
+        data: $f.serialize()
+      }).done(function(msg) {
+        listStaff();
       }).fail(function(xhr, status, err) {
         showModalError(err);
       }).always(function() {
@@ -1111,6 +1235,7 @@
     setupTracks();
     setupTimezones();
     setupOrganizers();
+    setupStaff();
     setupDates();
     setupStatus();
     setupSessionTypes();
