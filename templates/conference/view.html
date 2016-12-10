@@ -35,566 +35,601 @@
   </div>
 </div>
 
-<div class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Miscellaneous{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <ul>
-        <li><a href="/conference/{{ conference.id }}/blog_entries">{% trans %}Body Entries{% endtrans %}</a></li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-<div id="twitter" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Twitter{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <p><a href="/conference/{{ conference.id }}/twitter/authenticate">{% trans %}Authenticate Twitter Account{% endtrans %}</a></p>
-      <form action="/conference/{{ conference.id }}/twitter/post" method="POST">
-        <div class="input-field">
-          <label for="tweet">Tweet</label>
-          <textarea name="tweet"></textarea>
+<div class="row">
+  <div class="col s12 m9 l10">
+    <div id="miscellaneous-box" class="section scrollspy">
+      <div id="miscellaneous" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Miscellaneous{% endtrans %}</div>
         </div>
-        <button class="btn waves-effect waves-light" type="submit" name="action">
-          <i class="material-icons left">send</i>Submit
-        </button>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Sessions{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a href="/conference/{{ conference.id }}/sessions">{% trans %}Session List{% endtrans %}</a>
-    </div>
-  </div>
-</div>
-
-<div id="venues" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Venue{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a href="#add-venue-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new venue</a>
-    </div>
-  </div>
-  <div id="venue-list"></div>
-  <div id="add-venue-form" class="modal modal-fixed-footer">
-    <form action="/api/conference/venue/add" method="POST">
-    <input type="hidden" name="conference_id" value="{{ conference.id }}">
-    <div class="modal-content">
-      <div class="row">
-        <div class="col s{{ leftcol }} label">{% trans %}Venue{% endtrans %}</div>
-        <div class="col s{{ rightcol }}">
-          <select name="venue_id"></select>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <div class="row">
-        <div class="col s12">
-          <button id="add-venue-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
-            <i class="material-icons left">send</i>
-            {% trans %}Proceed{% endtrans %}
-          </button>
-        </div>
-      </div>
-    </div>
-    </form>
-  </div>
-</div>
-
-<div id="tracks" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Tracks{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a id="add-track-btn" href="#add-track-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new track</a>
-    </div>
-  </div>
-  <div class="tracks"></div>
-  <div id="add-track-form" class="modal modal-fixed-footer">
-    <form action="/api/track/create" method="POST">
-      <input type="hidden" name="conference_id" value="{{ conference.id }}">
-      <div class="modal-content">
         <div class="row">
           <div class="col s12">
-            <ul class="tabs">
-              <li class="tab col s3"><a href="#track-basic-en">{% trans %}English{% endtrans %}</a></li>
-              <li class="tab col s3"><a href="#track-basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+            <ul>
+              <li><a href="/conference/{{ conference.id }}/blog_entries">{% trans %}Blog Entries{% endtrans %}</a></li>
+              <li><a href="/conference/{{ conference.id }}/sessions">{% trans %}Session List{% endtrans %}</a></li>
             </ul>
           </div>
         </div>
-        <div id="track-basic-en">
-          <div class="row">
-            <div class="col s2 label">{% trans %}Name (English){% endtrans %}</div>
-            <div class="col s10">
-              <input type="text" name="name" placeholder="{% trans %}Name (English){% endtrans %}" />
+      </div>
+    </div>
+
+    <div id="venues-box" class="section scrollspy">
+      <div id="venues" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Venue{% endtrans %}</div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <a href="#add-venue-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new venue</a>
+          </div>
+        </div>
+        <div id="venue-list"></div>
+        <div id="add-venue-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/venue/add" method="POST">
+          <input type="hidden" name="conference_id" value="{{ conference.id }}">
+          <div class="modal-content">
+            <div class="row">
+              <div class="col s{{ leftcol }} label">{% trans %}Venue{% endtrans %}</div>
+              <div class="col s{{ rightcol }}">
+                <select name="venue_id"></select>
+              </div>
             </div>
           </div>
-        </div>
-        <div id="track-basic-ja">
-          <div class="row">
-            <div class="col s2 label">{% trans %}Name (Japanese){% endtrans %}</div>
-            <div class="col s10">
-              <input type="text" name="name#ja" placeholder="{% trans %}Name (Japanese){% endtrans %}" />
+          <div class="modal-footer">
+            <div class="row">
+              <div class="col s12">
+                <button id="add-venue-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+                  <i class="material-icons left">send</i>
+                  {% trans %}Proceed{% endtrans %}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col s2 label">{% trans %}Room{% endtrans %}</div>
-          <div class="col s10">
-            <select name="room_id"></select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s2 label">{% trans %}Sort Order{% endtrans %}</div>
-          <div class="col s10">
-            <input type="text" name="sort_order" placeholder="0-99, ascending order" />
-          </div>
+          </form>
         </div>
       </div>
-      <div class="modal-footer">
+    </div>
+
+    <div id="tracks-box" class="section scrollspy">
+      <div id="tracks" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Tracks{% endtrans %}</div>
+        </div>
         <div class="row">
           <div class="col s12">
-            <button id="add-track-proceed" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add Track{% endtrans %}</button>
+            <a id="add-track-btn" href="#add-track-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new track</a>
           </div>
         </div>
+        <div class="tracks"></div>
+        <div id="add-track-form" class="modal modal-fixed-footer">
+          <form action="/api/track/create" method="POST">
+            <input type="hidden" name="conference_id" value="{{ conference.id }}">
+            <div class="modal-content">
+              <div class="row">
+                <div class="col s12">
+                  <ul class="tabs">
+                    <li class="tab col s3"><a href="#track-basic-en">{% trans %}English{% endtrans %}</a></li>
+                    <li class="tab col s3"><a href="#track-basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div id="track-basic-en">
+                <div class="row">
+                  <div class="col s2 label">{% trans %}Name (English){% endtrans %}</div>
+                  <div class="col s10">
+                    <input type="text" name="name" placeholder="{% trans %}Name (English){% endtrans %}" />
+                  </div>
+                </div>
+              </div>
+              <div id="track-basic-ja">
+                <div class="row">
+                  <div class="col s2 label">{% trans %}Name (Japanese){% endtrans %}</div>
+                  <div class="col s10">
+                    <input type="text" name="name#ja" placeholder="{% trans %}Name (Japanese){% endtrans %}" />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s2 label">{% trans %}Room{% endtrans %}</div>
+                <div class="col s10">
+                  <select name="room_id"></select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s2 label">{% trans %}Sort Order{% endtrans %}</div>
+                <div class="col s10">
+                  <input type="text" name="sort_order" placeholder="0-99, ascending order" />
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-track-proceed" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add Track{% endtrans %}</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </form>
-  </div>
-</div>
-
-<div id="organizers" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Organizers{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a href="#add-organizer-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new organizer</a>
     </div>
-  </div>
-  <div class="users"></div>
-  <div id="add-organizer-form" class="modal modal-fixed-footer">
-    <form action="/api/conference/administrator/add" method="POST">
-      <input type="hidden" name="conference_id" value="{{ conference.id }}">
-      <div class="modal-content">
+
+    <div id="organizers-box" class="section scrollspy">
+      <div id="organizers" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Organizers{% endtrans %}</div>
+        </div>
         <div class="row">
           <div class="col s12">
-            <input type="text" name="autocomplete_user_id" placeholder="Type a user nickname (e.g. 'uzulla')">
-            <input type="hidden" name="user_id">
+            <a href="#add-organizer-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new organizer</a>
           </div>
         </div>
+        <div class="users"></div>
+        <div id="add-organizer-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/administrator/add" method="POST">
+            <input type="hidden" name="conference_id" value="{{ conference.id }}">
+            <div class="modal-content">
+              <div class="row">
+                <div class="col s12">
+                  <input type="text" name="autocomplete_user_id" placeholder="Type a user nickname (e.g. 'uzulla')">
+                  <input type="hidden" name="user_id">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-organizer-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="modal-footer">
+    </div>
+
+    <div id="staff-box" class="section scrollspy">
+      <div id="staff" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Staff{% endtrans %}</div>
+        </div>
         <div class="row">
           <div class="col s12">
-            <button id="add-organizer-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+            <a href="#add-staff-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new staff</a>
           </div>
         </div>
+        <div class="users"></div>
+        <div id="add-staff-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/staff/add" method="POST">
+            <input type="hidden" name="conference_id" value="{{ conference.id }}">
+            <div class="modal-content">
+              <div class="row">
+                <div class="col s12">
+                  <input type="text" name="autocomplete_user_id" placeholder="Type a user nickname (e.g. 'uzulla')">
+                  <input type="hidden" name="user_id">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-staff-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
       </div>
-    </form>
-  </div>
-</div>
-
-<div id="staff" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Staff{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a href="#add-staff-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new staff</a>
     </div>
-  </div>
-  <div class="users"></div>
-  <div id="add-staff-form" class="modal modal-fixed-footer">
-    <form action="/api/conference/staff/add" method="POST">
-      <input type="hidden" name="conference_id" value="{{ conference.id }}">
-      <div class="modal-content">
+    <div id="twitter-box" class="section scrollspy">
+      <div id="twitter" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Twitter{% endtrans %}</div>
+        </div>
         <div class="row">
           <div class="col s12">
-            <input type="text" name="autocomplete_user_id" placeholder="Type a user nickname (e.g. 'uzulla')">
-            <input type="hidden" name="user_id">
+            <p><a href="/conference/{{ conference.id }}/twitter/authenticate">{% trans %}Authenticate Twitter Account{% endtrans %}</a></p>
+            <form action="/conference/{{ conference.id }}/twitter/post" method="POST">
+              <div class="input-field">
+                <label for="tweet">Tweet</label>
+                <textarea name="tweet"></textarea>
+              </div>
+              <button class="btn waves-effect waves-light" type="submit" name="action">
+                <i class="material-icons left">send</i>Submit
+              </button>
+            </form>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <div class="row">
-          <div class="col s12">
-            <button id="add-staff-proceed" class="btn waves-effect waves-light" type="submit" name="action">Submit
-          </div>
+    </div>
+
+    <div id="basic-box" class="section scrollspy">
+      <div id="basic" class="box">
+      <form action="/conference/{{ conference.id }}/edit" method="POST">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Basic Information{% endtrans %}</div>
         </div>
-      </div>
-    </form>
-  </div>
-</div>
-
-<form action="/conference/{{ conference.id }}/edit" method="POST">
-<div id="basic" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Basic Information{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s{{ leftcol }} label">{% trans %}Conference Series{% endtrans %}</div>
-    <div class="col s{{ rightcol }}">
-      <select name="series_id">
-{% for series in conference_series %}
-        <option value="{{ series.id }}">{{ series.title }}</option>
-{% endfor %}
-      </select>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s{{ leftcol }} label">{% trans %}Status{% endtrans %}</div>
-    <div class="col s{{ rightcol }}">
-      <select name="status">
-        <option value="private">{% trans %}private{% endtrans %}</option>
-        <option value="public">{% trans %}public{% endtrans %}</option>
-      </select>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s{{ leftcol }} label">{% trans %}Redirect URL{% endtrans %}</div>
-    <div class="col s{{ rightcol }}">
-      <input type="text" name="redirect_url" value="{{ (conference.redirect_url or '') | e }}">
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s{{ leftcol }} label">{% trans %}Timetable Available{% endtrans %}</div>
-    <div class="col s{{ rightcol }}">
-      <input type="checkbox" class="filled-in" id="timetable_available-checkbox" name="timetable_available" value="true"{% if conference.timezone_available %} checked="checked"{% endif %}>
-      <label for="timetable_available-checkbox">{% trans %}Yes{% endtrans %}</label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s{{ leftcol }} label">{% trans %}Timezone{% endtrans %}</div>
-    <div class="col s{{ rightcol }}">
-       <select id="timezone-select" name="timezone"></select>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <ul class="tabs">
-        <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
-        <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
-      </ul>
-    </div>
-  </div>
-  <div id="basic-en">
-    <div class="row">
-      <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
-      <div class="col s{{ rightcol }}">
-        <input type="text" name="title" placeholder="{% trans %}Conference Title (English){% endtrans %}">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
-      <div class="col s{{ rightcol }}">
-        <input type="text" name="sub_title" placeholder="{% trans %}Conference Sub Title (English){% endtrans %}">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
-      <div class="col s{{ rightcol }}">
-        <textarea name="description" placeholder="{% trans %}Description (English){% endtrans %}"></textarea>
-      </div>
-    </div>
-  </div>
-  <div id="basic-ja">
-    <div class="row">
-      <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
-      <div class="col s{{ rightcol }}">
-        <input type="text" name="title#ja" placeholder="{% trans %}Conference Title (Japanese){% endtrans %}">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
-      <div class="col s{{ rightcol }}">
-        <input type="text" name="sub_title#ja" placeholder="{% trans %}Conference Sub Title (Japanese){% endtrans %}">
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
-      <div class="col s{{ rightcol }}">
-        <textarea name="description#ja" placeholder="{% trans %}Description (Japanese){% endtrans %}"></textarea>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">
-        <i class="material-icons left">send</i>
-        {% trans %}Update{% endtrans %}
-      </button>
-    </div>
-  </div>
-</div>
-</form>
-
-<form action="/conference/{{ conference.id }}/edit" method="POST">
-<div id="components" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Text Components{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <ul class="tabs">
-        <li class="tab col s3"><a href="#components-en">{% trans %}English{% endtrans %}</a></li>
-        <li class="tab col s3"><a href="#components-ja">{% trans %}Japanese{% endtrans %}</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="row" id="components-en">
-    <div class="col s12">
-      <ul class="collapsible" data-collapsible="expandable">
-        <li>
-          <div class="collapsible-header active">{% trans %}Contact Information (English){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="contact_information"></textarea>
-          </div>
-        </li>
-        <li>
-          <div class="collapsible-header">{% trans %}CFP Lead Text (English){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="cfp_lead_text"></textarea>
-          </div>
-        </li>
-        <li>
-          <div class="collapsible-header">{% trans %}CFP Pre-Submit Instructions (English){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="cfp_pre_submit_instructions"></textarea>
-          </div>
-        </li>
-        <li>
-          <div class="collapsible-header">{% trans %}CFP Post-Submit Instructions (English){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="cfp_post_submit_instructions"></textarea>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="row" id="components-ja">
-    <div class="col s12">
-      <ul class="collapsible" data-collapsible="expandable">
-        <li>
-          <div class="collapsible-header active">{% trans %}Contact Information (Japanese){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="contact_information#ja"></textarea>
-          </div>
-        </li>
-        <li>
-          <div class="collapsible-header">{% trans %}CFP Lead Text (Japanese){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="cfp_lead_text#ja"></textarea>
-          </div>
-        </li>
-        <li>
-          <div class="collapsible-header">{% trans %}CFP Pre-Submit Instructions (Japanese){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="cfp_pre_submit_instructions#ja"></textarea>
-          </div>
-        </li>
-        <li>
-          <div class="collapsible-header">{% trans %}CFP Post-Submit Instructions (Japanese){% endtrans %}</div>
-          <div class="collapsible-body">
-            <textarea name="cfp_post_submit_instructions#ja"></textarea>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <button id="components-update" class="btn waves-effect waves-light" type="submit" name="action">
-        <i class="material-icons left">send</i>
-        {% trans %}Update{% endtrans %}
-      </button>
-    </div>
-  </div>
-</div>
-</form>
-
-<div id="dates" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Dates{% endtrans %}</div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a href="#add-date-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new date</a>
-    </div>
-  </div>
-  <div id="add-date-form" class="modal modal-fixed-footer">
-    <form action="/api/conference/date/add" method="POST">
-      <div class="modal-content">
-        <input type="hidden" name="conference_id" value="{{ conference.id }}">
         <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Date{% endtrans %}</div>
+          <div class="col s{{ leftcol }} label">{% trans %}Conference Series{% endtrans %}</div>
           <div class="col s{{ rightcol }}">
-            <input type="text" name="date" class="date">
+            <select name="series_id">
+      {% for series in conference_series %}
+              <option value="{{ series.id }}">{{ series.title }}</option>
+      {% endfor %}
+            </select>
           </div>
         </div>
         <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Start Time{% endtrans %}</div>
+          <div class="col s{{ leftcol }} label">{% trans %}Status{% endtrans %}</div>
           <div class="col s{{ rightcol }}">
-            <input type="text" name="start_time" class="time">
+            <select name="status">
+              <option value="private">{% trans %}private{% endtrans %}</option>
+              <option value="public">{% trans %}public{% endtrans %}</option>
+            </select>
           </div>
         </div>
         <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}End Time{% endtrans %}</div>
+          <div class="col s{{ leftcol }} label">{% trans %}Redirect URL{% endtrans %}</div>
           <div class="col s{{ rightcol }}">
-            <td><input type="text" name="end_time" class="time">
+            <input type="text" name="redirect_url" value="{{ (conference.redirect_url or '') | e }}">
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
         <div class="row">
-          <div class="col s12">
-            <button id="add-date-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
+          <div class="col s{{ leftcol }} label">{% trans %}Timetable Available{% endtrans %}</div>
+          <div class="col s{{ rightcol }}">
+            <input type="checkbox" class="filled-in" id="timetable_available-checkbox" name="timetable_available" value="true"{% if conference.timezone_available %} checked="checked"{% endif %}>
+            <label for="timetable_available-checkbox">{% trans %}Yes{% endtrans %}</label>
           </div>
         </div>
-      </div>
-    </form>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <div class="dates"></div>
-    </div>
-  </div>
-</div>
-
-<div id="session_types" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Session Types{% endtrans %}</div>
-  </div>
-  <div id="add-session-type-form" class="modal modal-fixed-footer">
-    <form action="/api/conference/session_type/add" method="POST">
-      <input type="hidden" name="conference_id" value="{{ conference.id }}">
-      <div class="modal-content">
+        <div class="row">
+          <div class="col s{{ leftcol }} label">{% trans %}Timezone{% endtrans %}</div>
+          <div class="col s{{ rightcol }}">
+             <select id="timezone-select" name="timezone"></select>
+          </div>
+        </div>
         <div class="row">
           <div class="col s12">
             <ul class="tabs">
-              <li class="tab col s3"><a href="#session-type-en">{% trans %}English{% endtrans %}</a></li>
-              <li class="tab col s3"><a href="#session-type-ja">{% trans %}Japanese{% endtrans %}</a></li>
+              <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
+              <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
             </ul>
           </div>
         </div>
-        <div id="session-type-en">
+        <div id="basic-en">
           <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Name (English){% endtrans %}</div>
+            <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
             <div class="col s{{ rightcol }}">
-              <input type="text" name="name">
+              <input type="text" name="title" placeholder="{% trans %}Conference Title (English){% endtrans %}">
             </div>
           </div>
           <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Abstract (English){% endtrans %}</div>
+            <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
             <div class="col s{{ rightcol }}">
-              <input type="text" name="abstract">
-            </div>
-          </div>
-        </div>
-        <div id="session-type-ja">
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Name (Japanese){% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
-              <input type="text" name="name#ja">
+              <input type="text" name="sub_title" placeholder="{% trans %}Conference Sub Title (English){% endtrans %}">
             </div>
           </div>
           <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Abstract (Japanese){% endtrans %}</div>
+            <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
             <div class="col s{{ rightcol }}">
-              <input type="text" name="abstract#ja">
+              <textarea name="description" placeholder="{% trans %}Description (English){% endtrans %}"></textarea>
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Duration{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
-            <input type="text" name="duration" placeholder="{% trans %}Duration in seconds{% endtrans %}">
+        <div id="basic-ja">
+          <div class="row">
+            <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
+            <div class="col s{{ rightcol }}">
+              <input type="text" name="title#ja" placeholder="{% trans %}Conference Title (Japanese){% endtrans %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
+            <div class="col s{{ rightcol }}">
+              <input type="text" name="sub_title#ja" placeholder="{% trans %}Conference Sub Title (Japanese){% endtrans %}">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
+            <div class="col s{{ rightcol }}">
+              <textarea name="description#ja" placeholder="{% trans %}Description (Japanese){% endtrans %}"></textarea>
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Submission Start{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
-            <input type="text" name="submission_start_date" class="date">
-            <input type="text" name="submission_start_time" class="time">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Submission End{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
-            <input type="text" name="submission_end_date" class="date">
-            <input type="text" name="submission_end_time" class="time">
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
         <div class="row">
           <div class="col s12">
-            <button id="add-session-type-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
+            <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">
+              <i class="material-icons left">send</i>
+              {% trans %}Update{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+
+    <div id="components-box" class="section scrollspy">
+      <div id="components" class="box">
+      <form action="/conference/{{ conference.id }}/edit" method="POST">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Text Components{% endtrans %}</div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <ul class="tabs">
+              <li class="tab col s3"><a href="#components-en">{% trans %}English{% endtrans %}</a></li>
+              <li class="tab col s3"><a href="#components-ja">{% trans %}Japanese{% endtrans %}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="row" id="components-en">
+          <div class="col s12">
+            <ul class="collapsible" data-collapsible="expandable">
+              <li>
+                <div class="collapsible-header active">{% trans %}Contact Information (English){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="contact_information"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">{% trans %}CFP Lead Text (English){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="cfp_lead_text"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">{% trans %}CFP Pre-Submit Instructions (English){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="cfp_pre_submit_instructions"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">{% trans %}CFP Post-Submit Instructions (English){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="cfp_post_submit_instructions"></textarea>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row" id="components-ja">
+          <div class="col s12">
+            <ul class="collapsible" data-collapsible="expandable">
+              <li>
+                <div class="collapsible-header active">{% trans %}Contact Information (Japanese){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="contact_information#ja"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">{% trans %}CFP Lead Text (Japanese){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="cfp_lead_text#ja"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">{% trans %}CFP Pre-Submit Instructions (Japanese){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="cfp_pre_submit_instructions#ja"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">{% trans %}CFP Post-Submit Instructions (Japanese){% endtrans %}</div>
+                <div class="collapsible-body">
+                  <textarea name="cfp_post_submit_instructions#ja"></textarea>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <button id="components-update" class="btn waves-effect waves-light" type="submit" name="action">
+              <i class="material-icons left">send</i>
+              {% trans %}Update{% endtrans %}
+            </button>
+          </div>
+        </div>
+      </form>
+      </div>
+    </div>
+
+    <div id="dates-box" class="section scrollspy">
+      <div id="dates" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Dates{% endtrans %}</div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <a href="#add-date-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new date</a>
+          </div>
+        </div>
+        <div id="add-date-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/date/add" method="POST">
+            <div class="modal-content">
+              <input type="hidden" name="conference_id" value="{{ conference.id }}">
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Date{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="date" class="date">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Start Time{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="start_time" class="time">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}End Time{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <td><input type="text" name="end_time" class="time">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-date-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="dates"></div>
           </div>
         </div>
       </div>
-    </form>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <a href="#add-session-type-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new session type</a>
     </div>
-  </div>
-  <div class="row">
-    <div class="col s12">
-      <div class="session_types"></div>
-    </div>
-  </div>
-</div>
 
-<div id="sponsors" class="box">
-  <div class="row box-header">
-    <div class="col s12">{% trans %}Sponsors{% endtrans %}
-      <a href="#" id="add-sponsor-btn"><i class="material-icons vmiddle">library_add</i></a>
+    <div id="session_types-box" class="section scrollspy">
+      <div id="session_types" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Session Types{% endtrans %}</div>
+        </div>
+        <div id="add-session-type-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/session_type/add" method="POST">
+            <input type="hidden" name="conference_id" value="{{ conference.id }}">
+            <div class="modal-content">
+              <div class="row">
+                <div class="col s12">
+                  <ul class="tabs">
+                    <li class="tab col s3"><a href="#session-type-en">{% trans %}English{% endtrans %}</a></li>
+                    <li class="tab col s3"><a href="#session-type-ja">{% trans %}Japanese{% endtrans %}</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div id="session-type-en">
+                <div class="row">
+                  <div class="col s{{ leftcol }} label">{% trans %}Name (English){% endtrans %}</div>
+                  <div class="col s{{ rightcol }}">
+                    <input type="text" name="name">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s{{ leftcol }} label">{% trans %}Abstract (English){% endtrans %}</div>
+                  <div class="col s{{ rightcol }}">
+                    <input type="text" name="abstract">
+                  </div>
+                </div>
+              </div>
+              <div id="session-type-ja">
+                <div class="row">
+                  <div class="col s{{ leftcol }} label">{% trans %}Name (Japanese){% endtrans %}</div>
+                  <div class="col s{{ rightcol }}">
+                    <input type="text" name="name#ja">
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s{{ leftcol }} label">{% trans %}Abstract (Japanese){% endtrans %}</div>
+                  <div class="col s{{ rightcol }}">
+                    <input type="text" name="abstract#ja">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Duration{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="duration" placeholder="{% trans %}Duration in seconds{% endtrans %}">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Submission Start{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="submission_start_date" class="date">
+                  <input type="text" name="submission_start_time" class="time">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Submission End{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="submission_end_date" class="date">
+                  <input type="text" name="submission_end_time" class="time">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-session-type-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <a href="#add-session-type-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new session type</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="session_types"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sponsors-box" class="section scrollspy">
+      <div id="sponsors" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Sponsors{% endtrans %}
+            <a href="#" id="add-sponsor-btn"><i class="material-icons vmiddle">library_add</i></a>
+          </div>
+        </div>
+        <div class="row sponsors"></div>
+        <div id="add-sponsor-form" class="row">
+          <div class="col s12">
+            <form action="/api/conference/sponsor/add" method="POST">
+            <table>
+            <tbody>
+              <tr>
+                <td>{% trans %}Name{% endtrans %}</td>
+                <td><input type="text" name="name" placeholder="Sponsor Name (English)"></td>
+              </tr>
+              <tr>
+                <td>{% trans %}Name (Japanese){% endtrans %}</td>
+                <td><input type="text" name="name#ja" placeholder="日本語表記"></td>
+              </tr>
+              <tr>
+                <td>{% trans %}URL{% endtrans %}</td>
+                <td><input type="text" name="url" placeholder="http://www.company.com"></td>
+              </tr>
+              <tr>
+                <td>{% trans %}Group Name{% endtrans %}</td>
+                <td><input type="text" name="group_name" placeholder="tier-1"></td>
+              </tr>
+              <tr>
+                <td>{% trans %}Sort Order{% endtrans %}</td>
+                <td><input type="text" name="sort_order"></td>
+              </tr>
+            </tbody>
+            </table>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="row sponsors"></div>
-  <div id="add-sponsor-form" class="row">
-    <div class="col s12">
-      <form action="/api/conference/sponsor/add" method="POST">
-      <table>
-      <tbody>
-        <tr>
-          <td>{% trans %}Name{% endtrans %}</td>
-          <td><input type="text" name="name" placeholder="Sponsor Name (English)"></td>
-        </tr>
-        <tr>
-          <td>{% trans %}Name (Japanese){% endtrans %}</td>
-          <td><input type="text" name="name#ja" placeholder="日本語表記"></td>
-        </tr>
-        <tr>
-          <td>{% trans %}URL{% endtrans %}</td>
-          <td><input type="text" name="url" placeholder="http://www.company.com"></td>
-        </tr>
-        <tr>
-          <td>{% trans %}Group Name{% endtrans %}</td>
-          <td><input type="text" name="group_name" placeholder="tier-1"></td>
-        </tr>
-        <tr>
-          <td>{% trans %}Sort Order{% endtrans %}</td>
-          <td><input type="text" name="sort_order"></td>
-        </tr>
-      </tbody>
-      </table>
-      </form>
+
+  <div class="col hide-on-small-only m3 l2">
+    <div class="toc-wrapper">
+    <div style="height: 1px">
+    <ul class="section table-of-contents">
+      <li><a href="#miscellaneous-box">Miscellaneous</a></li>
+      <li><a href="#venues-box">Venues</a></li>
+      <li><a href="#tracks-box">Tracks</a></li>
+      <li><a href="#organizers-box">Organizers</a></li>
+      <li><a href="#staff-box">Staff</a></li>
+      <li><a href="#twitter-box">Twitter</a></li>
+      <li><a href="#basic-box">Basic Information</a></li>
+      <li><a href="#components-box">Text Components</a></li>
+      <li><a href="#dates-box">Dates</a></li>
+      <li><a href="#session_types-box">Session Types</a></li>
+      <li><a href="#sponsors-box">Sponsors</a></li>
+    </ul>
+    </div>
     </div>
   </div>
 </div>
@@ -1230,6 +1265,10 @@
   }
 
   $(document).ready(function() {
+    var $toc = $('.toc-wrapper');
+    $toc.pushpin({ "top": $($toc.parent()).offset().top });
+    $('.scrollspy').scrollSpy({ scrollOffset: 100 });
+
     registerVenues(conference.venues);
     setupVenues();
     setupTracks();
