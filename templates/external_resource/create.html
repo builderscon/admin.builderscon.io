@@ -1,0 +1,47 @@
+{% extends 'layouts/base.html' %}
+
+{% block main %}
+<form action="/external_resource/create?conference_id={{ conference_id }}" method="POST" class="row">
+  <input type="hidden" name="conference_id" value="{{ conference_id }}">
+  <input type="hidden" name="next_url" value="/conference/{{ conference_id }}/view#external-resources-box">
+  {% if error %}
+  <div class="card-panel red">
+    {{ error }}
+  </div>
+  {% endif %}
+  <div>
+    <a href="javascript:history.back();" class="left btn modal-action modal-close waves-effect waves-green">GO BACK</a>
+    <button class="right btn waves-effect waves-light" type="submit" name="action">
+      <i class="material-icons left">send</i>CREATE
+    </button>
+  </div>
+  <table>
+    <tbody>
+    <tr>
+      <td>{% trans %}Title{% endtrans %}</td>
+      <td><input type="text" name="title" placeholder="External Resource Name (English)" value="{{ external_resource.title }}"></td>
+    </tr>
+    <tr>
+      <td>{% trans %}Title (Japanese){% endtrans %}</td>
+      <td><input type="text" name="title#ja" placeholder="タイトル (日本語)" value="{{ external_resource.get('title#ja', '') }}"></td>
+    </tr>
+    <tr>
+      <td>{% trans %}Description{% endtrans %}</td>
+      <td><input class="materialize-textarea" name="description" placeholder="Description (English)" value="{{ external_resource.description }}"></td>
+    </tr>
+    <tr>
+      <td>{% trans %}Description (Japanese){% endtrans %}</td>
+      <td><input class="materialize-textarea" name="description#ja" placeholder="説明 (日本語)" value="{{ external_resource.get('description#ja', '') }}"></td>
+    </tr>
+    <tr>
+      <td>{% trans %}URL{% endtrans %}</td>
+      <td><input type="text" name="url" placeholder="http://www.company.com" value="{{ external_resource.url }}"></td>
+    </tr>
+    <tr>
+      <td>{% trans %}Sort Order{% endtrans %}</td>
+      <td><input type="number" name="sort_order" value="{{ external_resource.sort_order }}"></td>
+    </tr>
+    </tbody>
+  </table>
+</form>
+{% endblock %}

@@ -6,6 +6,7 @@ import root
 import session_type
 import track
 import venue
+import external_resource
 
 assert api
 assert auth
@@ -15,3 +16,4 @@ assert root
 assert session_type
 assert track
 assert venue
+assert external_resource
