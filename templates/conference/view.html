@@ -615,9 +615,7 @@
     <div id="external-resources-box" class="section scrollspy">
       <div id="external-resources" class="box">
         <div class="row box-header">
-          <div class="col s12">{% trans %}External Resources{% endtrans %}
-            <a href="#" id="add-external-resource-btn"><i class="material-icons vmiddle">library_add</i></a>
-          </div>
+          <div class="col s12">{% trans %}External Resources{% endtrans %}</div>
         </div>
         <div class="row">
           <div class="col s12">
@@ -640,9 +638,10 @@
           </div>
         </div>
 {% endfor %}
+{% endif %}
       </div>
     </div>
-{% endif %}
+
   </div>
 
   <div class="col hide-on-small-only m3 l2">
