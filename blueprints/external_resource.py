@@ -20,6 +20,7 @@ COLUMNS = [
     'sort_order',
 ]
 
+
 def to_int(s):
     try:
         return int(s)
@@ -27,6 +28,7 @@ def to_int(s):
         return 0
 
 
+# make sure target URL is in the same domain as host
 def is_safe_url(target):
     ref_url = urlparse.urlparse(flask.request.host_url)
     test_url = urlparse.urlparse(urlparse.urljoin(flask.request.host_url, target))
