@@ -1,7 +1,6 @@
 import app
 import flask
 import functools
-import urlparse
 import copy
 
 page = flask.Blueprint('external_resource', __name__)
@@ -28,19 +27,11 @@ def to_int(s):
         return 0
 
 
-# make sure target URL is in the same domain as host
-def is_safe_url(target):
-    ref_url = urlparse.urlparse(flask.request.host_url)
-    test_url = urlparse.urlparse(urlparse.urljoin(flask.request.host_url, target))
-    return test_url.scheme in ('http', 'https') and \
-           ref_url.netloc == test_url.netloc
-
-
 def get_redirect_target():
     for target in flask.request.values.get('next_url'), flask.request.referrer:
         if not target:
             continue
-        if is_safe_url(target):
+        else:
             return target
     return flask.url_for('/')
 
