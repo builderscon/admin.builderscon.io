@@ -611,6 +611,38 @@
         </div>
       </div>
     </div>
+
+    <div id="external-resources-box" class="section scrollspy">
+      <div id="external-resources" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}External Resources{% endtrans %}
+            <a href="#" id="add-external-resource-btn"><i class="material-icons vmiddle">library_add</i></a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <a href="/external_resource/create?conference_id={{ conference.id }}"><i class="vmiddle material-icons">library_add</i> Add an external source</a>
+          </div>
+        </div>
+{% set external_resources = conference.get('external_resources') or [] %}
+{% if external_resources|length > 0 %}
+{% for resource in external_resources %}
+        <div class="row">
+          <div class="col s12" style="border-top: 1px solid #d0d0d0; padding-top: 5px;">
+            <div>
+              <a class="btn waves-effect waves-light" href="/external_resource/{{ resource.id }}/update">Edit</a>
+              <a class="btn waves-effect waves-light" href="/external_resource/{{ resource.id }}/delete">Delete</a>
+            </div>
+            <div><a href="{{ resource.url }}">{{ resource.title }}</a>:{{ resource.description }}</div>
+            {% if resource.get('title#ja') %}
+            <div><a href="{{ resource.url }}">{{ resource.get('title#ja', '') }}</a>:{{ resource.get('description#ja', '') }}</div>
+            {% endif %}
+          </div>
+        </div>
+{% endfor %}
+      </div>
+    </div>
+{% endif %}
   </div>
 
   <div class="col hide-on-small-only m3 l2">
@@ -628,6 +660,7 @@
       <li><a href="#dates-box">Dates</a></li>
       <li><a href="#session_types-box">Session Types</a></li>
       <li><a href="#sponsors-box">Sponsors</a></li>
+      <li><a href="#external-resources-box">External Resources</a></li>
     </ul>
     </div>
     </div>
@@ -925,7 +958,7 @@
                   url: '/api/conference/administrator/remove',
                   method: 'POST',
                   data: {
-                    'conference_id': {{ conference.id | tojson }}, 
+                    'conference_id': {{ conference.id | tojson }},
                     'admin_id': user_id
                   }
                 }).done(function(data) {
@@ -978,7 +1011,7 @@
                   url: '/api/conference/staff/remove',
                   method: 'POST',
                   data: {
-                    'conference_id': {{ conference.id | tojson }}, 
+                    'conference_id': {{ conference.id | tojson }},
                     'staff_id': user_id
                   }
                 }).done(function(data) {
@@ -1164,7 +1197,7 @@
       );
     });
   }
-    
+
   function setupSponsors() {
     listSponsors(conference.sponsors);
     $('#add-sponsor-form').hide();

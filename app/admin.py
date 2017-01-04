@@ -19,6 +19,7 @@ def initialize():
     app.register_blueprint(blueprints.session_type.page)
     app.register_blueprint(blueprints.track.page)
     app.register_blueprint(blueprints.venue.page)
+    app.register_blueprint(blueprints.external_resource.page)
 
     global cfg, api
 

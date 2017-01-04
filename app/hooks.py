@@ -156,4 +156,12 @@ def with_session(cb, lang=None):
         return cb()
     return functools.update_wrapper(functools.partial(_load_session, cb, lang=lang), cb)
 
-
+def with_external_resource(cb, lang=None):
+    def _load_external_resource(cb, id, lang):
+        external_resource = admin.api.lookup_external_resource(id=id, lang=lang or flask.g.lang)
+        if not external_resource:
+            return flask.abort(404)
+        flask.g.stash['external_resource_id'] = id
+        flask.g.stash['external_resource'] = external_resource
+        return cb()
+    return functools.update_wrapper(functools.partial(_load_external_resource, cb, lang=lang), cb)
