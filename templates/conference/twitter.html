@@ -1,0 +1,16 @@
+{% extends 'layouts/base.html' %}
+
+{% block main %}
+            <form action="/conference/{{ conference.id }}/twitter" method="POST">
+              <div class="input-field">
+                <label for="tweet">Tweet</label>
+                <textarea name="tweet"></textarea>
+              </div>
+              <button class="btn waves-effect waves-light" type="submit" name="action">
+                <i class="material-icons left">send</i>Submit
+              </button>
+            </form>
+
+{% endblock %}
+
+

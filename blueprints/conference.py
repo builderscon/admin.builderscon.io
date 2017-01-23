@@ -148,3 +148,19 @@ def blog_entries():
     flask.g.stash['blog_entries'] = blog_entries or [];
     return flask.render_template('conference/blog_entries.html')
 
+@page.route('/conference/<id>/twitter')
+@with_conference
+def twitter():
+    return flask.render_template('conference/twitter.html')
+
+@page.route('/conference/<id>/twitter', methods=['POST'])
+@with_conference
+def twitter_post():
+    conference_id = flask.g.stash['conference_id']
+    tweet = flask.request.values.get('tweet')
+    user_id = flask.session['user_id']
+    ok = app.api.tweet_as_conference(conference_id, tweet, user_id)
+    if not ok:
+        return "failure" # TODO
+    return "posted successfully" # TODO
+

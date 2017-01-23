@@ -1,7 +1,10 @@
 import admin
+import base64
 import flask
 import flasktools
 import flask_oauth
+import hooks
+import json
 import re
 import traceback
 
@@ -15,6 +18,17 @@ twitter = _oauth.remote_app('twitter',
     consumer_key=admin.cfg.section('TWITTER').get('client_id'),
     consumer_secret=admin.cfg.section('TWITTER').get('client_secret').encode('ASCII')
 )
+
+# Used for three-legged OAuth
+twitter_app = _oauth.remote_app('twitter_app',
+    base_url='https://api.twitter.com/1.1/',
+    request_token_url='https://api.twitter.com/oauth/request_token',
+    access_token_url='https://api.twitter.com/oauth/access_token',
+    authorize_url='https://api.twitter.com/oauth/authenticate',
+    consumer_key=admin.cfg.section('TWITTER').get('client_id'),
+    consumer_secret=admin.cfg.section('TWITTER').get('client_secret').encode('ASCII')
+)
+
 facebook = _oauth.remote_app('facebook',
     base_url='https://graph.facebook.com/',
     request_token_url=None,
@@ -47,6 +61,7 @@ def get_twitter_token(token=None):
     return flask.session.get('twitter_token')
 
 def start(oauth_handler, callback):
+    print("starting handler with callback %s" % callback)
     try:
         args = {}
         if flask.request.args.get('.next'):
@@ -240,3 +255,39 @@ def twitter_callback(resp):
     flask.g.stash['user'] = user
     return redirect_edit()
 
+@admin.app.route('/conference/<id>/twitter/authenticate')
+@hooks.with_conference
+def auth_conference_twitter():
+    if 'twitter_app_token' in flask.session:
+        del flask.session['twitter_app_token']
+    id = flask.g.stash['conference_id']
+    return start(twitter_app, admin.app.base_url + '/conference/twitter/callback?conference_id='+id)
+
+@twitter_app.tokengetter
+def get_twitter_app_token(token=None):
+    return flask.session.get('twitter_app_token')
+
+@admin.app.route('/conference/twitter/callback')
+@twitter_app.authorized_handler
+def twitter_app_callback(resp):
+    if resp is None:
+        err = flask.request.args.get('error_description') or flask.request.args.get('error')
+        return flask.render_template('conference/twitter/authfail.html', error=err)
+
+    conference_id = flask.request.args.get('conference_id')
+    data = dict(
+        access_token=resp['oauth_token'],
+        access_token_secret=resp['oauth_token_secret']
+    )
+    ok = admin.api.add_conference_credential(
+        conference_id=conference_id,
+        data=base64.b64encode(json.dumps(data)),
+        type='twitter',
+        user_id=flask.session['user_id']
+    )
+    if not ok:
+        return "failure" # TODO
+
+    if 'twitter_app_token' in flask.session:
+        del flask.session['twitter_app_token']
+    return flask.redirect('/conference/%s/twitter' % conference_id)
