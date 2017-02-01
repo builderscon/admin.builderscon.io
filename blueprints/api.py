@@ -77,7 +77,7 @@ def conference_list():
 @page.route('/api/conference/featured_speaker/list')
 @require_login
 def list_conference_featured_speaker():
-    confs = app.api.list_featured_speaker(
+    confs = app.api.list_featured_speakers(
         conference_id=flask.request.values.get('conference_id'),
         lang=flask.request.values.get('lang'),
         limit=flask.request.values.get('limit'),
@@ -89,15 +89,12 @@ def list_conference_featured_speaker():
 @page.route('/api/conference/featured_speaker/add', methods=['POST'])
 @require_login
 def add_conference_featured_speaker():
-    ok = app.api.add_featured_speaker(
-        conference_id=flask.request.values.get('conference_id'),
-        avatar_url=flask.request.values.get('avatar_url'),
-        description=flask.request.values.get('description'),
-        speaker_id=flask.request.values.get('speaker_id'),
-        display_name=flask.request.values.get('display_name'),
-        'description#ja'=flask.request.values.get('description#ja'),
-        user_id=flask.g.stash.get('user').get('id')
-    )
+    args = {}
+    args['user_id'] = flask.g.stash.get('user').get('id')
+    for k in ['conference_id', 'avatar_url', 'description', 'speaker_id', 'display_name', 'description#ja']:
+        args[k] = flask.request.values.get(k)
+
+    ok = app.api.add_featured_speaker(**args)
     return _stock_response(ok, app.api)
 
 @page.route('/api/conference/featured_speaker/remove', methods=['POST'])
@@ -131,14 +128,12 @@ def list_conference_sponsor():
 @page.route('/api/conference/sponsor/add', methods=['POST'])
 @require_login
 def add_conference_sponsor():
+    args = {}
+    args['user_id'] = flask.g.stash.get('user').get('id')
+    for k in ['conference_id','url','name', 'name#ja','group_name','sort_order']:
+        args[k] = flask.request.values.get(k)
+
     ok = app.api.add_sponsor(
-        conference_id=flask.request.values.get('conference_id'),
-        url=flask.request.values.get('url'),
-        name=flask.request.values.get('name'),
-        'name#ja'=flask.request.values.get('name#ja'),
-        group_name=flask.request.values.get('group_name'),
-        sort_order=flask.request.values.get('sort_order'),
-        user_id=flask.g.stash.get('user').get('id')
     )
     return _stock_response(ok, app.api)
 

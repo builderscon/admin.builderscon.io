@@ -574,36 +574,51 @@
     <div id="featured-speakers-box" class="section scrollspy">
       <div id="featured-speakers" class="box">
         <div class="row box-header">
-          <div class="col s12">{% trans %}Featured Speakers{% endtrans %}
-            <a href="#" id="add-featured-speaker-btn"><i class="material-icons vmiddle">library_add</i></a>
+          <div class="col s12">{% trans %}Featured Speakers{% endtrans %}</div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <a href="#add-featured-speaker-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new featured speaker</a>
           </div>
         </div>
         <div class="row featured-speakers"></div>
-        <div id="add-featured-speaker-form" class="row">
-          <div class="col s12">
-            <form action="/api/conference/featured_speaker/add" method="POST" class="col s12">
-            <table>
-            <tbody>
-              <tr>
-                <td>{% trans %}Display Name{% endtrans %}</td>
-                <td><input type="text" name="display_name" placeholder="Larry Wall (TimToady)"></td>
-              </tr>
-              <tr>
-                <td>{% trans %}Avatar URL{% endtrans %}</td>
-                <td><input type="text" name="avatar_url" placeholder="https://upload.wikimedia.org/wikipedia/commons/b/b3/Larry_Wall_YAPC_2007.jpg"></td>
-              </tr>
-              <tr>
-                <td>{% trans %}Description{% endtrans %}</td>
-                <td><textarea width="10" height="60" name="description" placeholder="Larry Wall is a computer programmer and author, most widely known as the creator of the Perl programming language."></textarea></td>
-              </tr>
-              <tr>
-                <td>{% trans %}Description (Japanese){% endtrans %}</td>
-                <td><textarea width="10" height="60" name="description#ja"></textarea></td>
-              </tr>
-            </tbody>
-            </table>
-            </form>
-          </div>
+        <div id="add-featured-speaker-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/featured_speaker/add" method="POST" class="col s12">
+            <input type="hidden" name="conference_id" value="{{ conference.id }}">
+            <div class="modal-content">
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Display Name{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="display_name" placeholder="Larry Wall (TimToady)">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Avatar URL{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="avatar_url" placeholder="https://upload.wikimedia.org/wikipedia/commons/b/b3/Larry_Wall_YAPC_2007.jpg">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <textarea width="10" height="60" name="description" placeholder="Larry Wall is a computer programmer and author, most widely known as the creator of the Perl programming language."></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Description (Japanese){% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <textarea width="10" height="60" name="description#ja"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-featured-speaker-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -695,6 +710,7 @@
       <li><a href="#components-box">Text Components</a></li>
       <li><a href="#dates-box">Dates</a></li>
       <li><a href="#session_types-box">Session Types</a></li>
+      <li><a href="#featured-speakers-box">Featured Speakers</a></li>
       <li><a href="#sponsors-box">Sponsors</a></li>
       <li><a href="#external-resources-box">External Resources</a></li>
     </ul>
@@ -1236,9 +1252,28 @@
 
   function setupFeaturedSpeakers() {
     listFeaturedSpeakers(conference.featured_speakers);
-    $('#add-featured-speaker-form').hide();
+    var $m = $("#add-featured-speaker-form");
+    $m.modal();
     $('#add-featured-speaker-btn').click(function() {
       $('#add-featured-speaker-form').show("slide");
+      return false;
+    });
+    $('#add-featured-speaker-form-btn').click(function() {
+      var $f = $('form', '#add-featured-speaker-form');
+      $.ajax({
+        url: $f.attr('action'),
+        method: $f.attr('method'),
+        data: $f.serialize(),
+      }).done(function(msg) {
+        $.ajax({
+          url: '/api/conference/featured_speaker/list',
+          data: { conference_id: '{{ conference.id | tojson }}' },
+        }).done(function(data) {
+          listFeaturedSpeakers(data);
+        });
+      }).fail(function(chr, status, err) {
+        console.log(err)
+      });
       return false;
     });
   }
@@ -1389,7 +1424,7 @@
         keys.push(k + '#' + l);
       });
       $.each(keys, function(i, key) {
-        $('*[name="' + key + '"]').each(function(i, c) {
+        $('*[name="' + key + '"]', '#basic').each(function(i, c) {
           $(c).val(conference[key]);
         });
       });
