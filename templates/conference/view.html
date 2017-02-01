@@ -571,6 +571,43 @@
       </div>
     </div>
 
+    <div id="featured-speakers-box" class="section scrollspy">
+      <div id="featured-speakers" class="box">
+        <div class="row box-header">
+          <div class="col s12">{% trans %}Featured Speakers{% endtrans %}
+            <a href="#" id="add-featured-speaker-btn"><i class="material-icons vmiddle">library_add</i></a>
+          </div>
+        </div>
+        <div class="row featured-speakers"></div>
+        <div id="add-featured-speaker-form" class="row">
+          <div class="col s12">
+            <form action="/api/conference/featured_speaker/add" method="POST" class="col s12">
+            <table>
+            <tbody>
+              <tr>
+                <td>{% trans %}Display Name{% endtrans %}</td>
+                <td><input type="text" name="display_name" placeholder="Larry Wall (TimToady)"></td>
+              </tr>
+              <tr>
+                <td>{% trans %}Avatar URL{% endtrans %}</td>
+                <td><input type="text" name="avatar_url" placeholder="https://upload.wikimedia.org/wikipedia/commons/b/b3/Larry_Wall_YAPC_2007.jpg"></td>
+              </tr>
+              <tr>
+                <td>{% trans %}Description{% endtrans %}</td>
+                <td><textarea width="10" height="60" name="description" placeholder="Larry Wall is a computer programmer and author, most widely known as the creator of the Perl programming language."></textarea></td>
+              </tr>
+              <tr>
+                <td>{% trans %}Description (Japanese){% endtrans %}</td>
+                <td><textarea width="10" height="60" name="description#ja"></textarea></td>
+              </tr>
+            </tbody>
+            </table>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="sponsors-box" class="section scrollspy">
       <div id="sponsors" class="box">
         <div class="row box-header">
@@ -1175,6 +1212,37 @@
     });
   }
 
+  function listFeaturedSpeakers(data) {
+    var $c = $('.featured-speakers', '#featured-speakers');
+    $c.empty();
+    var row;
+    $(data).each(function(i, speaker) {
+      if (i == 0) {
+        row = $("<div />").addClass("row");
+        $c.append(row);
+      }
+      row.append(
+        $("<div />").addClass("col").addClass("s2").addClass("featured-speaker")
+          .append(
+            $("<a />").attr("href", "/conference/{{ conference.id }}/speaker/" + speaker.id + "/view").append(
+              $("<img />").attr("src", speaker.avatar_url),
+              $("<br />"),
+              speaker.display_name
+            )
+          )
+      );
+    });
+  }
+
+  function setupFeaturedSpeakers() {
+    listFeaturedSpeakers(conference.featured_speakers);
+    $('#add-featured-speaker-form').hide();
+    $('#add-featured-speaker-btn').click(function() {
+      $('#add-featured-speaker-form').show("slide");
+      return false;
+    });
+  }
+
   function listSponsors(data) {
     var $c = $('.sponsors', '#sponsors');
     $c.empty();
@@ -1312,6 +1380,7 @@
     setupSessionTypes();
     setupSponsors();
     setupConferenceSeries();
+    setupFeaturedSpeakers();
     $('.modal').modal();
 
     for (k in conference) {
