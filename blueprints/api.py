@@ -74,6 +74,85 @@ def conference_list():
     )
     return flask.jsonify(conferences)
 
+@page.route('/api/conference/featured_speaker/list')
+@require_login
+def list_conference_featured_speaker():
+    confs = app.api.list_featured_speakers(
+        conference_id=flask.request.values.get('conference_id'),
+        lang=flask.request.values.get('lang'),
+        limit=flask.request.values.get('limit'),
+        since=flask.request.values.get('since'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    return flask.jsonify(confs)
+
+@page.route('/api/conference/featured_speaker/add', methods=['POST'])
+@require_login
+def add_conference_featured_speaker():
+    args = {}
+    args['user_id'] = flask.g.stash.get('user').get('id')
+    for k in ['conference_id', 'avatar_url', 'description', 'speaker_id', 'display_name', 'description#ja']:
+        args[k] = flask.request.values.get(k)
+
+    ok = app.api.add_featured_speaker(**args)
+    return _stock_response(ok, app.api)
+
+@page.route('/api/conference/featured_speaker/remove', methods=['POST'])
+@require_login
+def remove_conference_featured_speaker():
+    ok = app.api.delete_featured_speaker(
+        id=flask.request.values.get('id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": app.api.last_error()
+    })
+
+@page.route('/api/conference/sponsor/list')
+@require_login
+def list_conference_sponsor():
+    confs = app.api.list_sponsor(
+        conference_id=flask.request.values.get('conference_id'),
+        lang=flask.request.values.get('lang'),
+        limit=flask.request.values.get('limit'),
+        since=flask.request.values.get('since'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    return flask.jsonify(confs)
+
+@page.route('/api/conference/sponsor/add', methods=['POST'])
+@require_login
+def add_conference_sponsor():
+    args = {}
+    args['user_id'] = flask.g.stash.get('user').get('id')
+    for k in ['conference_id','url','name', 'name#ja','group_name','sort_order']:
+        args[k] = flask.request.values.get(k)
+
+    ok = app.api.add_sponsor(
+    )
+    return _stock_response(ok, app.api)
+
+@page.route('/api/conference/sponsor/remove', methods=['POST'])
+@require_login
+def remove_conference_sponsor():
+    ok = app.api.delete_sponsor(
+        id=flask.request.values.get('id'),
+        user_id=flask.g.stash.get('user').get('id')
+    )
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": app.api.last_error()
+    })
+
 @page.route('/api/conference/administrator/list')
 @require_login
 def list_conference_administrator():

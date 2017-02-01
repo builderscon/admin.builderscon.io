@@ -74,6 +74,16 @@ div.cols {
   height: 200px;
 }
 
+#conference #featured-speakers .featured-speaker {
+  text-align: center;
+  margin-bottom: 1em;
+}
+#conference #featured-speakers .featured-speaker img {
+  border: 1px solid #999;
+  width: 100%;
+  height: auto;
+}
+
 #conference #sponsors .sponsor {
   text-align: center;
   margin-bottom: 1em;

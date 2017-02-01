@@ -27,7 +27,7 @@
   }
 
   $(document).ready(function() {
-    var keys = ['name', 'address', 'name#ja', 'address#ja' ];
+    var keys = ['name', 'address', 'place_id', 'name#ja', 'address#ja' ];
     $(keys).each(function(i, k) {
       if (venue[k]) {
         $("input[name='" + k + "']").val(venue[k]);

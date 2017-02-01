@@ -35,6 +35,10 @@
         <td><input class="materialize-textarea" name="description#ja" placeholder="説明 (日本語)" value="{{ external_resource.get('description#ja', '') }}"></td>
       </tr>
       <tr>
+        <td>{% trans %}Image URL{% endtrans %}</td>
+        <td><input type="text" name="image_url" placeholder="http://www.company.com" value="{{ external_resource.image_url }}"></td>
+      </tr>
+      <tr>
         <td>{% trans %}URL{% endtrans %}</td>
         <td><input type="text" name="url" placeholder="http://www.company.com" value="{{ external_resource.url }}"></td>
       </tr>
