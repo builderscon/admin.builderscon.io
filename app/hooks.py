@@ -140,7 +140,6 @@ def with_featured_speaker(cb, lang=None):
     def _load_featured_speaker(cb, id, lang):
         featured_speaker = admin.api.lookup_featured_speaker(id=id, lang=lang or flask.g.lang)
         if not featured_speaker:
-            print "featured_speaker not found"
             return flask.abort(404)
         flask.g.stash['featured_speaker_id'] = id
         flask.g.stash['featured_speaker'] = featured_speaker
