@@ -7,6 +7,7 @@ import session_type
 import track
 import venue
 import external_resource
+import featured_speaker
 
 assert api
 assert auth
@@ -17,3 +18,4 @@ assert session_type
 assert track
 assert venue
 assert external_resource
+assert featured_speaker

@@ -20,6 +20,7 @@ def initialize():
     app.register_blueprint(blueprints.track.page)
     app.register_blueprint(blueprints.venue.page)
     app.register_blueprint(blueprints.external_resource.page)
+    app.register_blueprint(blueprints.featured_speaker.page)
 
     global cfg, api
 

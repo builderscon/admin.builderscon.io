@@ -1,0 +1,97 @@
+{% extends 'layouts/base.html' %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="/static/css/materialize.clockpicker.css">
+{% endblock %}
+{% block additional_scripts %}
+<script src="/static/js/materialize.clockpicker.js"></script>
+{% endblock %}
+
+{% block main %}
+{% set leftcol = 3 -%}
+{%- set rightcol = 12 - leftcol -%}
+<form action="/featured_speaker/{{ featured_speaker.id }}/edit" method="POST">
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">{% trans %}Basic{% endtrans %}</div>
+  </div>
+  <div class="row">
+    <div class="col s2 label">{% trans %}Conference{% endtrans %}</div>
+    <div class="col s10"><a href="/conference/{{ conference.id }}/view">{{ conference.title }}</a></div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <ul class="tabs">
+        <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
+        <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+      </ul>
+    </div>
+  </div>
+  <div id="basic-en">
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Display Name (English){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="display_name">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Description (English){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <textarea name="description"></textarea>
+      </div>
+    </div>
+  </div>
+  <div id="basic-ja">
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Display Name (Japanese){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <input type="text" name="display_name#ja">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s{{ leftcol }} label">{% trans %}Description (Japanese){% endtrans %}</div>
+      <div class="col s{{ rightcol }}">
+        <textarea name="description#ja"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s{{ leftcol }} label">{% trans %}Avatar URL{% endtrans %}</div>
+    <div class="col s{{ rightcol }}">
+      <input type="text" name="avatar_url" placeholder="{% trans %}http://...{% endtrans %}">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">
+        <i class="material-icons left">send</i>
+        {% trans %}Update{% endtrans %}
+      </button>
+    </div>
+  </div>
+</div>
+</form>
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+<!--
+  var featured_speaker = {% autoescape false %}{{ featured_speaker | tojson }}{% endautoescape %};
+  function setupSessionType() {
+    $.each(['display_name', 'description', 'display_name#ja', 'description#ja', 'avatar_url'], function(i, k) {
+      var keys = [k];
+      $.each(['ja'], function(j, l) {
+        keys.push(k + '#' + l);
+      });
+      $.each(keys, function(x, key) {
+        $('*[name="' + key + '"]').val(featured_speaker[key]);
+      });
+    });
+  }
+
+  $(document).ready(function() {
+    setupSessionType()
+  });
+-->
+</script>
+{% endblock %}

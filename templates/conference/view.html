@@ -1240,7 +1240,7 @@
       row.append(
         $("<div />").addClass("col").addClass("s2").addClass("featured-speaker")
           .append(
-            $("<a />").attr("href", "/conference/{{ conference.id }}/speaker/" + speaker.id + "/view").append(
+            $("<a />").attr("href", "/featured_speaker/" + speaker.id + "/view").append(
               $("<img />").attr("src", speaker.avatar_url),
               $("<br />"),
               speaker.display_name
