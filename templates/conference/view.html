@@ -626,40 +626,64 @@
     <div id="sponsors-box" class="section scrollspy">
       <div id="sponsors" class="box">
         <div class="row box-header">
-          <div class="col s12">{% trans %}Sponsors{% endtrans %}
-            <a href="#" id="add-sponsor-btn"><i class="material-icons vmiddle">library_add</i></a>
+          <div class="col s12">{% trans %}Sponsors{% endtrans %}</div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <a href="#add-sponsor-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new sponsor</a>
           </div>
         </div>
         <div class="row sponsors"></div>
-        <div id="add-sponsor-form" class="row">
-          <div class="col s12">
-            <form action="/api/conference/sponsor/add" method="POST">
-            <table>
-            <tbody>
-              <tr>
-                <td>{% trans %}Name{% endtrans %}</td>
-                <td><input type="text" name="name" placeholder="Sponsor Name (English)"></td>
-              </tr>
-              <tr>
-                <td>{% trans %}Name (Japanese){% endtrans %}</td>
-                <td><input type="text" name="name#ja" placeholder="日本語表記"></td>
-              </tr>
-              <tr>
-                <td>{% trans %}URL{% endtrans %}</td>
-                <td><input type="text" name="url" placeholder="http://www.company.com"></td>
-              </tr>
-              <tr>
-                <td>{% trans %}Group Name{% endtrans %}</td>
-                <td><input type="text" name="group_name" placeholder="tier-1"></td>
-              </tr>
-              <tr>
-                <td>{% trans %}Sort Order{% endtrans %}</td>
-                <td><input type="text" name="sort_order"></td>
-              </tr>
-            </tbody>
-            </table>
-            </form>
-          </div>
+        <div id="add-sponsor-form" class="modal modal-fixed-footer">
+          <form action="/api/conference/sponsor/add" method="POST">
+            <input type="hidden" name="conference_id" value="{{ conference.id }}">
+            <div class="modal-content">
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Name{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="name" placeholder="Sponsor Name (English)">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Name (Japanese){% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="name#ja" placeholder="日本語表記">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}URL{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="url" placeholder="http://www.company.com">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Logo URL{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="logo_url" placeholder="http://www.company.com/logo.png">
+                  <p style="font-size: 0.7em; color: #ccc">Please upload the photo at <a href="https://console.cloud.google.com/storage/browser/media-builderscon-1248/conferences/{{ conference.id }}/?project=builderscon-1248">https://console.cloud.google.com/storage/browser/media-builderscon-1248/conferences/{{ conference.id }}/?project=builderscon-1248</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Group Name{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="group_name" placeholder="tier-1">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s{{ leftcol }} label">{% trans %}Sort Order{% endtrans %}</div>
+                <div class="col s{{ rightcol }}">
+                  <input type="text" name="sort_order">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <div class="row">
+                <div class="col s12">
+                  <button id="add-sponsor-form-btn" class="btn waves-effect waves-light" type="submit" name="action">{% trans %}Add{% endtrans %}</button>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -1290,8 +1314,8 @@
       row.append(
         $("<div />").addClass("col").addClass("s2").addClass("sponsor")
           .append(
-            $("<a />").attr("href", "/conference/{{ conference.id }}/sponsor/" + sponsor.id + "/view").append(
-              $("<img />").attr("src", sponsor.logo_url1),
+            $("<a />").attr("href", "/sponsor/" + sponsor.id + "/view").append(
+              $("<img />").attr("src", "https://builderscon.io/sharaq/sponsor-small/" + sponsor.logo_url),
               $("<br />"),
               sponsor.name
             )
@@ -1302,9 +1326,28 @@
 
   function setupSponsors() {
     listSponsors(conference.sponsors);
-    $('#add-sponsor-form').hide();
+    var $m = $("#add-sponsor-form");
+    $m.modal();
     $('#add-sponsor-btn').click(function() {
       $('#add-sponsor-form').show("slide");
+      return false;
+    });
+    $('#add-sponsor-form-btn').click(function() {
+      var $f = $('form', '#add-sponsor-form');
+      $.ajax({
+        url: $f.attr('action'),
+        method: $f.attr('method'),
+        data: $f.serialize(),
+      }).done(function(msg) {
+        $.ajax({
+          url: '/api/conference/sponsor/list',
+          data: { conference_id: '{{ conference.id | tojson }}' },
+        }).done(function(data) {
+          listSponsors(data);
+        });
+      }).fail(function(chr, status, err) {
+        console.log(err)
+      });
       return false;
     });
   }

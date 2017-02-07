@@ -136,6 +136,16 @@ def with_session_type(cb, lang=None):
         return cb()
     return functools.update_wrapper(functools.partial(_load_session_type, cb, lang=lang), cb)
 
+def with_sponsor(cb, lang=None):
+    def _load_sponsor(cb, id, lang):
+        sponsor = admin.api.lookup_sponsor(id=id, lang=lang or flask.g.lang)
+        if not sponsor:
+            return flask.abort(404)
+        flask.g.stash['sponsor_id'] = id
+        flask.g.stash['sponsor'] = sponsor
+        return cb()
+    return functools.update_wrapper(functools.partial(_load_sponsor, cb, lang=lang), cb)
+
 def with_featured_speaker(cb, lang=None):
     def _load_featured_speaker(cb, id, lang):
         featured_speaker = admin.api.lookup_featured_speaker(id=id, lang=lang or flask.g.lang)
