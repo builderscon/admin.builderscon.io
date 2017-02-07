@@ -184,6 +184,8 @@ def update():
     data = v[datakey]
     data['id'] = flask.g.stash.get('sponsor_id')
     data['user_id'] = flask.session['user_id']
+    if 'sort_order' in data:
+        data['sort_order'] = int(data['sort_order'])
     ok = app.api.update_sponsor(**data)
     if not ok:
         flask.g.stash['error'] = app.api.last_error()
