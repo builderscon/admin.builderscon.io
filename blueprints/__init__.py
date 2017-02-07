@@ -8,6 +8,7 @@ import track
 import venue
 import external_resource
 import featured_speaker
+import sponsor
 
 assert api
 assert auth
@@ -19,3 +20,5 @@ assert track
 assert venue
 assert external_resource
 assert featured_speaker
+assert sponsor
+

@@ -116,12 +116,11 @@ def remove_conference_featured_speaker():
 @page.route('/api/conference/sponsor/list')
 @require_login
 def list_conference_sponsor():
-    confs = app.api.list_sponsor(
+    confs = app.api.list_sponsors(
         conference_id=flask.request.values.get('conference_id'),
         lang=flask.request.values.get('lang'),
         limit=flask.request.values.get('limit'),
-        since=flask.request.values.get('since'),
-        user_id=flask.g.stash.get('user').get('id')
+        since=flask.request.values.get('since')
     )
     return flask.jsonify(confs)
 
@@ -130,11 +129,14 @@ def list_conference_sponsor():
 def add_conference_sponsor():
     args = {}
     args['user_id'] = flask.g.stash.get('user').get('id')
-    for k in ['conference_id','url','name', 'name#ja','group_name','sort_order']:
+    for k in ['conference_id','logo_url','url','name', 'name#ja','group_name']:
         args[k] = flask.request.values.get(k)
+    if 'sort_order' in flask.request.values:
+        v = flask.request.values.get('sort_order')
+        if v:
+            args['sort_order'] = int(v)
 
-    ok = app.api.add_sponsor(
-    )
+    ok = app.api.add_sponsor(**args)
     return _stock_response(ok, app.api)
 
 @page.route('/api/conference/sponsor/remove', methods=['POST'])
