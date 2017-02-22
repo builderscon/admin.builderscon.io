@@ -1311,6 +1311,54 @@
         row = $("<div />").addClass("row");
         $c.append(row);
       }
+
+      var btn = $('<button />');
+      btn.addClass('btn waves-effect red')
+        .append(
+          $('<i />').addClass('material-icons').addClass('left').text('delete')
+        )
+      ;
+      btn.click(function() {
+        var $m = $('#delete-modal');
+        $('.message', $m).append(
+          $('<p />').text('{% trans %}Are you sure you want to remove the following sponsor ?{% endtrans %}')
+        ).append(
+          $('<div />').addClass('chip').append(
+            $('<img />').attr('src', sponsor.logo_url),
+            $('<a />').attr('href', '/sponsor/' + sponsor.id + '/view').text(sponsor.name)
+          )
+        );
+        $m.modal('open');
+        $('.proceed-btn', $m).click(function() {
+          $.ajax({
+            url: '/api/conference/sponsor/remove',
+            method: 'POST',
+            data: {
+              'conference_id': {{ conference.id | tojson }},
+              'id': sponsor.id
+            }
+          }).done(function(data) {
+            if (data.error) {
+              showModalError(data.error);
+              return
+            }
+            $.ajax({
+              url: '/api/conference/sponsor/list',
+              data: {
+                'conference_id': {{ conference.id | tojson }}
+              }
+            }).done(function(data) {
+              listSponsors(data)
+            });
+          }).fail(function(xhr, status, err) {
+            showModalError(err);
+          }).always(function() {
+            $m.modal('close');
+          });
+        });
+        return false;
+      });
+
       row.append(
         $("<div />").addClass("col").addClass("s2").addClass("sponsor")
           .append(
@@ -1318,7 +1366,8 @@
               $("<img />").attr("src", "https://builderscon.io/sharaq/sponsor-small/" + sponsor.logo_url),
               $("<br />"),
               sponsor.name
-            )
+            ),
+            btn
           )
       );
     });
@@ -1339,14 +1388,20 @@
         method: $f.attr('method'),
         data: $f.serialize(),
       }).done(function(msg) {
+        if (msg.error) {
+          showModalError('{% trans %}Failed to create new sponsor{% endtrans %}: ' + msg.error);
+          return;
+        }
         $.ajax({
           url: '/api/conference/sponsor/list',
-          data: { conference_id: '{{ conference.id | tojson }}' },
+          data: { conference_id: '{{ conference.id }}' },
         }).done(function(data) {
           listSponsors(data);
         });
       }).fail(function(chr, status, err) {
         console.log(err)
+      }).always(function() {
+        $m.modal('close');
       });
       return false;
     });
