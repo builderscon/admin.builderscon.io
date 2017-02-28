@@ -1,0 +1,47 @@
+{# creates the most commonly used big row #}
+
+{% macro form_row(label, label_width=2) %}
+<div class="row">
+  <div class="col s{{ label_width }} label">{{ label }}</div>
+  <div class="col s{{ 12 - label_width }}">{{ caller() }}</div>
+</div>
+{% endmacro %}
+
+{% macro fullwidth_row(extra_class='') %}
+<div class="row{% if extra_class %} {{ extra_class }}{% endif %}">
+  <div class="col s12">
+{{ caller() }}
+  </div>
+</div>
+{% endmacro %}
+
+{% set scrollspy_sections = [] %}
+{% macro roundbox(id, box_title) %}
+{%- if scrollspy_sections.append({'section': id + "-box", 'title': box_title}) %}{% endif %}
+    <div id="{{ id }}-box" class="section scrollspy">
+      <div id="{{ id }}" class="box">
+{% call fullwidth_row('box-header') %}{{ box_title }}{% endcall %}
+{{ caller() }}
+      </div>
+  </div>
+{% endmacro %}
+
+{% macro add_link(id) %}
+{% call fullwidth_row() %}
+  <a href="#add-{{ id }}-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new {{ id }}</a>
+{% endcall %}
+{% endmacro %}
+
+{% macro scrollspy_toc() %}
+  <div class="col hide-on-small-only m3 l2">
+    <div class="toc-wrapper">
+    <div style="height: 1px">
+    <ul class="section table-of-contents">
+{% for section in scrollspy_sections %}
+      <li><a href="#{{ section.section }}">{{ section.title }}</a></li>
+{% endfor %}
+    </ul>
+    </div>
+    </div>
+  </div>
+{% endmacro %}

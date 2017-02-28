@@ -1,30 +1,42 @@
-{% set modal_id = 'message-modal' -%}
 <script type="text/javascript">
 <!--
-  function msgModal() {
-    return $({% autoescape false %}{{ ('#' + modal_id) | tojson }}{% endautoescape %});
-  }
-
-  function showModalMessage(title, message, options) {
-    var $m = msgModal();
+  function showModal(id, title, message, options) {
+    var $m = $(id);
     $('.title', $m).empty().append(title);
     $('.message', $m).empty().append(message);
     if (options) {
       $m.modal(options);
     }
     $m.modal('open');
+    return $m;
   }
 
-  function showModalError(err) {
-    showModalMessage('{% trans %}Error{% endtrans %}', err);
+  function modalMessage(title, message, options) {
+    return showModal('#message-modal', title, message, options);
+  }
+
+  function modalError(err) {
+    return showModal('#message-modal', '{% trans %}Error{% endtrans %}', err);
+  }
+
+  function modalDelete(title, message, options) {
+    return showModal('#delete-modal', title, message, options);
   }
 -->
 </script>
 
-<div id="{{ modal_id }}" class="modal">
+<div id="message-modal" class="modal">
   <div class="modal-content">
     <h4 class="title"></h4>
     <p class="message"></p>
   </div>
 </div>
 
+<div id="delete-modal" class="modal">
+  <div class="modal-content">
+    <p class="message"></p>
+  </div>
+  <div class="modal-footer">
+    <button class="proceed-btn btn waves-effect waves-light" type="submit" name="action">Submit</button>
+  </div>
+</div>

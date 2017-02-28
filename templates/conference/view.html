@@ -1,4 +1,6 @@
 {% extends 'layouts/base.html' %}
+{% import "component/macros.html" as macros %}
+{% include 'component/message-modal.html' %}
 
 {% block body_id %}conference{% endblock %}
 
@@ -11,69 +13,32 @@
 {% endblock %}
 
 {% block main %}
-{% include 'component/message-modal.html' %}
-<div id="delete-modal" class="modal">
-  <div class="modal-content">
-    <p class="message"></p>
-  </div>
-  <div class="modal-footer">
-    <button class="proceed-btn btn waves-effect waves-light" type="submit" name="action">Submit</button>
-  </div>
-</div>
-<div id="success-modal" class="modal">
-  <div class="modal-content">
-    <h4>{% trans %}Success{% endtrans %}</h4>
-    <p class="message"></p>
-  </div>
-</div>
 
-{% set leftcol = 2 -%}
-{%- set rightcol = 12 - leftcol -%}
-<div class="row">
-  <div class="col s12">
+{% call macros.fullwidth_row() %}
     <h2>{{ conference.title }}</h2>
-  </div>
-</div>
+{% endcall %}
 
 <div class="row">
   <div class="col s12 m9 l10">
-    <div id="miscellaneous-box" class="section scrollspy">
-      <div id="miscellaneous" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Miscellaneous{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
+{% call macros.roundbox('miscellaneous', _('Miscellaneous')) %}
+{% call macros.fullwidth_row() %}
             <ul>
               <li><a href="/conference/{{ conference.id }}/blog_entries">{% trans %}Blog Entries{% endtrans %}</a></li>
               <li><a href="/conference/{{ conference.id }}/sessions">{% trans %}Session List{% endtrans %}</a></li>
             </ul>
-          </div>
-        </div>
-      </div>
-    </div>
+{% endcall %}{# macros.fullwidth_row #}
+{% endcall %}
 
-    <div id="venues-box" class="section scrollspy">
-      <div id="venues" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Venue{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a href="#add-venue-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new venue</a>
-          </div>
-        </div>
+{% call macros.roundbox('venues', _('Venue')) %}
+{{ macros.add_link('venue') }}
         <div id="venue-list"></div>
         <div id="add-venue-form" class="modal modal-fixed-footer">
           <form action="/api/conference/venue/add" method="POST">
           <input type="hidden" name="conference_id" value="{{ conference.id }}">
           <div class="modal-content">
-            <div class="row">
-              <div class="col s{{ leftcol }} label">{% trans %}Venue{% endtrans %}</div>
-              <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Venue')) %}
                 <select name="venue_id"></select>
-              </div>
-            </div>
+{% endcall %}
           </div>
           <div class="modal-footer">
             <div class="row">
@@ -87,19 +52,10 @@
           </div>
           </form>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="tracks-box" class="section scrollspy">
-      <div id="tracks" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Tracks{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a id="add-track-btn" href="#add-track-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new track</a>
-          </div>
-        </div>
+{% call macros.roundbox('tracks', _('Tracks')) %}
+{{ macros.add_link('track') }}
         <div class="tracks"></div>
         <div id="add-track-form" class="modal modal-fixed-footer">
           <form action="/api/track/create" method="POST">
@@ -114,33 +70,21 @@
                 </div>
               </div>
               <div id="track-basic-en">
-                <div class="row">
-                  <div class="col s2 label">{% trans %}Name (English){% endtrans %}</div>
-                  <div class="col s10">
+{% call macros.form_row(_('Name (English)')) %}
                     <input type="text" name="name" placeholder="{% trans %}Name (English){% endtrans %}" />
-                  </div>
-                </div>
+{% endcall %}
               </div>
               <div id="track-basic-ja">
-                <div class="row">
-                  <div class="col s2 label">{% trans %}Name (Japanese){% endtrans %}</div>
-                  <div class="col s10">
+{% call macros.form_row(_('Name (Japanese)')) %}
                     <input type="text" name="name#ja" placeholder="{% trans %}Name (Japanese){% endtrans %}" />
-                  </div>
-                </div>
+{% endcall %}
               </div>
-              <div class="row">
-                <div class="col s2 label">{% trans %}Room{% endtrans %}</div>
-                <div class="col s10">
+{% call macros.form_row(_('Room')) %}
                   <select name="room_id"></select>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s2 label">{% trans %}Sort Order{% endtrans %}</div>
-                <div class="col s10">
+{% endcall %}
+{% call macros.form_row(_('Sort Order')) %}
                   <input type="text" name="sort_order" placeholder="0-99, ascending order" />
-                </div>
-              </div>
+{% endcall %}
             </div>
             <div class="modal-footer">
               <div class="row">
@@ -151,19 +95,10 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="organizers-box" class="section scrollspy">
-      <div id="organizers" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Organizers{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a href="#add-organizer-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new organizer</a>
-          </div>
-        </div>
+{% call macros.roundbox('organizers', _('Organizers')) %}
+{{ macros.add_link('organizer') }}
         <div class="users"></div>
         <div id="add-organizer-form" class="modal modal-fixed-footer">
           <form action="/api/conference/administrator/add" method="POST">
@@ -185,19 +120,10 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="staff-box" class="section scrollspy">
-      <div id="staff" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Staff{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a href="#add-staff-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new staff</a>
-          </div>
-        </div>
+{% call macros.roundbox('staff', _('Staff')) %}
+{{ macros.add_link('staff') }}
         <div class="users"></div>
         <div id="add-staff-form" class="modal modal-fixed-footer">
           <form action="/api/conference/staff/add" method="POST">
@@ -219,15 +145,10 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
-    <div id="twitter-box" class="section scrollspy">
-      <div id="twitter" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Twitter{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
+{% endcall %}
+
+{% call macros.roundbox('twitter', _('Twitter')) %}
+{% call macros.fullwidth_row() %}
             <p><a href="/conference/{{ conference.id }}/twitter/authenticate">{% trans %}Authenticate Twitter Account{% endtrans %}</a></p>
             <form action="/conference/{{ conference.id }}/twitter" method="POST">
               <div class="input-field">
@@ -238,102 +159,61 @@
                 <i class="material-icons left">send</i>Submit
               </button>
             </form>
-          </div>
-        </div>
-      </div>
-    </div>
+{% endcall %}{# macros.fullwidth_row #}
+{% endcall %}
 
-    <div id="basic-box" class="section scrollspy">
-      <div id="basic" class="box">
+{% call macros.roundbox('basic', _('Basic Information')) %}
       <form action="/conference/{{ conference.id }}/edit" method="POST">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Basic Information{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Conference Series{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Conference Series')) %}
             <select name="series_id">
       {% for series in conference_series %}
               <option value="{{ series.id }}">{{ series.title }}</option>
       {% endfor %}
             </select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Status{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Status')) %}
             <select name="status">
               <option value="private">{% trans %}private{% endtrans %}</option>
               <option value="public">{% trans %}public{% endtrans %}</option>
             </select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Redirect URL{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Redirect URL')) %}
             <input type="text" name="redirect_url" value="{{ (conference.redirect_url or '') | e }}">
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Timetable Available{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Timetable Available')) %}
             <input type="checkbox" class="filled-in" id="timetable_available-checkbox" name="timetable_available" value="true"{% if conference.timezone_available %} checked="checked"{% endif %}>
             <label for="timetable_available-checkbox">{% trans %}Yes{% endtrans %}</label>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s{{ leftcol }} label">{% trans %}Timezone{% endtrans %}</div>
-          <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Timezone')) %}
              <select id="timezone-select" name="timezone"></select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s12">
+{% endcall %}
+{% call macros.fullwidth_row() %}
             <ul class="tabs">
               <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
               <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
             </ul>
-          </div>
-        </div>
+{% endcall %}
         <div id="basic-en">
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Title')) %}
               <input type="text" name="title" placeholder="{% trans %}Conference Title (English){% endtrans %}">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Sub Title')) %}
               <input type="text" name="sub_title" placeholder="{% trans %}Conference Sub Title (English){% endtrans %}">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Description')) %}
               <textarea name="description" placeholder="{% trans %}Description (English){% endtrans %}"></textarea>
-            </div>
-          </div>
+{% endcall %}
         </div>
         <div id="basic-ja">
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Title{% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Title')) %}
               <input type="text" name="title#ja" placeholder="{% trans %}Conference Title (Japanese){% endtrans %}">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Sub Title{% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Sub Title')) %}
               <input type="text" name="sub_title#ja" placeholder="{% trans %}Conference Sub Title (Japanese){% endtrans %}">
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
-            <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Description')) %}
               <textarea name="description#ja" placeholder="{% trans %}Description (Japanese){% endtrans %}"></textarea>
-            </div>
-          </div>
+{% endcall %}
         </div>
         <div class="row">
           <div class="col s12">
@@ -344,15 +224,10 @@
           </div>
         </div>
       </form>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="components-box" class="section scrollspy">
-      <div id="components" class="box">
+{% call macros.roundbox('components', _('Text Components')) %}
       <form action="/conference/{{ conference.id }}/edit" method="POST">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Text Components{% endtrans %}</div>
-        </div>
         <div class="row">
           <div class="col s12">
             <ul class="tabs">
@@ -430,41 +305,23 @@
           </div>
         </div>
       </form>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="dates-box" class="section scrollspy">
-      <div id="dates" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Dates{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a href="#add-date-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new date</a>
-          </div>
-        </div>
+{% call macros.roundbox('dates', _('Dates')) %}
+{{ macros.add_link('date') }}
         <div id="add-date-form" class="modal modal-fixed-footer">
           <form action="/api/conference/date/add" method="POST">
             <div class="modal-content">
               <input type="hidden" name="conference_id" value="{{ conference.id }}">
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Date{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Date')) %}
                   <input type="text" name="date" class="date">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Start Time{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Start Time')) %}
                   <input type="text" name="start_time" class="time">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}End Time{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
-                  <td><input type="text" name="end_time" class="time">
-                </div>
-              </div>
+{% endcall %}
+{% call macros.form_row(_('End Time')) %}
+                  <input type="text" name="end_time" class="time">
+{% endcall %}
             </div>
             <div class="modal-footer">
               <div class="row">
@@ -480,14 +337,10 @@
             <div class="dates"></div>
           </div>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="session_types-box" class="section scrollspy">
-      <div id="session_types" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Session Types{% endtrans %}</div>
-        </div>
+{% call macros.roundbox('session_types', _('Session Types')) %}
+{{ macros.add_link('session-type') }}
         <div id="add-session-type-form" class="modal modal-fixed-footer">
           <form action="/api/conference/session_type/add" method="POST">
             <input type="hidden" name="conference_id" value="{{ conference.id }}">
@@ -501,53 +354,32 @@
                 </div>
               </div>
               <div id="session-type-en">
-                <div class="row">
-                  <div class="col s{{ leftcol }} label">{% trans %}Name (English){% endtrans %}</div>
-                  <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Name (English)')) %}
                     <input type="text" name="name">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s{{ leftcol }} label">{% trans %}Abstract (English){% endtrans %}</div>
-                  <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Abstract (English)')) %}
                     <input type="text" name="abstract">
-                  </div>
-                </div>
+{% endcall %}
               </div>
               <div id="session-type-ja">
-                <div class="row">
-                  <div class="col s{{ leftcol }} label">{% trans %}Name (Japanese){% endtrans %}</div>
-                  <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Name (Japanese)')) %}
                     <input type="text" name="name#ja">
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col s{{ leftcol }} label">{% trans %}Abstract (Japanese){% endtrans %}</div>
-                  <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Abstract (Japanese)')) %}
                     <input type="text" name="abstract#ja">
-                  </div>
-                </div>
+{% endcall %}
               </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Duration{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Duration')) %}
                   <input type="text" name="duration" placeholder="{% trans %}Duration in seconds{% endtrans %}">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Submission Start{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Submission Start')) %}
                   <input type="text" name="submission_start_date" class="date">
                   <input type="text" name="submission_start_time" class="time">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Submission End{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Submissionm End')) %}
                   <input type="text" name="submission_end_date" class="date">
                   <input type="text" name="submission_end_time" class="time">
-                </div>
-              </div>
+{% endcall %}
             </div>
             <div class="modal-footer">
               <div class="row">
@@ -560,56 +392,30 @@
         </div>
         <div class="row">
           <div class="col s12">
-            <a href="#add-session-type-form" class="modal-trigger"><i class="vmiddle material-icons">library_add</i> Add a new session type</a>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s12">
             <div class="session_types"></div>
           </div>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="featured-speakers-box" class="section scrollspy">
-      <div id="featured-speakers" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Featured Speakers{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a href="#add-featured-speaker-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new featured speaker</a>
-          </div>
-        </div>
+{% call macros.roundbox('featured-speakers', _('Featured Speakers')) %}
+{{ macros.add_link('featured-speaker') }}
         <div class="row featured-speakers"></div>
         <div id="add-featured-speaker-form" class="modal modal-fixed-footer">
           <form action="/api/conference/featured_speaker/add" method="POST" class="col s12">
             <input type="hidden" name="conference_id" value="{{ conference.id }}">
             <div class="modal-content">
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Display Name{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Display Name')) %}
                   <input type="text" name="display_name" placeholder="Larry Wall (TimToady)">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Avatar URL{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Avatar URL')) %}
                   <input type="text" name="avatar_url" placeholder="https://upload.wikimedia.org/wikipedia/commons/b/b3/Larry_Wall_YAPC_2007.jpg">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Description{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Description')) %}
                   <textarea width="10" height="60" name="description" placeholder="Larry Wall is a computer programmer and author, most widely known as the creator of the Perl programming language."></textarea>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Description (Japanese){% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Description (Japanese)')) %}
                   <textarea width="10" height="60" name="description#ja"></textarea>
-                </div>
-              </div>
+{% endcall %}
             </div>
             <div class="modal-footer">
               <div class="row">
@@ -620,61 +426,34 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="sponsors-box" class="section scrollspy">
-      <div id="sponsors" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}Sponsors{% endtrans %}</div>
-        </div>
-        <div class="row">
-          <div class="col s12">
-            <a href="#add-sponsor-form" class="modal-trigger"><i class="vmiddle material-icons left">library_add</i>Add a new sponsor</a>
-          </div>
-        </div>
+{% call macros.roundbox('sponsors', _('Sponsors')) %}
+{{ macros.add_link('sponsor') }}
         <div class="row sponsors"></div>
         <div id="add-sponsor-form" class="modal modal-fixed-footer">
           <form action="/api/conference/sponsor/add" method="POST">
             <input type="hidden" name="conference_id" value="{{ conference.id }}">
             <div class="modal-content">
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Name{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% call macros.form_row(_('Name (English)')) %}
                   <input type="text" name="name" placeholder="Sponsor Name (English)">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Name (Japanese){% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Name (Japanese)')) %}
                   <input type="text" name="name#ja" placeholder="日本語表記">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}URL{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('URL')) %}
                   <input type="text" name="url" placeholder="http://www.company.com">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Logo URL{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Logo URL')) %}
                   <input type="text" name="logo_url" placeholder="http://www.company.com/logo.png">
                   <p style="font-size: 0.7em; color: #ccc">Please upload the photo at <a href="https://console.cloud.google.com/storage/browser/media-builderscon-1248/conferences/{{ conference.id }}/?project=builderscon-1248">https://console.cloud.google.com/storage/browser/media-builderscon-1248/conferences/{{ conference.id }}/?project=builderscon-1248</a>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Group Name{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Group Name')) %}
                   <input type="text" name="group_name" placeholder="tier-1">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col s{{ leftcol }} label">{% trans %}Sort Order{% endtrans %}</div>
-                <div class="col s{{ rightcol }}">
+{% endcall %}
+{% call macros.form_row(_('Sort Order')) %}
                   <input type="text" name="sort_order">
-                </div>
-              </div>
+{% endcall %}
             </div>
             <div class="modal-footer">
               <div class="row">
@@ -685,14 +464,9 @@
             </div>
           </form>
         </div>
-      </div>
-    </div>
+{% endcall %}
 
-    <div id="external-resources-box" class="section scrollspy">
-      <div id="external-resources" class="box">
-        <div class="row box-header">
-          <div class="col s12">{% trans %}External Resources{% endtrans %}</div>
-        </div>
+{% call macros.roundbox('exsternal-resources', _('External Resources')) %}
         <div class="row">
           <div class="col s12">
             <a href="/external_resource/create?conference_id={{ conference.id }}"><i class="vmiddle material-icons">library_add</i> Add an external source</a>
@@ -715,32 +489,10 @@
         </div>
 {% endfor %}
 {% endif %}
-      </div>
-    </div>
-
+{% endcall %}
   </div>
 
-  <div class="col hide-on-small-only m3 l2">
-    <div class="toc-wrapper">
-    <div style="height: 1px">
-    <ul class="section table-of-contents">
-      <li><a href="#miscellaneous-box">Miscellaneous</a></li>
-      <li><a href="#venues-box">Venues</a></li>
-      <li><a href="#tracks-box">Tracks</a></li>
-      <li><a href="#organizers-box">Organizers</a></li>
-      <li><a href="#staff-box">Staff</a></li>
-      <li><a href="#twitter-box">Twitter</a></li>
-      <li><a href="#basic-box">Basic Information</a></li>
-      <li><a href="#components-box">Text Components</a></li>
-      <li><a href="#dates-box">Dates</a></li>
-      <li><a href="#session_types-box">Session Types</a></li>
-      <li><a href="#featured-speakers-box">Featured Speakers</a></li>
-      <li><a href="#sponsors-box">Sponsors</a></li>
-      <li><a href="#external-resources-box">External Resources</a></li>
-    </ul>
-    </div>
-    </div>
-  </div>
+{{ macros.scrollspy_toc() }}
 </div>
 
 {% endblock %}
@@ -802,7 +554,7 @@
       $c.append(
         $('<div />').addClass('row').append(
           $('<div />').addClass('col').addClass('s2').append(
-            $('<button />').addClass('delete-venue-btn').addClass('btn').addClass('wafes-effect').addClass('waves-light').attr('data-id', venue.id).attr('type', 'submit').attr('name', 'action').append(
+            $('<button />').addClass('delete-venue-btn btn wafes-effect waves-light').attr('data-id', venue.id).attr('type', 'submit').attr('name', 'action').append(
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
               ' {% trans %}Remove{% endtrans %}'
             )
@@ -833,12 +585,19 @@
     $('.delete-venue-btn').click(function(e) {
       var $t = $(e.target);
       var id = $t.attr('data-id');
-      var $m = $('#delete-modal');
       var v = _venues[id];
-      $('.message', $m).empty().append(
-        $('<p />').text('{% trans %}Are you sure you want to remove the following venue ?{% endtrans %}'),
-        $('<div />').text(v.name)
-      )
+      if (!v) {
+        alert('failed to load venue by id: ' + id);
+        return false;
+      }
+
+      var $m = modalDelete(
+        '{% trans %}Delete venue warning{% endtrans %}',
+        $('<div />').append(
+          $('<p />').text('{% trans %}Are you sure you want to remove the following venue ?{% endtrans %}'),
+          $('<div />').text(v.name)
+        )
+      );
 
       $('.proceed-btn', $m).click(function() {
         $.ajax({
@@ -849,15 +608,16 @@
             console.log(err);
           },
           success: function(data) {
-            var $m = $('#success-modal');
-            $('.message', $m).text('{% trans %}Successfully deleted venue{% endtrans %}');
-            $m.modal({
-              complete: function() {
-                console.log("delete complete");
-                location.href = '/conference/{{ conference.id }}/view';
+            messageModal(
+              '{% trans %}Success{% endtrans %}',
+              '{% trans %}Successfully deleted venue{% endtrans %}',
+              {
+                complete: function() {
+                  console.log("delete complete");
+                  location.href = '/conference/{{ conference.id }}/view';
+                }
               }
-            });
-            $m.modal('open');
+            );
           }
         });
         return true;
@@ -884,16 +644,17 @@
           conference_id: {{ conference.id | tojson }}
         },
         success: function(data) {
-          var $m = $('#success-modal');
-          $('.message', $m).text('{% trans %}Successfully added venue{% endtrans %}');
-          $m.modal({
-            dismissible: true,
-            complete: function() {
-              console.log("add complete");
-              location.href = '/conference/{{ conference.id }}/view'
+          messageModal(
+            '{% trans %}Success{% endtrans %}',
+            '{% trans %}Successfully added venue{% endtrans %}',
+            {
+              dismissible: true,
+              complete: function() {
+                console.log("add complete");
+                location.href = '/conference/{{ conference.id }}/view'
+              }
             }
-          });
-          $m.modal('open');
+          );
         }
       });
       return false;
@@ -921,26 +682,24 @@
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
               ' {% trans %}Remove{% endtrans %}'
             ).click(function() {
-              var $m = $('#delete-modal');
-              $('.message', $m).empty().append(
-                $('<p />').text('{% trans %}Are you sure you want to remove the following track ?{% endtrans %}'),
-                $('<div />').append(track.name + ' ' + _rooms[track.room_id].name)
+              var $m = modalDelete(
+                '{% trans %}Delete track warning{% endtrans %}',
+                '{% trans %}Are you sure you want to remove the following track?{% endtrans %}: ' + track.name + ' (' + _rooms[track.room_id].name + ')'
               );
-              $m.modal('open');
               $('.proceed-btn', $m).click(function() {
                 $.ajax({
                   url: '/api/track/delete',
                   method: 'POST',
                   data: { 'id': track.id }
                 }).fail(function(xhr, status, err) {
-                  showModalError(err);
+                  modalError(err);
                 }).done(function(data) {
                   if (data.error) {
-                    showModalError(data.error);
+                    modalError(data.error);
                     return
                   }
                   $m.modal('close');
-                  showModalMessage(
+                  modalMessage(
                     '{% trans %}Success{% endtrans %}',
                     '{% trans %}Successfully deleted track{% endtrans %}',
                     {
@@ -987,14 +746,14 @@
         method: $f.attr('method'),
         data: $f.serialize(),
         error: function(xhr, status, err) {
-          showModalError(err);
+          modalError(err);
         },
         success: function(data) {
           if (data.error) {
-            showModalError('{% trans %}Failed to create new track{% endtrans %}: ' + data.error)
+            modalError('{% trans %}Failed to create new track{% endtrans %}: ' + data.error)
             return
           }
-          showModalMessage(
+          modalMessage(
             '{% trans %}Success{% endtrans %}',
             '{% trans %}Successfully created new track{% endtrans %}',
             {
@@ -1019,16 +778,16 @@
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
               ' {% trans %}Remove{% endtrans %}'
             ).click(function() {
-              var $m = $('#delete-modal');
-              $('.message', $m).append(
-                $('<p />').text('{% trans %}Are you sure you want to remove the following administrator ?{% endtrans %}')
-              ).append(
-                $('<div />').addClass('chip').append(
-                  $('<img />').attr('src', user.avatar_url),
-                  $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+              var $m = modalDelete(
+                '{% trans %}Delete administrator warning{% endtrans %}',
+                $('<div />').append(
+                  $('<p />').append('{% trans %}Are you sure you want to remove the following organizer ?{% endtrans %}'),
+                  $('<div />').addClass('chip').append(
+                    $('<img />').attr('src', user.avatar_url),
+                    $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+                  )
                 )
               );
-              $m.modal('open');
               $('.proceed-btn', $m).click(function() {
                 $.ajax({
                   url: '/api/conference/administrator/remove',
@@ -1040,7 +799,7 @@
                 }).done(function(data) {
                   listOrganizers()
                 }).fail(function(xhr, status, err) {
-                  showModalError(err);
+                  modalError(err);
                 }).always(function() {
                   $m.modal('close');
                 });
@@ -1072,16 +831,16 @@
               $('<i />').addClass('material-icons').addClass('vmiddle').text('delete'),
               ' {% trans %}Remove{% endtrans %}'
             ).click(function() {
-              var $m = $('#delete-modal');
-              $('.message', $m).append(
-                $('<p />').text('{% trans %}Are you sure you want to remove the following staff ?{% endtrans %}')
-              ).append(
-                $('<div />').addClass('chip').append(
-                  $('<img />').attr('src', user.avatar_url),
-                  $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+              var $m = modalDelete(
+                '{% trans %}Delete staff warning{% endtrans %}',
+                $('<div />').append(
+                  $('<p />').text('{% trans %}Are you sure you want to remove the following staff ?{% endtrans %}'),
+                  $('<div />').addClass('chip').append(
+                    $('<img />').attr('src', user.avatar_url),
+                    $('<a />').attr('href', '/user/' + user.id + '/view').text(user.nickname)
+                  )
                 )
               );
-              $m.modal('open');
               $('.proceed-btn', $m).click(function() {
                 $.ajax({
                   url: '/api/conference/staff/remove',
@@ -1093,7 +852,7 @@
                 }).done(function(data) {
                   listStaff()
                 }).fail(function(xhr, status, err) {
-                  showModalError(err);
+                  modalError(err);
                 }).always(function() {
                   $m.modal('close');
                 });
@@ -1180,7 +939,7 @@
       }).done(function(msg) {
         listOrganizers();
       }).fail(function(xhr, status, err) {
-        showModalError(err);
+        modalError(err);
       }).always(function() {
         $m.modal('close');
       });
@@ -1208,7 +967,7 @@
       }).done(function(msg) {
         listStaff();
       }).fail(function(xhr, status, err) {
-        showModalError(err);
+        modalError(err);
       }).always(function() {
         $m.modal('close');
       });
@@ -1319,16 +1078,16 @@
         )
       ;
       btn.click(function() {
-        var $m = $('#delete-modal');
-        $('.message', $m).append(
-          $('<p />').text('{% trans %}Are you sure you want to remove the following sponsor ?{% endtrans %}')
-        ).append(
-          $('<div />').addClass('chip').append(
-            $('<img />').attr('src', sponsor.logo_url),
-            $('<a />').attr('href', '/sponsor/' + sponsor.id + '/view').text(sponsor.name)
+        var $m = modalDelete(
+          '{% trans %}Delete sponsor warning{% endtrans %}',
+          $('<div />').append(
+            $('<p />').text('{% trans %}Are you sure you want to remove the following sponsor ?{% endtrans %}'),
+            $('<div />').addClass('chip').append(
+              $('<img />').attr('src', sponsor.logo_url),
+              $('<a />').attr('href', '/sponsor/' + sponsor.id + '/view').text(sponsor.name)
+            )
           )
         );
-        $m.modal('open');
         $('.proceed-btn', $m).click(function() {
           $.ajax({
             url: '/api/conference/sponsor/remove',
@@ -1339,7 +1098,7 @@
             }
           }).done(function(data) {
             if (data.error) {
-              showModalError(data.error);
+              modalError(data.error);
               return
             }
             $.ajax({
@@ -1351,7 +1110,7 @@
               listSponsors(data)
             });
           }).fail(function(xhr, status, err) {
-            showModalError(err);
+            modalError(err);
           }).always(function() {
             $m.modal('close');
           });
@@ -1389,7 +1148,7 @@
         data: $f.serialize(),
       }).done(function(msg) {
         if (msg.error) {
-          showModalError('{% trans %}Failed to create new sponsor{% endtrans %}: ' + msg.error);
+          modalError('{% trans %}Failed to create new sponsor{% endtrans %}: ' + msg.error);
           return;
         }
         $.ajax({
