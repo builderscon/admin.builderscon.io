@@ -29,3 +29,25 @@ class Date(object):
 @admin.app.template_filter('date')
 def date_filter(s, lang='en', timezone='UTC'):
     return Date(s, lang=lang, timezone=timezone)
+
+@admin.app.template_filter('first_available_lang')
+def first_available_lang(obj, field, langs=['ja']):
+    for l in langs:
+        key = field + '#' + l
+        if key in obj:
+            return obj.get(key)
+    return obj.get(field)
+
+@admin.app.template_filter('datepicker_value')
+def datepicker_value(s, timezone='UTC'):
+    localtz = pytz.timezone(timezone)
+    return iso8601.parse_date(s).astimezone(localtz).date().isoformat()
+
+@admin.app.template_filter('clockpicker_value')
+def clockpicker_value(s, timezone='UTC'):
+    localtz = pytz.timezone(timezone)
+    return iso8601.parse_date(s).astimezone(localtz).time().isoformat()
+
+@admin.app.template_filter('sort_dict_keys')
+def sort_dict_keys(h):
+    return sorted(h)

@@ -1,0 +1,214 @@
+{% extends 'layouts/base.html' %}
+{% import "component/macros.html" as macros %}
+{% include 'component/message-modal.html' %}
+
+{%- macro select_language(id, lang) -%}
+{%- set languages = [
+  {'value': 'en', 'label': 'English'},
+  {'value': 'ja', 'label': 'Japanese'}
+] -%}
+<select name="{{ id }}">
+{%- for l in languages %}
+  <option value="{{ l.value }}"{% if l.value == lang %} selected="selected"{% endif %}>{{ _(l.label) }}</option>
+{%- endfor %}
+</select>
+{%- endmacro -%}
+
+{% block body_id %}session{% endblock %}
+
+{% block additional_styles %}
+<link rel="stylesheet" href="/static/css/materialize.clockpicker.css">
+{% endblock %}
+
+{% block additional_scripts %}
+<script src="/static/js/materialize.clockpicker.js"></script>
+{% endblock %}
+
+{% block embedded_scripts %}
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('select').material_select();
+    $('input[name="starts_on_date"]').pickadate({
+      format: 'yyyy-mm-dd',
+      selectMonths: true,
+      selectYears: 5,
+    }).attr('placeholder', 'yyyy-mm-dd');
+    $('input[name="starts_on_time"]').pickatime({
+      twelvehour: false
+    }).attr('placeholder', 'hh:mm');
+  });
+</script>
+{% endblock %}
+
+{% block main %}
+
+{% call macros.fullwidth_row() %}
+    <h2>{{ session|first_available_lang('title') }}</h2>
+{% endcall %}
+
+{% call macros.roundbox('basic', _('Basic Information')) %}
+<form action="/session/{{ session.id }}/edit" method="POST">
+  <input type="hidden" name="session_id" value="{{ session.id }}">
+{% call macros.form_row(_('Conference')) %}
+  <a href="/conference/{{ session.conference.get('id') }}">{{ session.conference.get('title') }}</a>
+{% endcall %}
+
+{% call macros.fullwidth_row() %}
+  <ul class="tabs">
+    <li class="tab col s3"><a href="#basic-en">{% trans %}English{% endtrans %}</a></li>
+    <li class="tab col s3"><a href="#basic-ja">{% trans %}Japanese{% endtrans %}</a></li>
+  </ul>
+{% endcall %}
+
+<div id="basic-en">
+{% call macros.form_row(_('Title (English)')) %}
+  <input type="text" name="title" value="{{ session.get('title') }}" placeholder="{% trans %}Title (English){% endtrans %}">
+{% endcall %}
+
+{% call macros.form_row(_('Abstract (English)')) %}
+  <textarea name="abstract" placeholder="{% trans %}Abstract (English){% endtrans %}">{{ session.get('abstract') }}</textarea>
+{% endcall %}
+</div>
+
+<div id="basic-ja">
+{% call macros.form_row(_('Title (Japanese)')) %}
+  <input type="text" name="title#ja" value="{{ session.get('title#ja') }}" placeholder="{% trans %}Title (Japanese){% endtrans %}">
+{% endcall %}
+
+{% call macros.form_row(_('Abstract (Japanese)')) %}
+  <textarea name="abstract#ja" placeholder="{% trans %}Abstract (Japanese){% endtrans %}">{{ session.get('abstract#ja') }}</textarea>
+{% endcall %}
+</div>
+
+{% call macros.form_row(_('Memo')) -%}
+  <textarea name="memo">{{ session.get('memo') }}</textarea>
+{% endcall %}
+
+{% call macros.form_row(_('Status')) %}
+  <select name="status">
+{%- for st in [ 'pending', 'accepted', 'rejected' ] %}
+    <option value="{{ _(st) }}"{% if st == session.get('status') %} selected="selected"{% endif %}>{{ _(st) }}</option>
+{%- endfor %}
+  </select>
+{% endcall %}
+
+{% call macros.form_row(_('Session Type')) %}
+  <select name="session_type_id">
+{%- for st in session.conference.get('session_types') or [] %}
+    <option value="{{ st.id }}"{% if st.id == session.session_type_id %} selected="selected"{% endif %}>{{ _(st.name) }}</option>
+{%- endfor %}
+  </select>
+{% endcall %}
+
+{% call macros.form_row(_('Material Level')) %}
+  <select name="material_level">
+{%- for l in [
+  {'value': 'beginner', 'label': 'Beginner'},
+  {'value': 'intermediate', 'label': 'Intermediate'},
+  {'value': 'expert', 'label': 'Expert'}
+] -%}
+    <option value="{{ l.value }}"{% if l.value == session.get('material_level') %} selected="selected"{% endif %}>{{ _(l.label) }}</option>
+{%- endfor %}
+  </select>
+{% endcall %}
+
+{% call macros.form_row(_('Room')) %}
+  <select name="room_id">
+{%- for v in session.conference.venues %}
+  {%- for r in v.rooms %}
+    <option value="{{ r.id }}"{% if r.id == session.get('room_id') %} selected="selected"{% endif %}>{{ r.name }}</option>
+{{ r }}
+  {%- endfor %}
+{%- endfor %}
+  </select>
+{% endcall %}
+
+{% call macros.form_row(_('Starts On')) %}
+  <input type="text" name="starts_on_date" value="{% if session.starts_on %}{{ session.starts_on | datepicker_value(timezone=session.conference.get('timezone')) }}{% endif %}">
+  <input type="text" name="starts_on_time" value="{% if session.starts_on %}{{ session.starts_on | clockpicker_value(timezone=session.conference.get('timezone')) }}{% endif %}">
+{% endcall %}
+
+{% call macros.form_row(_('Spoken Language')) %}
+{{ select_language('spoken_language', session.get('spoken_language')) }}
+{% endcall %}
+
+{% call macros.form_row(_('Slide Language')) %}
+{{ select_language('slide_language', session.get('slide_language')) }}
+{% endcall %}
+
+{% call macros.form_row(_('Interpretation')) %}
+{%- set has_interpretation = session.get('has_interpretation') %}
+  <input id="interpretation-checkbox-yes" type="radio" name="has_interpretation" value="1"{% if has_interpretation %} checked="checked"{% endif %}>
+  <label for="interpretation-checkbox-yes">{% trans %}Yes{% endtrans %}</label>
+  <input id="interpretation-checkbox-no" type="radio" name="has_interpretation" value="0"{% if not has_interpretation %} checked="checked"{% endif %}>
+  <label for="interpretation-checkbox-no">{% trans %}No{% endtrans %}</label>
+{% endcall %}
+
+{% call macros.form_row(_('Photo Release')) %}
+{%- set photo_release = session.get('photo_release') %}
+  <input id="photo_release-checkbox-yes" type="radio" name="photo_release" value="allow"{% if photo_release == 'allow' %} checked="checked"{% endif %}>
+  <label for="photo_release-checkbox-yes">{% trans %}Yes{% endtrans %}</label>
+  <input id="photo_release-checkbox-no" type="radio" name="photo_release" value="disallow"{% if photo_release != 'allow' %} checked="checked"{% endif %}>
+  <label for="photo_release-checkbox-no">{% trans %}No{% endtrans %}</label>
+{% endcall %}
+
+{% call macros.form_row(_('Video Release')) %}
+{%- set recording_release = session.get('recording_release') %}
+  <input id="recording_release-checkbox-yes" type="radio" name="recording_release" value="allow"{% if recording_release == 'allow' %} checked="checked"{% endif %}>
+  <label for="recording_release-checkbox-yes">{% trans %}Yes{% endtrans %}</label>
+  <input id="recording_release-checkbox-no" type="radio" name="recording_release" value="disallow"{% if recording_release != 'allow' %} checked="checked"{% endif %}>
+  <label for="recording_release-checkbox-no">{% trans %}No{% endtrans %}</label>
+{% endcall %}
+
+{% call macros.form_row(_('Materials Release')) %}
+{%- set materials_release = session.get('materials_release') %}
+  <input id="materials_release-checkbox-yes" type="radio" name="materials_release" value="allow"{% if materials_release == 'allow' %} checked="checked"{% endif %}>
+  <label for="materials_release-checkbox-yes">{% trans %}Yes{% endtrans %}</label>
+  <input id="materials_release-checkbox-no" type="radio" name="materials_release" value="disallow"{% if materials_release != 'allow' %} checked="checked"{% endif %}>
+  <label for="materials_release-checkbox-no">{% trans %}No{% endtrans %}</label>
+{% endcall %}
+
+{% call macros.form_row(_('Video URL')) %}
+{%- set video_url = session.get('video_url') or '' %}
+  <input type="text" name="video_url" value="{{ video_url }}">
+{%- if video_url %}
+  <a href="/session/{{ session.id }}/video_cover">{% trans %}Edit video cover{% endtrans %}</a>
+{%- endif %}
+{% endcall %}
+
+{% call macros.form_row(_('Slide URL')) %}
+  <input type="text" name="slide_url" value="{{ session.get('slide_url') or '' }}">
+{% endcall %}
+
+{% call macros.form_row(_('Sort Order')) %}
+  <input type="text" name="sort_order" value="{{ session.get('sort_order') or '' }}" placeholder="0">
+{% endcall %}
+
+{% call macros.form_row(_('Selection Result Sent')) %}
+{%- set selection_result_sent = session.get('selection_result_sent') %}
+  <input id="selection_result_sent-checkbox-yes" type="radio" name="selection_result_sent" value="allow"{% if selection_result_sent %} checked="checked"{% endif %}>
+  <label for="selection_result_sent-checkbox-yes">{% trans %}Yes{% endtrans %}</label>
+  <input id="selection_result_sent-checkbox-no" type="radio" name="selection_result_sent" value="disallow"{% if not selection_result_sent %} checked="checked"{% endif %}>
+  <label for="selection_result_sent-checkbox-no">{% trans %}No{% endtrans %}</label>
+{% endcall %}
+
+{% call macros.form_row(_('Confirmed')) %}
+{%- set confirmed = session.get('confirmed') %}
+  <input id="confirmed-checkbox-yes" type="radio" name="confirmed" value="allow"{% if confirmed %} checked="checked"{% endif %}>
+  <label for="confirmed-checkbox-yes">{% trans %}Yes{% endtrans %}</label>
+  <input id="confirmed-checkbox-no" type="radio" name="confirmed" value="disallow"{% if not confirmed %} checked="checked"{% endif %}>
+  <label for="confirmed-checkbox-no">{% trans %}No{% endtrans %}</label>
+{% endcall %}
+
+{% call macros.fullwidth_row() %}
+  <button id="conference-update" class="btn waves-effect waves-light" type="submit" name="action">
+    <i class="material-icons left">send</i>
+    {% trans %}Update{% endtrans %}
+  </button>
+{% endcall %}
+
+</form>
+{% endcall %}
+
+{% endblock %}{# main #}
+

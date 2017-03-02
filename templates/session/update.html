@@ -1,0 +1,30 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}session{% endblock %}
+
+{% block main %}
+<div class="row">
+  <div class="col s12">
+{% if error %}
+    <h2>Error</h2>
+    <p>{{ error }}</p>
+{% else %}
+    <h2>{% trans %}Session Updated{% endtrans %}</h2>
+{% endif %}
+  </div>
+</div>
+
+<div class="box">
+  <div class="row box-header">
+    <div class="col s12">&nbsp;</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <a href="/session/{{ session.id }}/view">{% trans %}Back to session page{% endtrans %}</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+

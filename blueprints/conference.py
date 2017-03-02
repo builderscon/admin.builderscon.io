@@ -164,3 +164,8 @@ def twitter_post():
         return "failure" # TODO
     return "posted successfully" # TODO
 
+@page.route('/conference/<id>/oauth')
+@with_conference
+def show_oauth():
+    # show oauth tokens
+    return
