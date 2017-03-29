@@ -764,18 +764,6 @@
     drawVenues(conference.venues);
   }
 
-  function loadVenues() {
-    $.ajax({
-      url: '/api/conference/venue/list',
-      data: { id: {{ conference.id | tojson }} },
-      method: 'GET',
-      success: function(data) {
-        registerVenues(data);
-        drawVenues(data);
-      }
-    });
-  }
-
   var _venues = {};
   var _rooms = {};
   function registerVenues(venues) {
@@ -785,10 +773,12 @@
     $.each(venues, function(i, venue) {
       console.log("register venue " + venue.id)
       _venues[venue.id] = venue;
-      $.each(venue.rooms, function(i, room) {
-      console.log("register room " + room.id)
-        _rooms[room.id] = room
-      });
+      if (venue.rooms) {
+        $.each(venue.rooms, function(i, room) {
+          console.log("register room " + room.id)
+          _rooms[room.id] = room
+        });
+      }
     });
     console.log(_venues);
     console.log(_rooms);
