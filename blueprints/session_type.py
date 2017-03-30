@@ -23,8 +23,10 @@ REQUIRED = {
 
 with_session_type = app.hooks.with_session_type
 with_associated_conference = app.hooks.with_associated_conference
+require_login = app.hooks.require_login
 
 @page.route('/session_type/<id>/view')
+@require_login
 @functools.partial(with_session_type, lang='all')
 @functools.partial(with_associated_conference, id_getter=lambda: flask.g.stash.get('session_type').get('conference_id'))
 def view():
@@ -32,10 +34,12 @@ def view():
     return flask.render_template('session_type/view.html')
 
 @page.route('/session_type/input', methods=['GET'])
+@require_login
 def input():
     return flask.render_template('session_type/input.html')
 
 @page.route('/session_type/input', methods=['POST'])
+@require_login
 def input_post():
     # For this action, merge the new values withe conference
     # object, so that we can show the user the edits
@@ -80,6 +84,7 @@ def input_post():
 
 
 @page.route('/session_type/create', methods=['POST'])
+@require_login
 def create():
     subskey = 'session_type.create'
     if subskey not in flask.session:
@@ -106,9 +111,9 @@ def create():
 
     data = v[datakey]
     data['user_id'] = flask.session['user_id']
-    new_session_type = app.api.create_session_type(**data)
+    new_session_type = flask.g.api.create_session_type(**data)
     if not new_session_type:
-        flask.g.stash['errors'] = [{'error': app.api.last_error()}]
+        flask.g.stash['errors'] = [{'error': flask.g.api.last_error()}]
         return flask.render_template('session_type/input.html')
 
     del flask.session[subskey][subs]
@@ -116,6 +121,7 @@ def create():
     return flask.render_template('session_type/create.html')
 
 @page.route('/session_type/<id>/edit', methods=['POST'])
+@require_login
 @functools.partial(with_session_type, lang='all')
 def edit():
     # For this action, merge the new values withe session_type
@@ -159,6 +165,7 @@ def edit():
     return flask.render_template('session_type/edit.html')
 
 @page.route('/session_type/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_session_type, lang='all')
 def update():
     subskey = 'session_type.edit'
@@ -187,9 +194,9 @@ def update():
     data = v[datakey]
     data['id'] = flask.g.stash.get('session_type_id')
     data['user_id'] = flask.session['user_id']
-    ok = app.api.update_session_type(**data)
+    ok = flask.g.api.update_session_type(**data)
     if not ok:
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
 
     del flask.session[subskey][subs]
     return flask.render_template('session_type/update.html')

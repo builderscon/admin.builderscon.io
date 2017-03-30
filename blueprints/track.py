@@ -18,14 +18,17 @@ REQUIRED = {
 
 with_track = app.hooks.with_track
 with_associated_conference = app.hooks.with_associated_conference
+require_login = app.hooks.require_login
 
 @page.route('/track/<id>/view')
+@require_login
 @functools.partial(with_track, lang='all')
 @functools.partial(with_associated_conference, id_getter=lambda: flask.g.stash.get('track').get('conference_id'))
 def view():
     return flask.render_template('track/view.html')
 
 @page.route('/track/<id>/edit', methods=['POST'])
+@require_login
 @functools.partial(with_track, lang='all')
 def edit():
     # For this action, merge the new values withe track
@@ -65,6 +68,7 @@ def edit():
     return flask.render_template('track/edit.html')
 
 @page.route('/track/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_track, lang='all')
 def update():
     subskey = 'track.edit'
@@ -93,9 +97,9 @@ def update():
     data = v[datakey]
     data['id'] = flask.g.stash.get('track_id')
     data['user_id'] = flask.session['user_id']
-    ok = app.api.update_track(**data)
+    ok = flask.g.api.update_track(**data)
     if not ok:
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
 
     del flask.session[subskey][subs]
     return flask.render_template('track/update.html')

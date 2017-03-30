@@ -22,7 +22,7 @@ def _stock_response(ok, api):
 @page.route('/api/my/conferences')
 @require_login
 def my_conferences():
-    confs = app.api.list_conference(
+    confs = flask.g.api.list_conference(
         lang=flask.g.lang,
         organizers=[flask.g.stash.get('user').get('id')],
         status=['any']
@@ -38,11 +38,11 @@ def venue_list():
 @page.route('/api/venue/delete', methods=['POST'])
 @require_login
 def venue_delete():
-    ok = app.api.delete_venue(
+    ok = flask.g.api.delete_venue(
         id=flask.request.values.get('id'),
         user_id=flask.g.stash.get('user').get('id')
     )
-    return _stock_response(ok, app.api)
+    return _stock_response(ok, flask.g.api)
 
 @page.route('/api/venue/room/add', methods=['POST'])
 @require_login
@@ -53,13 +53,13 @@ def venue_room_add():
         args[k] = vals[k]
     args['capacity'] = float(args['capacity']) # numify
     args['user_id'] = flask.g.stash.get('user').get('id')
-    ok = app.api.create_room(**args)
-    return _stock_response(ok, app.api)
+    ok = flask.g.api.create_room(**args)
+    return _stock_response(ok, flask.g.api)
 
 @page.route('/api/user/incremental')
 @require_login
 def user_incremental():
-    users = app.api.list_user(pattern=flask.request.args.get('query'))
+    users = flask.g.api.list_user(pattern=flask.request.args.get('query'))
     return flask.jsonify({
         "suggestions": map(lambda x: {"data":x.get('id'),"value": "%s (%s)" % (x.get('nickname'), x.get('auth_via')) }, users)
     })
@@ -68,7 +68,7 @@ def user_incremental():
 @require_login
 def conference_list():
     args = flask.request.args
-    conferences = app.api.list_conference(
+    conferences = flask.g.api.list_conference(
         lang=flask.g.lang,
         **args
     )
@@ -77,7 +77,7 @@ def conference_list():
 @page.route('/api/conference/featured_speaker/list')
 @require_login
 def list_conference_featured_speaker():
-    confs = app.api.list_featured_speakers(
+    confs = flask.g.api.list_featured_speakers(
         conference_id=flask.request.values.get('conference_id'),
         lang=flask.request.values.get('lang'),
         limit=flask.request.values.get('limit'),
@@ -94,13 +94,13 @@ def add_conference_featured_speaker():
     for k in ['conference_id', 'avatar_url', 'description', 'speaker_id', 'display_name', 'description#ja']:
         args[k] = flask.request.values.get(k)
 
-    ok = app.api.add_featured_speaker(**args)
-    return _stock_response(ok, app.api)
+    ok = flask.g.api.add_featured_speaker(**args)
+    return _stock_response(ok, flask.g.api)
 
 @page.route('/api/conference/featured_speaker/remove', methods=['POST'])
 @require_login
 def remove_conference_featured_speaker():
-    ok = app.api.delete_featured_speaker(
+    ok = flask.g.api.delete_featured_speaker(
         id=flask.request.values.get('id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -110,13 +110,13 @@ def remove_conference_featured_speaker():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/conference/sponsor/list')
 @require_login
 def list_conference_sponsor():
-    confs = app.api.list_sponsors(
+    confs = flask.g.api.list_sponsors(
         conference_id=flask.request.values.get('conference_id'),
         lang=flask.request.values.get('lang'),
         limit=flask.request.values.get('limit'),
@@ -136,13 +136,13 @@ def add_conference_sponsor():
         if v:
             args['sort_order'] = int(v)
 
-    ok = app.api.add_sponsor(**args)
-    return _stock_response(ok, app.api)
+    ok = flask.g.api.add_sponsor(**args)
+    return _stock_response(ok, flask.g.api)
 
 @page.route('/api/conference/sponsor/remove', methods=['POST'])
 @require_login
 def remove_conference_sponsor():
-    ok = app.api.delete_sponsor(
+    ok = flask.g.api.delete_sponsor(
         id=flask.request.values.get('id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -152,13 +152,13 @@ def remove_conference_sponsor():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/conference/administrator/list')
 @require_login
 def list_conference_administrator():
-    confs = app.api.list_conference_admin(
+    confs = flask.g.api.list_conference_admin(
         conference_id=flask.request.values.get('conference_id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -167,17 +167,17 @@ def list_conference_administrator():
 @page.route('/api/conference/administrator/add', methods=['POST'])
 @require_login
 def add_conference_administrator():
-    ok = app.api.add_conference_admin(
+    ok = flask.g.api.add_conference_admin(
         conference_id=flask.request.values.get('conference_id'),
         admin_id=flask.request.values.get('user_id'),
         user_id=flask.g.stash.get('user').get('id')
     )
-    return _stock_response(ok, app.api)
+    return _stock_response(ok, flask.g.api)
 
 @page.route('/api/conference/administrator/remove', methods=['POST'])
 @require_login
 def remove_conference_administrator():
-    ok = app.api.delete_conference_admin(
+    ok = flask.g.api.delete_conference_admin(
         conference_id=flask.request.values.get('conference_id'),
         admin_id=flask.request.values.get('admin_id'),
         user_id=flask.g.stash.get('user').get('id')
@@ -188,13 +188,13 @@ def remove_conference_administrator():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/conference/date/list')
 @require_login
 def list_conference_date():
-    dates = app.api.list_conference_date(
+    dates = flask.g.api.list_conference_date(
         conference_id=flask.request.values.get('conference_id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -205,7 +205,7 @@ def list_conference_date():
 def add_conference_date():
     # normalize this datetime into UTC
     conference_id = flask.request.values.get('conference_id')
-    conference = app.api.lookup_conference(id=conference_id, lang=flask.g.lang)
+    conference = flask.g.api.lookup_conference(id=conference_id, lang=flask.g.lang)
     localtz = pytz.timezone(conference.get('timezone', 'UTC'))
 
     offset = localtz.utcoffset(datetime.datetime.utcnow())
@@ -228,7 +228,7 @@ def add_conference_date():
         )
     )
 
-    ok = app.api.add_conference_date(
+    ok = flask.g.api.add_conference_date(
         conference_id=conference_id,
         date={
             "open": open_time.isoformat(),
@@ -243,14 +243,14 @@ def add_conference_date():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
  
 
 @page.route('/api/conference/venue/add', methods=['POST'])
 @require_login
 def add_conference_venue():
-    ok = app.api.add_conference_venue(
+    ok = flask.g.api.add_conference_venue(
         conference_id=flask.request.values.get('conference_id'),
         venue_id=flask.request.values.get('venue_id'),
         user_id=flask.g.stash.get('user').get('id')
@@ -261,13 +261,13 @@ def add_conference_venue():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/conference/venue/delete', methods=['POST'])
 @require_login
 def delete_conference_venue():
-    ok = app.api.delete_conference_venue(
+    ok = flask.g.api.delete_conference_venue(
         conference_id=flask.request.values.get('conference_id'),
         venue_id=flask.request.values.get('venue_id'),
         user_id=flask.g.stash.get('user').get('id')
@@ -278,13 +278,13 @@ def delete_conference_venue():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/track/create', methods=['POST'])
 @require_login
 def create_track():
-    ok = app.api.create_track(
+    ok = flask.g.api.create_track(
         conference_id=flask.request.values.get('conference_id'),
         room_id=flask.request.values.get('room_id'),
         name=flask.request.values.get('name'),
@@ -296,13 +296,13 @@ def create_track():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/track/delete', methods=['POST'])
 @require_login
 def delete_track():
-    ok = app.api.delete_track(
+    ok = flask.g.api.delete_track(
         id=flask.request.values.get('id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -312,7 +312,7 @@ def delete_track():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 @page.route('/api/session/bulk_update', methods=['POST'])
@@ -322,9 +322,9 @@ def update_session_bulk():
     for session_id in flask.request.json:
         data = flask.request.json[session_id]
         for k in data:
-            ok = app.api.update_session(id=k, **data[k])
+            ok = flask.g.api.update_session(id=k, **data[k])
             if not ok:
-                errors.append(app.api.last_error())
+                errors.append(flask.g.api.last_error())
 
     if len(errors) == 0:
         return flask.jsonify({"success": True})
@@ -336,7 +336,7 @@ def update_session_bulk():
 @page.route('/api/conference/staff/list')
 @require_login
 def list_conference_staff():
-    confs = app.api.list_conference_staff(
+    confs = flask.g.api.list_conference_staff(
         conference_id=flask.request.values.get('conference_id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -345,17 +345,17 @@ def list_conference_staff():
 @page.route('/api/conference/staff/add', methods=['POST'])
 @require_login
 def add_conference_staff():
-    ok = app.api.add_conference_staff(
+    ok = flask.g.api.add_conference_staff(
         conference_id=flask.request.values.get('conference_id'),
         staff_id=flask.request.values.get('user_id'),
         user_id=flask.g.stash.get('user').get('id')
     )
-    return _stock_response(ok, app.api)
+    return _stock_response(ok, flask.g.api)
 
 @page.route('/api/conference/staff/remove', methods=['POST'])
 @require_login
 def remove_conference_staff():
-    ok = app.api.delete_conference_staff(
+    ok = flask.g.api.delete_conference_staff(
         conference_id=flask.request.values.get('conference_id'),
         staff_id=flask.request.values.get('staff_id'),
         user_id=flask.g.stash.get('user').get('id')
@@ -366,7 +366,7 @@ def remove_conference_staff():
         })
     return flask.jsonify({
         "success": False,
-        "error": app.api.last_error()
+        "error": flask.g.api.last_error()
     })
 
 

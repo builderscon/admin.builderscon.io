@@ -97,9 +97,11 @@ def github_callback(resp):
     data = res.data
 
     # Load user via github id
-    user = admin.api.lookup_user_by_auth_user_id(auth_via='github', auth_user_id=str(data['id']))
+    user = flask.g.api.lookup_user_by_auth_user_id(auth_via='github', auth_user_id=str(data['id']))
     if user:
         flask.session['user_id'] = user.get('id')
+        flask.session['access_token'] = resp['access_token']
+        flask.session['auth_via'] = 'github'
         flask.g.stash['user'] = user
         return flask.redirect(flask.request.args.get('.next') or '/')
 
@@ -112,7 +114,7 @@ def github_callback(resp):
     elif len(names) == 1:
         first_name = names[0]
 
-    user = admin.api.create_user (
+    user = flask.g.api.create_user (
         str(data.get('id')),
         auth_via='github',
         nickname=data.get('login'),
@@ -124,6 +126,8 @@ def github_callback(resp):
         return flask.render_template('auth/login.html', error='failed to register user in the backend server')
 
     flask.session['user_id'] = user.get('id')
+    flask.session['access_token'] = resp['access_token']
+    flask.session['auth_via'] = 'github'
     flask.g.stash['user'] = user
 
     return redirect_edit()
@@ -157,9 +161,11 @@ def facebook_callback(resp):
     data = res.data
 
     # Load user via facebook id
-    user = admin.api.lookup_user_by_auth_user_id(auth_via='facebook', auth_user_id=data['id'])
+    user = flask.g.api.lookup_user_by_auth_user_id(auth_via='facebook', auth_user_id=data['id'])
     if user:
         flask.session['user_id'] = user.get('id')
+        flask.session['access_token'] = resp['access_token']
+        flask.session['auth_via'] = 'facebook'
         flask.g.stash['user'] = user
         return flask.redirect(flask.request.args.get('.next') or '/')
 
@@ -185,7 +191,7 @@ def facebook_callback(resp):
         return flask.render_template('auth/login.html', error='failed to fetch user photo after oauth')
     picture = res.data
 
-    user = admin.api.create_user (
+    user = flask.g.api.create_user (
         data.get('id'),
         auth_via='facebook',
         nickname=data.get('name'),
@@ -197,6 +203,8 @@ def facebook_callback(resp):
         return flask.render_template('auth/login.html', error='failed to register user in the backend server')
 
     flask.session['user_id'] = user.get('id')
+    flask.session['access_token'] = resp['access_token']
+    flask.session['auth_via'] = 'facebook'
     flask.g.stash['user'] = user
 
     return redirect_edit()
@@ -211,11 +219,15 @@ def twitter_callback(resp):
         resp['oauth_token'],
         resp['oauth_token_secret']
     )
+    consumer_key=admin.cfg.section('TWITTER').get('client_id')
+    consumer_secret=admin.cfg.section('TWITTER').get('client_secret').encode('ASCII')
 
     # Load user via twitter id
-    user = admin.api.lookup_user_by_auth_user_id(auth_via='twitter', auth_user_id=resp['user_id'])
+    user = flask.g.api.lookup_user_by_auth_user_id(auth_via='twitter', auth_user_id=resp['user_id'])
     if user:
         flask.session['user_id'] = user.get('id')
+        flask.session['access_token'] = ":".join([resp['oauth_token'], resp['oauth_token_secret'], consumer_key, consumer_secret])
+        flask.session['auth_via'] = 'twitter'
         flask.g.stash['user'] = user
         return flask.redirect(flask.request.args.get('.next') or '/')
 
@@ -240,7 +252,7 @@ def twitter_callback(resp):
     elif len(names) == 1:
         first_name = names[0]
 
-    user = admin.api.create_user (
+    user = flask.g.api.create_user (
         data.get('id_str'),
         auth_via='twitter',
         nickname=data.get('screen_name'),
@@ -252,6 +264,8 @@ def twitter_callback(resp):
         return flask.render_template('auth/login.html', error='failed to register user in the backend server')
 
     flask.session['user_id'] = user.get('id')
+    flask.session['access_token'] = ":".join([resp['oauth_token'], resp['oauth_token_secret'], consumer_key, consumer_secret])
+    flask.session['auth_via'] = 'twitter'
     flask.g.stash['user'] = user
     return redirect_edit()
 
@@ -279,7 +293,7 @@ def twitter_app_callback(resp):
         access_token=resp['oauth_token'],
         access_token_secret=resp['oauth_token_secret']
     )
-    ok = admin.api.add_conference_credential(
+    ok = flask.g.api.add_conference_credential(
         conference_id=conference_id,
         data=base64.b64encode(json.dumps(data)),
         type='twitter',

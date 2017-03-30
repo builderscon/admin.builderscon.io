@@ -20,8 +20,10 @@ REQUIRED = {
 
 with_blog_entry = app.hooks.with_blog_entry
 with_associated_conference = app.hooks.with_associated_conference
+require_login = app.hooks.require_login
 
 @page.route('/blog_entry/<id>/view')
+@require_login
 @functools.partial(with_blog_entry, lang='all')
 @functools.partial(with_associated_conference, id_getter=lambda: flask.g.stash.get('blog_entry').get('conference_id'))
 def view():
@@ -29,10 +31,12 @@ def view():
     return flask.render_template('blog_entry/view.html')
 
 @page.route('/blog_entry/input', methods=['GET'])
+@require_login
 def input():
     return flask.render_template('blog_entry/input.html')
 
 @page.route('/blog_entry/input', methods=['POST'])
+@require_login
 def input_post():
     # For this action, merge the new values withe conference
     # object, so that we can show the user the edits
@@ -74,6 +78,7 @@ def input_post():
 
 
 @page.route('/blog_entry/create', methods=['POST'])
+@require_login
 def create():
     subskey = 'blog_entry.create'
     if subskey not in flask.session:
@@ -101,9 +106,9 @@ def create():
     data = v[datakey]
     data['user_id'] = flask.session['user_id']
     flask.g.stash['conference_id'] = data['conference_id'] # for form
-    new_blog_entry = app.api.create_blog_entry(**data)
+    new_blog_entry = flask.g.api.create_blog_entry(**data)
     if not new_blog_entry:
-        flask.g.stash['errors'] = [{'error': app.api.last_error()}]
+        flask.g.stash['errors'] = [{'error': flask.g.api.last_error()}]
         return flask.render_template('blog_entry/input.html')
 
     del flask.session[subskey][subs]
@@ -111,6 +116,7 @@ def create():
     return flask.render_template('blog_entry/create.html')
 
 @page.route('/blog_entry/<id>/edit', methods=['POST'])
+@require_login
 @functools.partial(with_blog_entry, lang='all')
 def edit():
     # For this action, merge the new values withe blog_entry
@@ -154,6 +160,7 @@ def edit():
     return flask.render_template('blog_entry/edit.html')
 
 @page.route('/blog_entry/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_blog_entry, lang='all')
 def update():
     subskey = 'blog_entry.edit'
@@ -182,9 +189,9 @@ def update():
     data = v[datakey]
     data['id'] = flask.g.stash.get('blog_entry_id')
     data['user_id'] = flask.session['user_id']
-    ok = app.api.update_blog_entry(**data)
+    ok = flask.g.api.update_blog_entry(**data)
     if not ok:
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
 
     del flask.session[subskey][subs]
     return flask.render_template('blog_entry/update.html')

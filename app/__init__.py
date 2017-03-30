@@ -12,7 +12,6 @@ import sys
 assert hooks
 assert filters
 
-api = admin.api
 app = requestlogger.WSGILogger(
     admin.app,
     [logging.StreamHandler(sys.stdout)],
