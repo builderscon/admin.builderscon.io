@@ -37,6 +37,7 @@ def get_redirect_target():
 
 
 @page.route('/external_resource/create', methods=['GET'])
+@require_login
 def create_external_resource_get():
     conference_id = flask.request.args.get('conference_id')
     if not conference_id:
@@ -60,26 +61,28 @@ def create_external_resource_post():
 
     args = copy.deepcopy(new_external_resource)
     args['user_id'] = flask.g.stash.get('user').get('id')
-    ok = app.api.create_external_resource(**args)
+    ok = flask.g.api.create_external_resource(**args)
 
     if ok:
         redirect_url = get_redirect_target()
         return flask.redirect(redirect_url, code=303)
     else:
         # retain new input in the rendered page
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
         flask.g.stash['conference_id'] = flask.request.values.get('conference_id')
         flask.g.stash['external_resource'] = new_external_resource
         return flask.render_template('external_resource/create.html')
 
 
 @page.route('/external_resource/<id>/update', methods=['GET'])
+@require_login
 @functools.partial(with_external_resource, lang='all')
 def update_external_resource_get():
     return flask.render_template('external_resource/update.html')
 
 
 @page.route('/external_resource/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_external_resource, lang='all')
 @require_login
 def update_external_resource_post():
@@ -97,7 +100,7 @@ def update_external_resource_post():
 
     args = copy.deepcopy(new_external_resource)
     args['user_id'] = flask.g.stash.get('user').get('id')
-    ok = app.api.update_external_resource(**args)
+    ok = flask.g.api.update_external_resource(**args)
 
     if ok:
         redirect_url = get_redirect_target()
@@ -105,21 +108,22 @@ def update_external_resource_post():
     else:
         # retain new input in the rendered page
         flask.g.stash['external_resource'] = new_external_resource
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
         return flask.render_template('external_resource/update.html')
 
 
 @page.route('/external_resource/<id>/delete', methods=['GET'])
+@require_login
 @functools.partial(with_external_resource, lang='all')
 def delete_external_resource_get():
     return flask.render_template('external_resource/delete.html')
 
 
 @page.route('/external_resource/<id>/delete', methods=['POST'])
-@functools.partial(with_external_resource, lang='all')
 @require_login
+@functools.partial(with_external_resource, lang='all')
 def delete_external_resource_post():
-    ok = app.api.delete_external_resource(
+    ok = flask.g.api.delete_external_resource(
         id=flask.request.values.get('id'),
         user_id=flask.g.stash.get('user').get('id')
     )
@@ -128,5 +132,5 @@ def delete_external_resource_post():
         return flask.redirect(redirect_url, code=303)
     else:
         # retain new input in the rendered page
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
         return flask.render_template('external_resource/delete.html')

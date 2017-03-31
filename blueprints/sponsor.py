@@ -22,18 +22,22 @@ REQUIRED = {
 
 with_sponsor = app.hooks.with_sponsor
 with_associated_conference = app.hooks.with_associated_conference
+require_login = app.hooks.require_login
 
 @page.route('/sponsor/<id>/view')
+@require_login
 @functools.partial(with_sponsor, lang='all')
 @functools.partial(with_associated_conference, id_getter=lambda: flask.g.stash.get('sponsor').get('conference_id'))
 def view():
     return flask.render_template('sponsor/view.html')
 
 @page.route('/sponsor/input', methods=['GET'])
+@require_login
 def input():
     return flask.render_template('sponsor/input.html')
 
 @page.route('/sponsor/input', methods=['POST'])
+@require_login
 def input_post():
     # For this action, merge the new values withe conference
     # object, so that we can show the user the edits
@@ -78,6 +82,7 @@ def input_post():
 
 
 @page.route('/sponsor/create', methods=['POST'])
+@require_login
 def create():
     subskey = 'sponsor.create'
     if subskey not in flask.session:
@@ -104,9 +109,9 @@ def create():
 
     data = v[datakey]
     data['user_id'] = flask.session['user_id']
-    new_sponsor = app.api.create_sponsor(**data)
+    new_sponsor = flask.g.api.create_sponsor(**data)
     if not new_sponsor:
-        flask.g.stash['errors'] = [{'error': app.api.last_error()}]
+        flask.g.stash['errors'] = [{'error': flask.g.api.last_error()}]
         return flask.render_template('sponsor/input.html')
 
     del flask.session[subskey][subs]
@@ -114,6 +119,7 @@ def create():
     return flask.render_template('sponsor/create.html')
 
 @page.route('/sponsor/<id>/edit', methods=['POST'])
+@require_login
 @functools.partial(with_sponsor, lang='all')
 def edit():
     # For this action, merge the new values withe sponsor
@@ -156,6 +162,7 @@ def edit():
     return flask.render_template('sponsor/edit.html')
 
 @page.route('/sponsor/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_sponsor, lang='all')
 def update():
     subskey = 'sponsor.edit'
@@ -186,9 +193,9 @@ def update():
     data['user_id'] = flask.session['user_id']
     if 'sort_order' in data:
         data['sort_order'] = int(data['sort_order'])
-    ok = app.api.update_sponsor(**data)
+    ok = flask.g.api.update_sponsor(**data)
     if not ok:
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
 
     del flask.session[subskey][subs]
     return flask.render_template('sponsor/update.html')

@@ -2,14 +2,48 @@ import admin
 import flask
 import flasktools
 import functools
+import octav
 
 @admin.app.before_request
 def detect_default_language():
     flask.g.lang = admin.get_locale()
 
 def load_logged_in_user():
+    print("load_logged_in_user")
+    has_octav_session = True
+    for k in ['octav_session_id', 'octav_session_expires']:
+        if k not in flask.session:
+            print("Could not find key %s" % k)
+            has_octav_session = False
+            break
+
+    if not has_octav_session:
+        for k in ['access_token', 'user_id']:
+            if k not in flask.session:
+                return False
+
+        s = flask.g.api.new_session(flask.session['access_token'], flask.session['auth_via'])
+        if s is None:
+            return False
+        flask.session['octav_session_id'] = s.sid
+        flask.session['octav_session_expires'] = s.expires
+    else:
+        sid = flask.session['octav_session_id']
+        print("session exists %s" % sid)
+        expires = flask.session['octav_session_expires']
+        f = functools.partial(flask.g.api.create_client_session, flask.session['access_token'], flask.session['auth_via'])
+        s = octav.Session(flask.g.api, f, sid, expires)
+        v = s.renew()
+        print("result of renew %s" % v)
+        if v is None:
+            return False
+        if v:
+            # Update the stored octav session ID
+            flask.session['octav_session_id'] = s.sid
+            flask.session['octav_session_expires'] = s.expires
+    flask.g.api = s
     if 'user_id' in flask.session:
-        user = admin.api.lookup_user(flask.session.get('user_id'))
+        user = flask.g.api.lookup_user(flask.session.get('user_id'))
         if user:
             flask.g.stash['user'] = user
             return True
@@ -52,7 +86,7 @@ def check_email(cb, **args):
 def with_associated_conference(cb, id_getter, lang=None):
     def _load_associated_conference(cb, id_getter):
         conf_id = id_getter()
-        conf = admin.api.lookup_conference(id=conf_id, lang=lang or flask.g.lang)
+        conf = flask.g.api.lookup_conference(id=conf_id, lang=lang or flask.g.lang)
         if not conf:
           return flask.abort(404)
         flask.g.stash['conference'] = conf
@@ -61,7 +95,7 @@ def with_associated_conference(cb, id_getter, lang=None):
 
 def with_conference(cb, lang=None):
     def _load_conference(cb, id, lang):
-        conf = admin.api.lookup_conference(id=id, lang=lang or flask.g.lang)
+        conf = flask.g.api.lookup_conference(id=id, lang=lang or flask.g.lang)
         if not conf:
             return flask.abort(404)
         flask.g.stash['conference'] = conf
@@ -75,7 +109,7 @@ def with_conference_list(cb, **args):
         if 'lang' not in args:
             args['lang'] = flask.g.lang
 
-        conferences = admin.api.list_conference(**args)
+        conferences = flask.g.api.list_conference(**args)
         if not conferences:
             return flask.abort(404)
         flask.g.stash['conferences'] = conferences
@@ -85,7 +119,7 @@ def with_conference_list(cb, **args):
 
 def with_conference_series_list(cb):
     def _load_conference_series_list(cb):
-        serieses = admin.api.list_conference_series()
+        serieses = flask.g.api.list_conference_series()
         if not serieses:
             return flask.abort(404)
         flask.g.stash['conference_series'] = serieses
@@ -97,7 +131,7 @@ def with_track(cb, lang=None):
     def _load_track(cb, id, lang):
         if lang is None:
             lang = flask.g.lang
-        track = admin.api.lookup_track(id=id, lang=lang)
+        track = flask.g.api.lookup_track(id=id, lang=lang)
         if not track:
             return flask.abort(404)
         flask.g.stash['track_id'] = id
@@ -110,7 +144,7 @@ def with_venue(cb, lang=None):
     def _load_venue(cb, id, lang):
         if lang is None:
             lang = flask.g.lang
-        venue = admin.api.lookup_venue(id=id, lang=lang)
+        venue = flask.g.api.lookup_venue(id=id, lang=lang)
         if not venue:
             return flask.abort(404)
         flask.g.stash['venue'] = venue
@@ -120,7 +154,7 @@ def with_venue(cb, lang=None):
 
 def with_venue_list(cb, lang=None):
     def _load_venue_list(cb, lang):
-        venues = admin.api.list_venue(lang=lang or flask.g.lang)
+        venues = flask.g.api.list_venue(lang=lang or flask.g.lang)
         flask.g.stash['venues'] = venues or []
         return cb()
 
@@ -128,7 +162,7 @@ def with_venue_list(cb, lang=None):
 
 def with_session_type(cb, lang=None):
     def _load_session_type(cb, id, lang):
-        session_type = admin.api.lookup_session_type(id=id, lang=lang or flask.g.lang)
+        session_type = flask.g.api.lookup_session_type(id=id, lang=lang or flask.g.lang)
         if not session_type:
             return flask.abort(404)
         flask.g.stash['session_type_id'] = id
@@ -138,7 +172,7 @@ def with_session_type(cb, lang=None):
 
 def with_sponsor(cb, lang=None):
     def _load_sponsor(cb, id, lang):
-        sponsor = admin.api.lookup_sponsor(id=id, lang=lang or flask.g.lang)
+        sponsor = flask.g.api.lookup_sponsor(id=id, lang=lang or flask.g.lang)
         if not sponsor:
             return flask.abort(404)
         flask.g.stash['sponsor_id'] = id
@@ -148,7 +182,7 @@ def with_sponsor(cb, lang=None):
 
 def with_featured_speaker(cb, lang=None):
     def _load_featured_speaker(cb, id, lang):
-        featured_speaker = admin.api.lookup_featured_speaker(id=id, lang=lang or flask.g.lang)
+        featured_speaker = flask.g.api.lookup_featured_speaker(id=id, lang=lang or flask.g.lang)
         if not featured_speaker:
             return flask.abort(404)
         flask.g.stash['featured_speaker_id'] = id
@@ -158,7 +192,7 @@ def with_featured_speaker(cb, lang=None):
 
 def with_blog_entry(cb, lang=None):
     def _load_blog_entry(cb, id, lang):
-        blog_entry = admin.api.lookup_blog_entry(id=id, lang=lang or flask.g.lang)
+        blog_entry = flask.g.api.lookup_blog_entry(id=id, lang=lang or flask.g.lang)
         if not blog_entry:
             return flask.abort(404)
         flask.g.stash['blog_entry_id'] = id
@@ -168,7 +202,7 @@ def with_blog_entry(cb, lang=None):
 
 def with_session(cb, lang=None):
     def _load_session(cb, id, lang):
-        session = admin.api.lookup_session(id=id, lang=lang or flask.g.lang)
+        session = flask.g.api.lookup_session(id=id, lang=lang or flask.g.lang)
         if not session:
             return flask.abort(404)
         flask.g.stash['session_id'] = id
@@ -178,7 +212,7 @@ def with_session(cb, lang=None):
 
 def with_external_resource(cb, lang=None):
     def _load_external_resource(cb, id, lang):
-        external_resource = admin.api.lookup_external_resource(id=id, lang=lang or flask.g.lang)
+        external_resource = flask.g.api.lookup_external_resource(id=id, lang=lang or flask.g.lang)
         if not external_resource:
             return flask.abort(404)
         flask.g.stash['external_resource_id'] = id

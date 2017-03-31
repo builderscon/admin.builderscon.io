@@ -20,18 +20,22 @@ REQUIRED = {
 
 with_featured_speaker = app.hooks.with_featured_speaker
 with_associated_conference = app.hooks.with_associated_conference
+require_login = app.hooks.require_login
 
 @page.route('/featured_speaker/<id>/view')
+@require_login
 @functools.partial(with_featured_speaker, lang='all')
 @functools.partial(with_associated_conference, id_getter=lambda: flask.g.stash.get('featured_speaker').get('conference_id'))
 def view():
     return flask.render_template('featured_speaker/view.html')
 
 @page.route('/featured_speaker/input', methods=['GET'])
+@require_login
 def input():
     return flask.render_template('featured_speaker/input.html')
 
 @page.route('/featured_speaker/input', methods=['POST'])
+@require_login
 def input_post():
     # For this action, merge the new values withe conference
     # object, so that we can show the user the edits
@@ -76,6 +80,7 @@ def input_post():
 
 
 @page.route('/featured_speaker/create', methods=['POST'])
+@require_login
 def create():
     subskey = 'featured_speaker.create'
     if subskey not in flask.session:
@@ -102,9 +107,9 @@ def create():
 
     data = v[datakey]
     data['user_id'] = flask.session['user_id']
-    new_featured_speaker = app.api.create_featured_speaker(**data)
+    new_featured_speaker = flask.g.api.create_featured_speaker(**data)
     if not new_featured_speaker:
-        flask.g.stash['errors'] = [{'error': app.api.last_error()}]
+        flask.g.stash['errors'] = [{'error': flask.g.api.last_error()}]
         return flask.render_template('featured_speaker/input.html')
 
     del flask.session[subskey][subs]
@@ -112,6 +117,7 @@ def create():
     return flask.render_template('featured_speaker/create.html')
 
 @page.route('/featured_speaker/<id>/edit', methods=['POST'])
+@require_login
 @functools.partial(with_featured_speaker, lang='all')
 def edit():
     # For this action, merge the new values withe featured_speaker
@@ -154,6 +160,7 @@ def edit():
     return flask.render_template('featured_speaker/edit.html')
 
 @page.route('/featured_speaker/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_featured_speaker, lang='all')
 def update():
     subskey = 'featured_speaker.edit'
@@ -182,9 +189,9 @@ def update():
     data = v[datakey]
     data['id'] = flask.g.stash.get('featured_speaker_id')
     data['user_id'] = flask.session['user_id']
-    ok = app.api.update_featured_speaker(**data)
+    ok = flask.g.api.update_featured_speaker(**data)
     if not ok:
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
 
     del flask.session[subskey][subs]
     return flask.render_template('featured_speaker/update.html')

@@ -21,21 +21,26 @@ REQUIRED = {
 }
 
 with_venue = app.hooks.with_venue
+require_login = app.hooks.require_login
 
 @page.route('/venue/')
+@require_login
 def list():
     return flask.render_template('venue/index.html')
 
 @page.route('/venue/<id>/view')
+@require_login
 @functools.partial(with_venue, lang='all')
 def view():
     return flask.render_template('venue/view.html')
 
 @page.route('/venue/input', methods=['GET'])
+@require_login
 def input():
     return flask.render_template('venue/input.html')
 
 @page.route('/venue/input', methods=['POST'])
+@require_login
 def input_post():
     # For this action, merge the new values withe conference
     # object, so that we can show the user the edits
@@ -80,6 +85,7 @@ def input_post():
 
 
 @page.route('/venue/create', methods=['POST'])
+@require_login
 def create():
     subskey = 'venue.create'
     if subskey not in flask.session:
@@ -106,9 +112,9 @@ def create():
 
     data = v[datakey]
     data['user_id'] = flask.session['user_id']
-    new_venue = app.api.create_venue(**data)
+    new_venue = flask.g.api.create_venue(**data)
     if not new_venue:
-        flask.g.stash['errors'] = [{'error': app.api.last_error()}]
+        flask.g.stash['errors'] = [{'error': flask.g.api.last_error()}]
         return flask.render_template('venue/input.html')
 
     del flask.session[subskey][subs]

@@ -32,17 +32,19 @@ COLUMNS = [
 with_conference = app.hooks.with_conference
 with_conference_series_list = app.hooks.with_conference_series_list
 with_venue_list = app.hooks.with_venue_list
+require_login = app.hooks.require_login
 
 @page.route('/conference')
 def index():
     return flask.render_template('conference/index.html')
 
 @page.route('/conference/<id>/view')
+@require_login
 @functools.partial(with_conference, lang='all')
 @with_conference_series_list
 @with_venue_list
 def view():
-    staff = app.api.list_conference_staff(
+    staff = flask.g.api.list_conference_staff(
         conference_id=flask.g.stash.get('conference_id'),
         lang=flask.g.lang
     )
@@ -52,6 +54,7 @@ def view():
     return flask.render_template('conference/view.html')
 
 @page.route('/conference/<id>/edit', methods=['POST'])
+@require_login
 @functools.partial(with_conference, lang='all')
 def edit():
     # For this action, merge the new values withe conference
@@ -91,6 +94,7 @@ def edit():
     return flask.render_template('conference/edit.html')
 
 @page.route('/conference/<id>/update', methods=['POST'])
+@require_login
 @functools.partial(with_conference, lang='all')
 def update():
     subskey = 'conference.edit'
@@ -119,17 +123,18 @@ def update():
     data = v[datakey]
     data['id'] = flask.g.stash.get('conference_id')
     data['user_id'] = flask.session['user_id']
-    ok = app.api.update_conference(**data)
+    ok = flask.g.api.update_conference(**data)
     if not ok:
-        flask.g.stash['error'] = app.api.last_error()
+        flask.g.stash['error'] = flask.g.api.last_error()
 
     del flask.session[subskey][subs]
     return flask.render_template('conference/update.html')
 
 @page.route('/conference/<id>/sessions')
+@require_login
 @with_conference
 def sessions():
-    sessions = app.api.list_sessions(
+    sessions = flask.g.api.list_sessions(
         conference_id=flask.g.stash.get('conference_id'),
         lang=flask.g.lang,
         status=['accepted', 'rejected']
@@ -138,9 +143,10 @@ def sessions():
     return flask.render_template('conference/sessions.html')
 
 @page.route('/conference/<id>/blog_entries')
+@require_login
 @with_conference
 def blog_entries():
-    blog_entries = app.api.list_blog_entries(
+    blog_entries = flask.g.api.list_blog_entries(
         conference_id=flask.g.stash.get('conference_id'),
         lang=flask.g.lang,
         status=['public', 'private']
@@ -149,17 +155,19 @@ def blog_entries():
     return flask.render_template('conference/blog_entries.html')
 
 @page.route('/conference/<id>/twitter')
+@require_login
 @with_conference
 def twitter():
     return flask.render_template('conference/twitter.html')
 
 @page.route('/conference/<id>/twitter', methods=['POST'])
+@require_login
 @with_conference
 def twitter_post():
     conference_id = flask.g.stash['conference_id']
     tweet = flask.request.values.get('tweet')
     user_id = flask.session['user_id']
-    ok = app.api.tweet_as_conference(conference_id, tweet, user_id)
+    ok = flask.g.api.tweet_as_conference(conference_id, tweet, user_id)
     if not ok:
         return "failure" # TODO
     return "posted successfully" # TODO

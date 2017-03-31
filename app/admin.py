@@ -61,6 +61,7 @@ def get_locale():
 @app.before_request
 def before_request_hook():
     lang = get_locale()
+    flask.g.api = api
     flask.g.stash = dict(lang=lang)
 
 @app.context_processor
