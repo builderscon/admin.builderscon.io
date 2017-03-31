@@ -1,4 +1,5 @@
 import admin
+import flask
 
 def get_conference(id, lang='en'):
     key = 'conference.id.%s.%s' % (id, lang)
