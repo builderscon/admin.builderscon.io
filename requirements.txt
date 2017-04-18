@@ -8,6 +8,7 @@ jinja2
 iso8601
 pytz
 redis
+redis-py-cluster
 urllib3
 wsgi-request-logger
 werkzeug
