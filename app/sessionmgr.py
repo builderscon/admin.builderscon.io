@@ -7,7 +7,7 @@ def build(backend, cfg):
         r = redis.Redis(**cfg.section('REDIS'))
         return flask_session.RedisSessionInterface(r, key_prefix="session.", use_signer=True)
     elif backend == 'RedisCluster':
-        r = rediscluster.client.RedisCluster(**cfg.section('REDIS_CLUSTER'))
+        r = rediscluster.client.RedisCluster(**cfg.section('REDIS'))
         return flask_session.RedisSessionInterface(r, key_prefix="session.", use_signer=True)
 
     raise Exception('Unknown backend "%s"' % backend)
