@@ -9,7 +9,6 @@ def detect_default_language():
     flask.g.lang = admin.get_locale()
 
 def load_logged_in_user():
-    print("load_logged_in_user")
     has_octav_session = True
     for k in ['octav_session_id', 'octav_session_expires']:
         if k not in flask.session:
