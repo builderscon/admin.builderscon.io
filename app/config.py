@@ -14,6 +14,7 @@ class Config(object):
 
         self.populate_from_env('OCTAV_CLIENT_DEBUG', 'OCTAV', 'debug')
         self.populate_from_env('OCTAV_CLIENT_KEY', 'OCTAV', 'key')
+        self.populate_from_env('OCTAV_ENDPOINT', 'OCTAV', 'endpoint')
         self.populate_from_env('OCTAV_CLIENT_SECRET', 'OCTAV', 'secret')
         self.populate_from_env('ADMINWEB_FLASK_SECRET', 'FLASK', 'secret')
         for t in ['GITHUB', 'FACEBOOK', 'TWITTER']:
