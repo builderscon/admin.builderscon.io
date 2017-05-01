@@ -1515,6 +1515,9 @@
         $('*[name="' + key + '"]', '#basic').each(function(i, c) {
           $(c).val(conference[key]);
         });
+        $('*[name="' + key + '"]', '#components').each(function(i, c) {
+          $(c).val(conference[key]);
+        });
       });
     }
   });
