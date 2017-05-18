@@ -4,13 +4,13 @@ import flask
 page = flask.Blueprint('auth', __name__)
 
 @page.route('/logout', methods=['GET'])
-def logout():
-    return flask.redirect('/')
+def logout_get():
+    return flask.render_template('auth/logout.html')
 
 @page.route('/logout', methods=['POST'])
 def logout(p=None):
     flask.session.clear()
-    return flask.render_template('auth/logout.html')
+    return flask.redirect('/')
 
 @page.route('/login')
 def login():
