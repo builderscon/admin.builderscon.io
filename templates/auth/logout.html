@@ -1,0 +1,26 @@
+{% extends 'layouts/base.html' %}
+
+{% block body_id %}logout{% endblock %}
+
+{% block main %}
+<main>
+{% if error %}
+<div class="section error">
+  <div class="inner">
+    <h1>{% trans %}Error{% endtrans %}</h1>
+    <div class="content">{{ _(error) }}</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="section">
+  <div class="inner">
+    <h1 class="header">{% trans %}Login{% endtrans %}</h1>
+    <div class="content">
+      <form action="/logout" method="POST">
+        <button>Logout</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock%}
