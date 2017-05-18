@@ -3,6 +3,10 @@ import flask
 
 page = flask.Blueprint('auth', __name__)
 
+@page.route('/logout', methods=['GET'])
+def logout_get():
+    return flask.render_template('auth/logout.html')
+
 @page.route('/logout', methods=['POST'])
 def logout(p=None):
     flask.session.clear()
