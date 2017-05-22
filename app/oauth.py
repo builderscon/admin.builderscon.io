@@ -296,8 +296,7 @@ def twitter_app_callback(resp):
     ok = flask.g.api.add_conference_credential(
         conference_id=conference_id,
         data=base64.b64encode(json.dumps(data)),
-        type='twitter',
-        user_id=flask.session['user_id']
+        type='twitter'
     )
     if not ok:
         return "failure" # TODO
