@@ -282,6 +282,7 @@ def get_twitter_app_token(token=None):
     return flask.session.get('twitter_app_token')
 
 @admin.app.route('/conference/twitter/callback')
+@hooks.require_login
 @twitter_app.authorized_handler
 def twitter_app_callback(resp):
     if resp is None:
