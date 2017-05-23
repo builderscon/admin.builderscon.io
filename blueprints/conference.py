@@ -137,7 +137,7 @@ def sessions():
     sessions = flask.g.api.list_sessions(
         conference_id=flask.g.stash.get('conference_id'),
         lang=flask.g.lang,
-        status=['accepted', 'rejected']
+        status=['accepted', 'rejected', 'pending']
     )
     flask.g.stash['sessions'] = sessions;
     return flask.render_template('conference/sessions.html')
