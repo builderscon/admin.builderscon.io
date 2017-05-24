@@ -45,6 +45,23 @@
   function makeUpdateSingle(id) {
     return function(e) {
       var data = collectData(id);
+      data["id"] = id;
+      $.ajax({
+        url: "/api/session/update",
+        method: "POST",
+        contentType: 'application/json; charset=UTF-8',
+        data: JSON.stringify(data)
+      }).done(function(data) {
+        showModalMessage(
+          '{% trans %}Success{% endtrans %}',
+          '{% trans %}Successfully updated sessions{% endtrans %}',
+          {
+            complete: function() { location.href = location.href }
+          }
+        );
+      }).fail(function(xhr, status, err) {
+        showModalError(err);
+      });
       return false;
     }
   }
