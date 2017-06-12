@@ -350,6 +350,24 @@ def delete_track():
 @require_login
 def update_session():
     data = flask.request.json
+    conference_id = data['conference_id']
+    del data['conference_id']
+
+    if 'starts_on' in data:
+        conference = flask.g.api.lookup_conference(id=conference_id, lang=flask.g.lang)
+        localtz = pytz.timezone(conference.get('timezone', 'UTC'))
+        offset = localtz.utcoffset(datetime.datetime.utcnow())
+        starts_on = iso8601.parse_date(
+            '%s%s%02d%02d' % (
+                data['starts_on'],
+                '+' if offset.total_seconds() > 0 else '-',
+                int(offset.total_seconds() / 3600),
+                int((offset.total_seconds() % 3600) / 600),
+            )
+        )
+        data['starts_on'] = starts_on.isoformat()
+    
+    print(data)
     ok = flask.g.api.update_session(**data)
     if not ok:
         return flask.jsonify({

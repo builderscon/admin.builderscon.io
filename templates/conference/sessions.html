@@ -53,6 +53,14 @@
         data[$e.attr('name')] = $e.val();
       }
     });
+    if (data['starts_on_date'] && data['starts_on_time']) {
+      var t = data['starts_on_date'] + 'T' + data['starts_on_time'] + ':00';
+      delete data['starts_on_date'];
+      delete data['starts_on_time'];
+      data['starts_on'] = t;
+    }
+    console.log(data);
+    alert("foo");
     return data;
   }
 
@@ -60,6 +68,7 @@
     return function(e) {
       var data = collectData(id);
       data["id"] = id;
+      data["conference_id"] = conference.id;
       $.ajax({
         url: "/api/session/update",
         method: "POST",
@@ -82,19 +91,29 @@
 
   function setupSessions() {
     var $c = $('#sessions');
+    var room_select = $('<select />').attr('name', 'room_id').append(
+      $('<option />').attr('value', '').text('---')
+    );
+    $.each(conference.venues, function(i, venue) {
+      $.each(venue.rooms, function(i, room) {
+        room_select.append(
+          $('<option />').attr('value', room.id).text(room.name)
+        )
+      });
+    });
     var status_select = $('<select />').attr('name', 'status').append(
       $('<option />').attr('value', 'pending').text('{% trans %}pending{% endtrans %}'),
       $('<option />').attr('value', 'rejected').text('{% trans %}rejected{% endtrans %}'),
       $('<option />').attr('value', 'accepted').text('{% trans %}accepted{% endtrans %}')
     );
-    var date_select = $('<select />').attr('name', 'date').append(
+    var date_select = $('<select />').attr('name', 'starts_on_date').append(
       $('<option />').attr('value', '').text('---')
     );
     $.each(conference.dates, function(i, date) {
       var dt = fmtdate(new Date(Date.parse(date.open)));
       date_select.append($('<option />').attr('value', dt).text(dt));
     });
-    var $time = $('<input />').attr('type', 'text').attr('name', 'time');
+    var $time = $('<input />').attr('type', 'text').attr('name', 'starts_on_time');
     $.each(sessions, function(i, session) {
       var starts_on;
       var starts_on_date;
@@ -104,6 +123,7 @@
         starts_on_date = fmtdate(starts_on);
         starts_on_time = fmttime(starts_on);
       }
+      console.log(session);
       $c.append(
         $('<div />').addClass('row').append(
           $('<div />').addClass('col').addClass('s2').append(
@@ -135,6 +155,12 @@
               $('<i />').addClass('material-icons left').text('send'),
               '{% trans %}Update{% endtrans %}'
             ).click(makeUpdateSingle(session.id))
+          )
+        ),
+        $('<div />').addClass('row').append(
+          $('<div />').addClass('col').addClass('s2'),
+          $('<div />').addClass('col').addClass('s7').append(
+            room_select.clone().attr('session-id', session.id).val(session.room_id)
           )
         )
       );
@@ -186,7 +212,7 @@
   $(document).ready(function() {
     setupSessions();
     $('select').material_select();
-    $('input[name="time"]').pickatime({
+    $('input[name="starts_on_time"]').pickatime({
       twelvehour: false
     }).attr('placeholder', 'hh:mm');
     $('#bulk-update-btn').click(updateBulk);
