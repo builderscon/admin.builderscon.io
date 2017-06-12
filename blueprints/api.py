@@ -124,6 +124,37 @@ def list_conference_sponsor():
     )
     return flask.jsonify(confs)
 
+@page.route('/api/conference/session_type/add', methods=['POST'])
+@require_login
+def add_conference_session_type():
+    args = {}
+    for k in ['conference_id', 'name', 'abstract', 'name#ja', 'abstract#ja', 'duration', 'submission_start', 'submission_end', 'is_default']:
+        args[k] = flask.request.values.get(k)
+        if k == 'duration':
+            args[k] = int(args[k])
+    if 'sort_order' in flask.request.values:
+        v = flask.request.values.get('sort_order')
+        if v:
+            args['sort_order'] = int(v)
+
+    ok = flask.g.api.add_session_type(**args)
+    return _stock_response(ok, flask.g.api)
+
+@page.route('/api/conference/session_type/remove', methods=['POST'])
+@require_login
+def remove_conference_session_type():
+    ok = flask.g.api.delete_session_type(
+        id=flask.request.values.get('id'),
+    )
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": flask.g.api.last_error()
+    })
+
 @page.route('/api/conference/sponsor/add', methods=['POST'])
 @require_login
 def add_conference_sponsor():
