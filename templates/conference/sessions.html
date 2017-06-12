@@ -165,7 +165,7 @@
     return false;
   }
 
-  func sendSelectionResults() {
+  function sendSelectionResults() {
     $.ajax({
       url: "/api/session/send_all_selection_result_notification",
       method: "POST",
