@@ -11,6 +11,20 @@
 {% include 'component/message-modal.html' %}
 <div class="box">
   <div class="row box-header">
+    <div class="col s12">{% trans %}Send Selection Results{% endtrans %} (ONLY DO THIS ONCE!)</div>
+  </div>
+  <div class="row">
+    <div class="col s12">
+      <button id="send-selection-results" class="btn wafes-effect waves-light red darken-4" type="submit">
+        <i class="material-icons left">send</i>
+        {% trans %}Send Selection Results{% endtrans %}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="row box-header">
     <div class="col s12">{% trans %}Session List{% endtrans %}</div>
   </div>
   <div id="sessions"></div>
@@ -151,6 +165,24 @@
     return false;
   }
 
+  func sendSelectionResults() {
+    $.ajax({
+      url: "/api/session/send_all_selection_result_notification",
+      method: "POST",
+    }).done(function(data) {
+      showModalMessage(
+        '{% trans %}Success{% endtrans %}',
+        '{% trans %}Successfully sent selection results{% endtrans %}',
+        {
+          complete: function() { location.href = location.href }
+        }
+      );
+    }).fail(function(xhr, status, err) {
+      showModalError(err);
+    });
+    return false;
+  }
+
   $(document).ready(function() {
     setupSessions();
     $('select').material_select();
@@ -158,6 +190,7 @@
       twelvehour: false
     }).attr('placeholder', 'hh:mm');
     $('#bulk-update-btn').click(updateBulk);
+    $('#send-selection-results').click(sendSelectionResults);
     $(".modal").modal();
   });
 -->

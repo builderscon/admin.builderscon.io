@@ -381,4 +381,16 @@ def remove_conference_staff():
         "error": flask.g.api.last_error()
     })
 
+@page.route('/api/session/send_all_selection_result_notification', methods=['POST'])
+@require_login
+def send_all_selection_result_notification():
+    ok = flask.g.api.send_all_selection_result_notification()
+    if ok:
+        return flask.jsonify({
+            "success": True
+        })
+    return flask.jsonify({
+        "success": False,
+        "error": flask.g.api.last_error()
+    })
 
