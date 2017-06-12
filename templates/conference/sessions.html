@@ -59,8 +59,6 @@
       delete data['starts_on_time'];
       data['starts_on'] = t;
     }
-    console.log(data);
-    alert("foo");
     return data;
   }
 
@@ -123,7 +121,6 @@
         starts_on_date = fmtdate(starts_on);
         starts_on_time = fmttime(starts_on);
       }
-      console.log(session);
       $c.append(
         $('<div />').addClass('row').append(
           $('<div />').addClass('col').addClass('s2').append(
