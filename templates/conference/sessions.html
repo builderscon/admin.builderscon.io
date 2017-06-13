@@ -192,6 +192,9 @@
     $.ajax({
       url: "/api/session/send_all_selection_result_notification",
       method: "POST",
+      data: {
+        "conference_id": conference.id
+      }
     }).done(function(data) {
       showModalMessage(
         '{% trans %}Success{% endtrans %}',

@@ -433,7 +433,8 @@ def remove_conference_staff():
 @page.route('/api/session/send_all_selection_result_notification', methods=['POST'])
 @require_login
 def send_all_selection_result_notification():
-    ok = flask.g.api.send_all_selection_result_notification()
+    id = flask.request.values.get('conference_id')
+    ok = flask.g.api.send_all_selection_result_notification(id)
     if ok:
         return flask.jsonify({
             "success": True
