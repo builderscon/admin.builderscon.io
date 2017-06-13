@@ -96,7 +96,8 @@ def update():
 
     data = v[datakey]
     data['id'] = flask.g.stash.get('track_id')
-    data['user_id'] = flask.session['user_id']
+    if 'sort_order' in data:
+        data['sort_order'] = int(data['sort_order'])
     ok = flask.g.api.update_track(**data)
     if not ok:
         flask.g.stash['error'] = flask.g.api.last_error()
