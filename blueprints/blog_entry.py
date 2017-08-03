@@ -104,7 +104,6 @@ def create():
         return flask.abort(500)
 
     data = v[datakey]
-    data['user_id'] = flask.session['user_id']
     flask.g.stash['conference_id'] = data['conference_id'] # for form
     new_blog_entry = flask.g.api.create_blog_entry(**data)
     if not new_blog_entry:
@@ -188,7 +187,6 @@ def update():
 
     data = v[datakey]
     data['id'] = flask.g.stash.get('blog_entry_id')
-    data['user_id'] = flask.session['user_id']
     ok = flask.g.api.update_blog_entry(**data)
     if not ok:
         flask.g.stash['error'] = flask.g.api.last_error()
