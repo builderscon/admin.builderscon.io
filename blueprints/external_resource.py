@@ -16,6 +16,7 @@ COLUMNS = [
     'description',
     'description#ja',
     'url',
+    'image_url',
     'sort_order',
 ]
 
