@@ -9,15 +9,12 @@ COLUMNS = [
     'url',
     'title',
     'status',
-    'image_url',
-    'sort_order',
     'conference_id'
 ]
 REQUIRED = {
     'url': True,
     'title': True,
     'status': True,
-    'image_url': True,
     'conference_id': True
 }
 
